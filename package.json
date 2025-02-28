@@ -1,0 +1,145 @@
+{
+  "name": "acmeportal",
+  "displayName": "ACMEPortal",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "acmeportal.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "acmeportal.itemClicked",
+        "title": "Item Clicked"
+      },
+      {
+        "command": "acmeportal.setFlowsPath",
+        "title": "Set Path to Flows"
+      },
+      {
+        "command": "acmeportal.openSettings",
+        "title": "ACME: Open Settings",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "acmeportal.refreshFlows",
+        "title": "Refresh Flows",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "acmeportal.openFlowFile",
+        "title": "Open Flow File",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "acmeportal.promoteEnvironment",
+        "title": "Promote Flow",
+        "icon": "$(rocket)"
+      }
+    ],
+    "configuration": {
+      "title": "ACME Portal",
+      "properties": {
+        "acmeportal.flowsPath": {
+          "type": "string",
+          "default": "flows",
+          "description": "Path to directory containing Python flow programs (relative to workspace root)"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "acme-portal-container",
+          "title": "ACME Portal",
+          "icon": "media/acme-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "acme-portal-container": [
+        {
+          "id": "acmePortalView",
+          "name": "ACME Resources",
+          "when": "acmePortalEnabled"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "acmeportal.openSettings",
+          "when": "view == acmePortalView",
+          "group": "navigation"
+        },
+        {
+          "command": "acmeportal.refreshFlows",
+          "when": "view == acmePortalView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "acmeportal.itemClicked",
+          "when": "view == acmePortalView && viewItem == leafNode"
+        },
+        {
+          "command": "acmeportal.openFlowFile",
+          "when": "view == acmePortalView && viewItem == flow",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.promoteEnvironment",
+          "when": "view == acmePortalView && viewItem == flow || view == acmePortalView && viewItem == environment",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "acmeportal.openSettings",
+          "title": "ACME: Open Settings"
+        },
+        {
+          "command": "acmeportal.refreshFlows",
+          "title": "ACME: Refresh Flows"
+        },
+        {
+          "command": "acmeportal.promoteEnvironment",
+          "title": "ACME: Promote Flow"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "knip": "knip"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.17.19",
+    "@types/vscode": "^1.97.0",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.19.0",
+    "knip": "^5.45.0",
+    "typescript": "^5.7.3"
+  }
+}
