@@ -13,6 +13,19 @@ interface WorkflowInput {
 
 export class GitHubWorkflowRunner {
     /**
+     * Get the workspace root directory
+     */
+    public static getWorkspaceRoot(): string | undefined {
+        const workspaces = vscode.workspace.workspaceFolders;
+        if (!workspaces || workspaces.length === 0) {
+            vscode.window.showErrorMessage('No workspace folder is open.');
+            return undefined;
+        }
+        
+        return workspaces[0].uri.fsPath;
+    }
+
+    /**
      * Trigger a GitHub Actions workflow using multiple methods if needed
      */
     public static async triggerWorkflow(
@@ -21,14 +34,6 @@ export class GitHubWorkflowRunner {
         workflowRef: string = 'main'
     ): Promise<string | undefined> {
         try {
-            // First, try using the GitHub Actions extension
-            const runUrlFromExtension = await this.triggerWorkflowViaExtension(workflowFile, workflowInputs, workflowRef);
-            if (runUrlFromExtension) {
-                return runUrlFromExtension;
-            }
-
-            // If extension fails, try using GitHub CLI
-            console.log("Extension method failed, falling back to GitHub CLI...");
             const runUrlFromCLI = await this.triggerWorkflowViaGitHubCLI(workflowFile, workflowInputs, workflowRef);
             if (runUrlFromCLI) {
                 return runUrlFromCLI;
@@ -58,62 +63,6 @@ export class GitHubWorkflowRunner {
     }
 
     /**
-     * Attempt to trigger workflow via GitHub Actions extension
-     */
-    private static async triggerWorkflowViaExtension(
-        workflowFile: string,
-        workflowInputs: WorkflowInput,
-        workflowRef: string
-    ): Promise<string | undefined> {
-        try {
-            // Check if GitHub Actions extension is installed
-            const githubActionsExtension = vscode.extensions.getExtension('github.vscode-github-actions');
-            
-            if (!githubActionsExtension) {
-                console.log('GitHub Actions extension is not installed.');
-                return undefined;
-            }
-            
-            // Ensure GitHub Actions extension is activated
-            if (!githubActionsExtension.isActive) {
-                await githubActionsExtension.activate();
-                // Add a small delay to ensure the extension is fully activated
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-            
-            // Try to get the GitHub Actions API
-            const actionsAPI = githubActionsExtension.exports;
-            
-            if (!actionsAPI) {
-                console.log('Failed to get GitHub Actions API from extension');
-                return undefined;
-            }
-
-            if (typeof actionsAPI.manuallyDispatchWorkflow !== 'function') {
-                console.log('manuallyDispatchWorkflow is not a function in the API');
-                // Try to find an alternative method in the API
-                console.log('Available API methods:', Object.keys(actionsAPI));
-                return undefined;
-            }
-            
-            // Call the GitHub Actions API to trigger the workflow
-            console.log(`Attempting to trigger workflow ${workflowFile} via extension with inputs:`, workflowInputs);
-            const result = await actionsAPI.manuallyDispatchWorkflow(workflowFile, workflowRef, workflowInputs);
-            
-            if (result && result.runUrl) {
-                console.log(`Workflow triggered: ${result.runUrl}`);
-                return result.runUrl;
-            } else {
-                console.log('Extension returned no run URL');
-                return undefined;
-            }
-        } catch (error) {
-            console.error('Error using GitHub Actions extension:', error);
-            return undefined;
-        }
-    }
-
-    /**
      * Attempt to trigger workflow via GitHub CLI
      */
     private static async triggerWorkflowViaGitHubCLI(
@@ -122,13 +71,11 @@ export class GitHubWorkflowRunner {
         workflowRef: string
     ): Promise<string | undefined> {
         try {
-            const workspaces = vscode.workspace.workspaceFolders;
-            if (!workspaces || workspaces.length === 0) {
-                vscode.window.showErrorMessage('No workspace folder is open.');
+            const workspaceRoot = this.getWorkspaceRoot();
+            if (!workspaceRoot) {
                 return undefined;
             }
 
-            const workspaceRoot = workspaces[0].uri.fsPath;
             const inputArgs = Object.entries(workflowInputs).map(([key, value]) => `-f ${key}=${value}`).join(' ');
             const command = `gh workflow run ${workflowFile} -r ${workflowRef} ${inputArgs}`;
             const { stdout } = await this.runCommand(command, workspaceRoot);
@@ -136,7 +83,7 @@ export class GitHubWorkflowRunner {
             // Extract the workflow filename from the path if needed
             const workflowName = path.basename(workflowFile);
             // Wait briefly to ensure the workflow has been registered
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 2000));
             // Get the list of runs for this workflow
             const listCommand = `gh run list --workflow=${workflowName} --limit=1 --json databaseId,url`;
             const { stdout: runListOutput } = await this.runCommand(listCommand, workspaceRoot);
@@ -169,67 +116,38 @@ export class GitHubWorkflowRunner {
             return undefined;
         }
     }
-
-    /**
-     * Check if a workflow file exists in the current workspace
-     */
-    private static async checkIfWorkflowExists(workflowFile: string): Promise<boolean> {
-        try {
-            const workspaces = vscode.workspace.workspaceFolders;
-            if (!workspaces || workspaces.length === 0) {
-                return false;
-            }
-            
-            const workspaceRoot = workspaces[0].uri.fsPath;
-            const fullPath = path.join(workspaceRoot, '.github', 'workflows', workflowFile);
-            
-            try {
-                await fs.promises.access(fullPath, fs.constants.F_OK);
-                return true;
-            } catch {
-                return false;
-            }
-        } catch (error) {
-            console.error('Error checking workflow file:', error);
-            return false;
-        }
-    }
     
     /**
      * Create a URL for a GitHub repository
      */
-    public static getRepositoryUrl(): string | undefined {
+    public static async getRepositoryUrl(): Promise<string | undefined> {
         try {
-            // Use GitHub extension to get the repository information
-            const githubExtension = vscode.extensions.getExtension('GitHub.vscode-pull-request-github');
-            if (githubExtension && githubExtension.isActive) {
-                const gitHubAPI = githubExtension.exports.getAPI(1);
-                const repositories = gitHubAPI.getRepositories();
-                
-                if (repositories && repositories.length > 0) {
-                    const repository = repositories[0];
-                    // Format: https://github.com/{owner}/{repo}
-                    return repository.remote.url;
-                }
+            const workspaceRoot = this.getWorkspaceRoot();
+            if (!workspaceRoot) {
+                return undefined;
             }
             
-            // Fallback to package.json if available
-            const workspaces = vscode.workspace.workspaceFolders;
-            if (workspaces && workspaces.length > 0) {
-                const packageJsonPath = path.join(workspaces[0].uri.fsPath, 'package.json');
-                try {
-                    const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf-8');
-                    const packageJson = JSON.parse(packageJsonContent);
-                    
-                    if (packageJson.repository && packageJson.repository.url) {
-                        return packageJson.repository.url;
-                    }
-                } catch {
-                    // Failed to read package.json, continue to next method
-                }
+            // Get the remote URL (usually origin)
+            const { stdout } = await this.runCommand('git config --get remote.origin.url', workspaceRoot);
+            
+            if (!stdout.trim()) {
+                return undefined;
             }
             
-            return undefined;
+            let url = stdout.trim();
+            
+            // Convert SSH URL format to HTTPS URL format
+            // Example: git@github.com:username/repo.git -> https://github.com/username/repo
+            if (url.startsWith('git@github.com:')) {
+                url = url.replace('git@github.com:', 'https://github.com/');
+            }
+            
+            // Remove .git suffix if it exists
+            if (url.endsWith('.git')) {
+                url = url.substring(0, url.length - 4);
+            }
+            
+            return url;
         } catch (error) {
             console.error('Error getting repository URL:', error);
             return undefined;
@@ -241,12 +159,11 @@ export class GitHubWorkflowRunner {
      */
     public static async getCurrentBranch(): Promise<string | undefined> {
         try {
-            const workspaces = vscode.workspace.workspaceFolders;
-            if (!workspaces || workspaces.length === 0) {
+            const workspaceRoot = this.getWorkspaceRoot();
+            if (!workspaceRoot) {
                 return 'main'; // Default if no workspace
             }
             
-            const workspaceRoot = workspaces[0].uri.fsPath;
             const { stdout } = await this.runCommand('git rev-parse --abbrev-ref HEAD', workspaceRoot);
             
             return stdout.trim() || 'main';
@@ -261,12 +178,11 @@ export class GitHubWorkflowRunner {
      */
     public static async hasUncommittedChanges(): Promise<boolean> {
         try {
-            const workspaces = vscode.workspace.workspaceFolders;
-            if (!workspaces || workspaces.length === 0) {
+            const workspaceRoot = this.getWorkspaceRoot();
+            if (!workspaceRoot) {
                 return false;
             }
             
-            const workspaceRoot = workspaces[0].uri.fsPath;
             const { stdout } = await this.runCommand('git status --porcelain', workspaceRoot);
             
             // If stdout has any content, there are uncommitted changes
@@ -278,9 +194,27 @@ export class GitHubWorkflowRunner {
     }
 
     /**
+     * Get the current commit hash of the workspace
+     */
+    public static async getCurrentCommitHash(): Promise<string | undefined> {
+        try {
+            const workspaceRoot = this.getWorkspaceRoot();
+            if (!workspaceRoot) {
+                return undefined;
+            }
+            
+            const { stdout } = await this.runCommand('git rev-parse HEAD', workspaceRoot);
+            return stdout.trim();
+        } catch (error) {
+            console.error('Error getting current commit hash:', error);
+            return undefined;
+        }
+    }
+
+    /**
      * Run a command in the terminal
      */
-    private static async runCommand(command: string, cwd: string): Promise<{stdout: string, stderr: string}> {
+    public static async runCommand(command: string, cwd: string): Promise<{stdout: string, stderr: string}> {
         try {
             return await execAsync(command, { cwd });
         } catch (error) {

@@ -211,13 +211,18 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                 for (const [env, envDeployments] of envMap.entries()) {
                     // Extract the environment name without the "Environment: " prefix
                     const envName = env;
+
+                    // Check if there are multiple deployments for this environment
+                    if (envDeployments.length > 1) {
+                        vscode.window.showErrorMessage(`Multiple deployments found for environment '${env}' in branch '${branch}' for flow '${flow.name}'.`);
+                    }
                     
                     const envItem = new TreeItem(
                         `Environment: ${env}`,
                         vscode.TreeItemCollapsibleState.Collapsed,
                         'env',
                         flow,
-                        undefined,
+                        envDeployments[0],
                         branchId,
                         envName  // Pass the environment name
                     );
@@ -236,7 +241,7 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                             if (tag.includes('COMMIT_HASH')) {
                                 const hash = tag.split('=')[1];
                                 envDetailItems.push(new TreeItem(
-                                    `Commit: ${hash}`,
+                                    `Commit Hash: ${hash}`,
                                     vscode.TreeItemCollapsibleState.None,
                                     'detail',
                                     flow,
@@ -246,7 +251,7 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                             } else if (tag.includes('PACKAGE_VERSION')) {
                                 const version = tag.split('=')[1];
                                 envDetailItems.push(new TreeItem(
-                                    `Package: ${version}`,
+                                    `Package Version: ${version}`,
                                     vscode.TreeItemCollapsibleState.None,
                                     'detail',
                                     flow,
@@ -257,8 +262,11 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                         }
                         
                         // Add creation date
+                        const d = new Date(deployment.updated);
+                        const formattedDate = d.toISOString().replace('T', ' ').substring(0, 19);
+                        
                         envDetailItems.push(new TreeItem(
-                            `Created: ${new Date(deployment.created).toLocaleString()}`,
+                            `Updated: ${formattedDate}`,
                             vscode.TreeItemCollapsibleState.None,
                             'detail',
                             flow,
@@ -293,7 +301,8 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
         return element;
     }
 
-    getChildren(element?: TreeItem): Thenable<TreeItem[]> {
+    // Changed from private to public so it can be used by the compareFlowVersions command
+    public getChildren(element?: TreeItem): Thenable<TreeItem[]> {
         if (this.isLoading && !element) {
             return Promise.resolve([new TreeItem("Loading flows...", vscode.TreeItemCollapsibleState.None, 'detail')]);
         }

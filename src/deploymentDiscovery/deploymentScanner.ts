@@ -12,6 +12,7 @@ export interface DeploymentDetails {
     tags: string[];         // relevant tags (COMMIT_HASH, PACKAGE_VERSION)
     id: string;             // deployment ID
     created: string;        // creation timestamp
+    updated: string;        // last updated timestamp
     flow_id: string;        // associated flow ID
 }
 

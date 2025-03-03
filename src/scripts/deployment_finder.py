@@ -48,6 +48,7 @@ def get_deployments() -> List[Dict[str, Any]]:
                 'tags': relevant_tags,
                 'id': str(deployment.id),
                 'created': str(deployment.created),
+                'updated': str(deployment.updated),
                 'flow_id': str(deployment.flow_id)
             }
             

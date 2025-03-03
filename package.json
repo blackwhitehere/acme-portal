@@ -46,6 +46,11 @@
         "command": "acmeportal.promoteEnvironment",
         "title": "Promote Flow",
         "icon": "$(rocket)"
+      },
+      {
+        "command": "acmeportal.compareFlowVersions",
+        "title": "Compare Flow Versions",
+        "icon": "$(diff)"
       }
     ],
     "configuration": {
@@ -103,6 +108,11 @@
           "command": "acmeportal.promoteEnvironment",
           "when": "view == acmePortalView && viewItem == flow || view == acmePortalView && viewItem == environment",
           "group": "inline"
+        },
+        {
+          "command": "acmeportal.compareFlowVersions",
+          "when": "view == acmePortalView && viewItem == environment",
+          "group": "inline"
         }
       ],
       "commandPalette": [
@@ -117,6 +127,10 @@
         {
           "command": "acmeportal.promoteEnvironment",
           "title": "ACME: Promote Flow"
+        },
+        {
+          "command": "acmeportal.compareFlowVersions",
+          "title": "ACME: Compare Flow Versions"
         }
       ]
     }
