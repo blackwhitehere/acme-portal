@@ -3,63 +3,25 @@ import * as path from 'path';
 import { FlowScanner, FlowDetails } from '../flowDiscovery/flowScanner';
 import { DeploymentScanner, DeploymentDetails } from '../deploymentDiscovery/deploymentScanner';
 import { SettingsManager } from '../settings/settingsManager';
-
-// Define the tree item types
-export class TreeItem extends vscode.TreeItem {
-    constructor(
-        public readonly label: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        public readonly itemType: 'flow' | 'branch' | 'env' | 'detail',
-        public readonly flowData?: FlowDetails,
-        public readonly deploymentData?: DeploymentDetails,
-        public readonly parentId?: string,
-        public readonly environmentName?: string
-    ) {
-        super(label, collapsibleState);
-        
-        // Use the flow's unique id if it's a flow item
-        if (itemType === 'flow' && flowData?.id) {
-            this.id = flowData.id;
-        } else {
-            this.id = parentId ? `${parentId}-${label}` : label;
-        }
-        
-        if (itemType === 'flow') {
-            this.contextValue = 'flow';
-            this.tooltip = flowData?.description || `Flow: ${this.label}`;
-            this.description = flowData?.module || '';
-            this.iconPath = new vscode.ThemeIcon('symbol-event');
-            
-            // Add a command to open the flow when clicked
-            this.command = {
-                command: 'acmeportal.openFlowFile',
-                title: 'Open Flow File',
-                arguments: [this]
-            };
-        } else if (itemType === 'detail') {
-            this.contextValue = 'flowDetail';
-            this.iconPath = new vscode.ThemeIcon('symbol-property');
-        } else if (itemType === 'env') {
-            this.contextValue = 'environment';  // Changed from 'env' to 'environment' for clarity in menus
-            this.iconPath = new vscode.ThemeIcon('server-environment');
-        } else if (itemType === 'branch') {
-            this.contextValue = 'branch';
-            this.iconPath = new vscode.ThemeIcon('git-branch');
-        }
-    }
-}
+import { 
+    BaseTreeItem,
+    FlowTreeItem,
+    BranchTreeItem,
+    EnvironmentTreeItem,
+    DetailTreeItem
+} from './items';
 
 // Tree data provider implementation
-export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
-    private _onDidChangeTreeData: vscode.EventEmitter<TreeItem | undefined | null | void> = new vscode.EventEmitter<TreeItem | undefined | null | void>();
-    readonly onDidChangeTreeData: vscode.Event<TreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
+export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeItem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem | undefined | null | void> = new vscode.EventEmitter<BaseTreeItem | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<BaseTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
     // Store the flow data
     private flows: FlowDetails[] = [];
     // Store deployment data
     private deployments: DeploymentDetails[] = [];
     // Store tree data
-    private data: { [key: string]: TreeItem[] } = {};
+    private data: { [key: string]: BaseTreeItem[] } = {};
     // Loading state
     private isLoading: boolean = false;
 
@@ -105,41 +67,27 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
         console.log(`Building tree data from ${this.flows.length} flows and ${this.deployments.length} deployments`);
         
         // Create flow items for first level
-        const flowItems = this.flows.map(flow => {
-            // Use flow.name for display but ensure id is used for identification
-            const flowName = flow.name;
-            console.log(`Creating tree item for flow: ${flowName} with id: ${flow.id}`);
-            
-            return new TreeItem(
-                flowName, 
-                vscode.TreeItemCollapsibleState.Collapsed, 
-                'flow', 
-                flow
-            );
-        });
+        const flowItems = this.flows.map(flow => new FlowTreeItem(flow));
         
         this.data['root'] = flowItems;
         
         // For each flow, create its details and branch/env structure
         for (const flow of this.flows) {
-            const flowName = flow.name;
-            const flowId = flow.id || flowName; // Fallback to name if id is missing
+            const flowId = flow.id || flow.name; // Fallback to name if id is missing
             
             // Find all deployments for this flow
             const flowDeployments = this.deployments.filter(
-                d => d.flow_name === flowName
+                d => d.flow_name === flow.name
             );
             
-            console.log(`Flow ${flowName} has ${flowDeployments.length} deployments`);
+            console.log(`Flow ${flow.name} has ${flowDeployments.length} deployments`);
             
-            const children = []; // Children of the flow item
+            const children: BaseTreeItem[] = []; // Children of the flow item
             
             // Add basic flow details
             if (flow.description) {
-                children.push(new TreeItem(
+                children.push(new DetailTreeItem(
                     `Description: ${flow.description}`,
-                    vscode.TreeItemCollapsibleState.None,
-                    'detail',
                     flow,
                     undefined,
                     flowId
@@ -154,10 +102,8 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                 sourcePath = path.relative(flowsPath, flow.source_file);
             }
             
-            children.push(new TreeItem(
+            children.push(new DetailTreeItem(
                 `Source: ${sourcePath}`,
-                vscode.TreeItemCollapsibleState.None,
-                'detail',
                 flow,
                 undefined,
                 flowId
@@ -165,10 +111,8 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
             
             // Check if original_name property exists before using it
             if (flow.original_name && flow.original_name !== flow.name) {
-                children.push(new TreeItem(
+                children.push(new DetailTreeItem(
                     `Function: ${flow.original_name}`,
-                    vscode.TreeItemCollapsibleState.None,
-                    'detail',
                     flow,
                     undefined,
                     flowId
@@ -186,14 +130,7 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
             
             // Add branch items
             for (const [branch, branchDeployments] of branchMap.entries()) {
-                const branchItem = new TreeItem(
-                    `Branch: ${branch}`,
-                    vscode.TreeItemCollapsibleState.Collapsed,
-                    'branch',
-                    flow,
-                    undefined,
-                    flowId
-                );
+                const branchItem = new BranchTreeItem(branch, flow, flowId);
                 children.push(branchItem);
                 
                 // Create environment items under this branch
@@ -207,30 +144,26 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                     envMap.get(deployment.env)!.push(deployment);
                 }
                 
-                const envItems = [];
+                const envItems: BaseTreeItem[] = [];
                 for (const [env, envDeployments] of envMap.entries()) {
-                    // Extract the environment name without the "Environment: " prefix
-                    const envName = env;
-
                     // Check if there are multiple deployments for this environment
                     if (envDeployments.length > 1) {
-                        vscode.window.showErrorMessage(`Multiple deployments found for environment '${env}' in branch '${branch}' for flow '${flow.name}'.`);
+                        vscode.window.showErrorMessage(
+                            `Multiple deployments found for environment '${env}' in branch '${branch}' for flow '${flow.name}'.`
+                        );
                     }
                     
-                    const envItem = new TreeItem(
-                        `Environment: ${env}`,
-                        vscode.TreeItemCollapsibleState.Collapsed,
-                        'env',
-                        flow,
-                        envDeployments[0],
-                        branchId,
-                        envName  // Pass the environment name
+                    const envItem = new EnvironmentTreeItem(
+                        env, 
+                        flow, 
+                        envDeployments[0], 
+                        branchId
                     );
                     envItems.push(envItem);
                     
                     // Create details for this environment's deployments
                     const envId = envItem.id!;
-                    const envDetailItems = [];
+                    const envDetailItems: BaseTreeItem[] = [];
                     
                     // Use index to ensure unique IDs for details with the same content
                     let detailIndex = 0;
@@ -240,23 +173,19 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                         for (const tag of deployment.tags) {
                             if (tag.includes('COMMIT_HASH')) {
                                 const hash = tag.split('=')[1];
-                                envDetailItems.push(new TreeItem(
-                                    `Commit Hash: ${hash}`,
-                                    vscode.TreeItemCollapsibleState.None,
-                                    'detail',
+                                envDetailItems.push(new DetailTreeItem(
+                                    `Commit: ${hash}`,
                                     flow,
                                     deployment,
-                                    `${envId}-detail-${detailIndex++}` // Use unique index-based ID
+                                    `${envId}-detail-${detailIndex++}`
                                 ));
                             } else if (tag.includes('PACKAGE_VERSION')) {
                                 const version = tag.split('=')[1];
-                                envDetailItems.push(new TreeItem(
+                                envDetailItems.push(new DetailTreeItem(
                                     `Package Version: ${version}`,
-                                    vscode.TreeItemCollapsibleState.None,
-                                    'detail',
                                     flow,
                                     deployment,
-                                    `${envId}-detail-${detailIndex++}` // Use unique index-based ID
+                                    `${envId}-detail-${detailIndex++}`
                                 ));
                             }
                         }
@@ -265,13 +194,11 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                         const d = new Date(deployment.updated);
                         const formattedDate = d.toISOString().replace('T', ' ').substring(0, 19);
                         
-                        envDetailItems.push(new TreeItem(
+                        envDetailItems.push(new DetailTreeItem(
                             `Updated: ${formattedDate}`,
-                            vscode.TreeItemCollapsibleState.None,
-                            'detail',
                             flow,
                             deployment,
-                            `${envId}-detail-${detailIndex++}` // Use unique index-based ID
+                            `${envId}-detail-${detailIndex++}`
                         ));
                     }
                     
@@ -292,7 +219,7 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
         this._onDidChangeTreeData.fire();
     }
 
-    getTreeItem(element: TreeItem): vscode.TreeItem {
+    getTreeItem(element: BaseTreeItem): vscode.TreeItem {
         if (this.isLoading && !element) {
             const item = new vscode.TreeItem("Loading flows...");
             item.iconPath = new vscode.ThemeIcon('loading~spin');
@@ -301,10 +228,12 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
         return element;
     }
 
-    // Changed from private to public so it can be used by the compareFlowVersions command
-    public getChildren(element?: TreeItem): Thenable<TreeItem[]> {
+    // Made public so it can be used by the compareFlowVersions command
+    public getChildren(element?: BaseTreeItem): Thenable<BaseTreeItem[]> {
         if (this.isLoading && !element) {
-            return Promise.resolve([new TreeItem("Loading flows...", vscode.TreeItemCollapsibleState.None, 'detail')]);
+            return Promise.resolve([
+                new DetailTreeItem("Loading flows...")
+            ]);
         }
         
         if (!element) {
@@ -317,7 +246,7 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
         return Promise.resolve(children || []);
     }
 
-    getParent(element: TreeItem): vscode.ProviderResult<TreeItem> {
+    getParent(element: BaseTreeItem): vscode.ProviderResult<BaseTreeItem> {
         if (element.parentId) {
             // Find parent element based on parentId
             for (const key in this.data) {
