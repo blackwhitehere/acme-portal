@@ -94,16 +94,8 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                 ));
             }
             
-            // Get relative source path from flows root directory
-            const flowsPath = SettingsManager.getAbsoluteFlowsPath();
-            let sourcePath = path.basename(flow.source_file);
-            
-            if (flowsPath && flow.source_file.startsWith(flowsPath)) {
-                sourcePath = path.relative(flowsPath, flow.source_file);
-            }
-            
             children.push(new DetailTreeItem(
-                `Source: ${sourcePath}`,
+                `Source: ${flow.source_relative}`,
                 flow,
                 undefined,
                 flowId

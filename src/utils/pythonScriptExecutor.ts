@@ -1,52 +1,71 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as cp from 'child_process';
+import { CommandExecutor } from './commandExecutor';
+import { WorkspaceService } from './workspaceService';
 
 /**
  * A utility class for executing Python scripts within a VSCode extension
  */
 export class PythonScriptExecutor {
+    private commandExecutor: CommandExecutor;
+    private workspaceService: WorkspaceService;
+
+    /**
+     * Constructor for PythonScriptExecutor
+     * @param commandExecutor Service for executing shell commands
+     * @param workspaceService Service for VS Code workspace operations
+     */
+    constructor(
+        commandExecutor: CommandExecutor = new CommandExecutor(),
+        workspaceService: WorkspaceService = new WorkspaceService()
+    ) {
+        this.commandExecutor = commandExecutor;
+        this.workspaceService = workspaceService;
+    }
+
     /**
      * Execute a Python script with the provided arguments
      * @param scriptPath Path to the Python script
      * @param args Arguments to pass to the script
      * @returns The script's stdout output as a string
      */
-    public static async executeScript(scriptPath: string, ...args: string[]): Promise<string> {
+    public async executeScript(scriptPath: string, ...args: string[]): Promise<string> {
         try {
             // Get the configured Python path
-            const pythonPath = await this.getPythonPath();
+            const pythonPath = await PythonScriptExecutor.getPythonPath();
             
             // Escape arguments to handle spaces and special characters
-            const escapedArgs = args.map(arg => `"${arg.replace(/"/g, '\\"')}"`).join(' ');
+            const escapedArgs = this.escapeCommandArguments(args);
             
-            // Execute the script
-            return new Promise<string>((resolve, reject) => {
-                cp.exec(
-                    `"${pythonPath}" "${scriptPath}" ${escapedArgs}`,
-                    { maxBuffer: 1024 * 1024 },
-                    (error, stdout, stderr) => {
-                        if (error) {
-                            console.error(`Python execution error: ${error}`);
-                            console.error(`stderr: ${stderr}`);
-                            reject(error);
-                            return;
-                        }
-
-                        if (stderr && stderr.trim()) {
-                            console.log(`Python script messages: ${stderr}`);
-                        }
-
-                        console.log(`Python script output length: ${stdout.length}`);
-                        resolve(stdout);
-                    }
-                );
-            });
+            // Construct the command
+            const command = `"${pythonPath}" "${scriptPath}" ${escapedArgs}`;
+            
+            // Get workspace root directory
+            const workspaceRoot = this.workspaceService.getWorkspaceRoot();
+            
+            // Execute the command
+            const result = await this.commandExecutor.execute(command, workspaceRoot);
+            
+            if (result.stderr && result.stderr.trim()) {
+                console.log(`Python script messages: ${result.stderr}`);
+            }
+            
+            console.log(`Python script output length: ${result.stdout.length}`);
+            return result.stdout;
         } catch (err) {
             console.error('Failed to execute Python script:', err);
             throw err;
         }
+    }
+
+    /**
+     * Escapes command arguments to handle spaces and special characters
+     * @param args Array of argument strings to escape
+     * @returns A single string with all arguments properly escaped
+     */
+    private escapeCommandArguments(args: string[]): string {
+        return args.map(arg => `"${arg.replace(/"/g, '\\"')}"`).join(' ');
     }
 
     /**

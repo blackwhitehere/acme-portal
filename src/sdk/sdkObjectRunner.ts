@@ -17,6 +17,9 @@ export class SdkObjectRunner {
      */
     public static async runSdkObject<T>(moduleName: string, className: string): Promise<T> {
         try {
+            // Create an instance of the python script executor
+            const pythonExecutor = new PythonScriptExecutor();
+            
             // Get the path to our script
             const scriptPath = await PythonScriptExecutor.getScriptPath(this.OBJECT_RUNNER_SCRIPT);
             if (!scriptPath) {
@@ -26,8 +29,8 @@ export class SdkObjectRunner {
             // Create a temporary file to store the output
             const outputFile = path.join(os.tmpdir(), `acme_portal_${Date.now()}.json`);
             
-            // Execute the script
-            await PythonScriptExecutor.executeScript(scriptPath, moduleName, className, outputFile);
+            // Execute the script using the instance method instead of static method
+            await pythonExecutor.executeScript(scriptPath, moduleName, className, outputFile);
             
             // Read the result from the output file
             if (await PythonScriptExecutor.fileExists(outputFile)) {

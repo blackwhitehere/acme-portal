@@ -3,14 +3,19 @@ import { SettingsManager } from '../settings/settingsManager';
 import { SdkObjectRunner } from '../sdk/sdkObjectRunner';
 
 export interface FlowDetails {
-    name: string; // flow name standardized for display
-    module: string; // module name derived from the source file
-    source_file: string; // full path to file where the flow is defined
-    description?: string; // description from decorator or function docstring
-    original_name?: string; // flow name before standardization
-    class?: string; // class name if flow is defined within a class
-    type: string; // 'function' or 'method' based on flow definition location
-    id?: string; // unique identifier for the flow
+    name: string;  // Display name, may be a normalized version of the original name
+    original_name: string;  // Name as defined in the code
+    description: string;  // Description of the flow
+    obj_type: string;  // Type of object defining the flow (e.g., function, method)
+    obj_name: string;  // Name of the object defining the flow (e.g., function name, method name)
+    obj_parent_type: string;  // Type of container for object defining the flow (e.g. class, module)
+    obj_parent: string;  // Name of container for flow object (e.g., class name if method, module name if function)
+    id: string;  // Unique identifier for the flow definition in memory
+    module: string;  // Module name where the flow is defined
+    source_path: string;  // Unambiguous path to the source file from the root of the project
+    source_relative: string;  // Relative path to the source file from some known root
+    import_path: string;  // Python import path to the source file
+    grouping: string[];  // Desired grouping of the flow in the context of the project (for navigation)
 }
 
 export class FlowScanner {
@@ -22,18 +27,8 @@ export class FlowScanner {
      */
     public static async scanForFlows(): Promise<FlowDetails[]> {
         try {
-            const flowsPath = SettingsManager.getAbsoluteFlowsPath();
-            if (!flowsPath) {
-                return [];
-            }
 
-            const pathExists = await SettingsManager.flowsPathExists();
-            if (!pathExists) {
-                vscode.window.showWarningMessage(`Flows directory not found: ${flowsPath}`);
-                return [];
-            }
-
-            console.log(`Scanning for flows in: ${flowsPath}`);
+            console.log(`Scanning for flows...`);
 
             try {
                 // Use SdkObjectRunner to invoke the FlowFinder object from the SDK
@@ -52,7 +47,7 @@ export class FlowScanner {
                 
                 // Log the flow names to help debug
                 flows.forEach(flow => {
-                    console.log(`Flow: ${flow.name} (${flow.source_file})`);
+                    console.log(`Flow: ${flow.name} (${flow.source_path})`);
                 });
                 
                 return flows;
