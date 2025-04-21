@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../acme-portal-sdk"
+		},
+		{
+			"path": "../acme-prefect"
 		}
 	],
 	"settings": {
