@@ -77,7 +77,6 @@ def main():
         # Call the object with kwargs if provided
         print(f"Calling object with kwargs: {kwargs}", file=sys.stderr)
         result = obj(**kwargs)
-        result = [x.to_dict(x) for x in result]
         # Save the result to a file
         with open(output_file, 'w') as f:
             json.dump(result, f)
