@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { GitService } from '../utils/gitService';
 import { WorkspaceService } from '../utils/workspaceService';
-import { AcmeTreeDataProvider } from '../treeView/treeDataProvider';
+import { FlowTreeDataProvider } from '../treeView/treeDataProvider';
 import { EnvironmentTreeItem } from '../treeView/items/EnvironmentTreeItem';
 import { DetailTreeItem } from '../treeView/items/DetailTreeItem';
 
@@ -9,7 +9,7 @@ export class ComparisonCommands {
     constructor(
         private readonly gitService: GitService,
         private readonly workspaceService: WorkspaceService,
-        private readonly treeDataProvider: AcmeTreeDataProvider
+        private readonly treeDataProvider: FlowTreeDataProvider
     ) {}
 
     /**
@@ -25,7 +25,7 @@ export class ComparisonCommands {
             }
 
             // Get the source file path from the flow data
-            const sourceFile = item.flowData.source_file;
+            const sourceFile = item.flowData.source_path;
             if (!sourceFile) {
                 vscode.window.showErrorMessage('Flow source file information is missing.');
                 return;

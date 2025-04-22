@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { BaseTreeItem } from './BaseTreeItem';
-import { FlowDetails } from '../../flowDiscovery/flowScanner';
-import { DeploymentDetails } from '../../deploymentDiscovery/deploymentScanner';
+import { FlowDetails } from '../../actions/findFlows';
+import { DeploymentDetails } from '../../actions/findDeployments';
 
 /**
  * Tree item representing a detail or property of a flow or deployment

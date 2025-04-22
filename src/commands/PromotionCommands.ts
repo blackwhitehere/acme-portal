@@ -1,14 +1,13 @@
 import * as vscode from 'vscode';
 import { GitService } from '../utils/gitService';
-import { GitHubWorkflowService } from '../github/githubWorkflowService';
-import { FlowScanner } from '../flowDiscovery/flowScanner';
+import { FindFlows } from '../actions/findFlows';
 import { FlowTreeItem } from '../treeView/items/FlowTreeItem';
 import { EnvironmentTreeItem } from '../treeView/items/EnvironmentTreeItem';
+import { FlowPromoter } from '../actions/promote';
 
 export class PromotionCommands {
     constructor(
-        private readonly gitService: GitService,
-        private readonly githubWorkflowService: GitHubWorkflowService
+        private readonly gitService: GitService
     ) {}
 
     /**
@@ -49,7 +48,7 @@ export class PromotionCommands {
         
         // If no valid data, let user select from available flows
         if (!flowName) {
-            const flows = await FlowScanner.scanForFlows();
+            const flows = await FindFlows.scanForFlows();
             if (flows.length === 0) {
                 vscode.window.showInformationMessage('No flows found to promote.');
                 return;
@@ -57,7 +56,7 @@ export class PromotionCommands {
             
             const flowItems = flows.map(flow => ({ 
                 label: flow.name,
-                detail: flow.module || flow.source_file,
+                detail: flow.module || flow.source_path,
                 description: flow.description,
                 flow
             }));
@@ -163,31 +162,28 @@ export class PromotionCommands {
         );
         
         if (confirmation === 'Promote') {
-            // Create inputs for GitHub workflow
-            const workflowInputs = {
-                'flows-to-deploy': flowName,
-                'source-env': sourceEnv,
-                'target-env': targetEnv
-            };
-            
-            // Trigger GitHub workflow on the specified branch using the service directly
-            const runUrl = await this.githubWorkflowService.triggerWorkflow(
-                'promote.yml', 
-                workflowInputs,
-                branchName
-            );
-            
-            if (runUrl) {
-                vscode.window.showInformationMessage(
-                    `Started promotion of flow "${flowName}" from ${sourceEnv} to ${targetEnv} on branch ${branchName}`,
-                    'View Workflow'
-                ).then(selection => {
-                    if (selection === 'View Workflow') {
-                        vscode.env.openExternal(vscode.Uri.parse(runUrl));
-                    }
-                });
+            try {
+                // Use the new FlowPromoter to handle promotion
+                const runUrl = await FlowPromoter.promoteFlows(
+                    [flowName],
+                    sourceEnv,
+                    targetEnv,
+                    branchName
+                );
+                
+                if (runUrl) {
+                    vscode.window.showInformationMessage(
+                        `Started promotion of flow "${flowName}" from ${sourceEnv} to ${targetEnv} on branch ${branchName}`,
+                        'View Workflow'
+                    ).then(selection => {
+                        if (selection === 'View Workflow') {
+                            vscode.env.openExternal(vscode.Uri.parse(runUrl));
+                        }
+                    });
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Failed to promote flow: ${error}`);
             }
-            // Error handling now happens inside the triggerWorkflow method
         }
     }
 }

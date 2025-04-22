@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { BaseTreeItem } from './BaseTreeItem';
-import { FlowDetails } from '../../flowDiscovery/flowScanner';
+import { FlowDetails } from '../../actions/findFlows';
 
 /**
  * Tree item representing a Git branch that contains flow deployments

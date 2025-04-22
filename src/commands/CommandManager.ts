@@ -4,8 +4,12 @@ import { SettingsCommands } from '../commands/SettingsCommands';
 import { FlowCommands } from '../commands/FlowCommands';
 import { PromotionCommands } from '../commands/PromotionCommands';
 import { ComparisonCommands } from '../commands/ComparisonCommands';
+import { DeploymentCommands } from '../commands/DeploymentCommands';
 
 export class CommandManager {
+    /**
+     * Registers all commands with VS Code
+     * */
     private readonly disposables: vscode.Disposable[] = [];
 
     constructor(
@@ -13,7 +17,8 @@ export class CommandManager {
         private readonly settingsCommands: SettingsCommands,
         private readonly flowCommands: FlowCommands,
         private readonly promotionCommands: PromotionCommands,
-        private readonly comparisonCommands: ComparisonCommands
+        private readonly comparisonCommands: ComparisonCommands,
+        private readonly deploymentCommands: DeploymentCommands
     ) {}
 
     /**
@@ -27,10 +32,6 @@ export class CommandManager {
                 'acmeportal.refreshTreeView',
                 this.treeViewCommands.refreshTreeView.bind(this.treeViewCommands)
             ),
-            vscode.commands.registerCommand(
-                'acmeportal.itemClicked',
-                this.treeViewCommands.itemClicked.bind(this.treeViewCommands)
-            )
         );
 
         // Settings commands
@@ -62,6 +63,14 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.promoteEnvironment',
                 this.promotionCommands.promoteEnvironment.bind(this.promotionCommands)
+            )
+        );
+
+        // Deployment commands
+        this.disposables.push(
+            vscode.commands.registerCommand(
+                'acmeportal.deployFlow',
+                this.deploymentCommands.deployFlow.bind(this.deploymentCommands)
             )
         );
 

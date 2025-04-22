@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { AcmeTreeDataProvider } from '../treeView/treeDataProvider';
+import { FlowTreeDataProvider } from '../treeView/treeDataProvider';
 import { FlowTreeItem } from '../treeView/items/FlowTreeItem';
 import { EnvironmentTreeItem } from '../treeView/items/EnvironmentTreeItem';
 
 export class FlowCommands {
     constructor(
-        private readonly treeDataProvider: AcmeTreeDataProvider
+        private readonly treeDataProvider: FlowTreeDataProvider
     ) {}
 
     /**
@@ -23,8 +23,8 @@ export class FlowCommands {
         let sourceFile: string | undefined;
         
         if (item instanceof FlowTreeItem || item instanceof EnvironmentTreeItem) {
-            sourceFile = item.flowData.source_file;
-        } else if (item.flowData && item.flowData.source_file) {
+            sourceFile = item.flowData.source_path;
+        } else if (item.flowData && item.flowData.source_path) {
             // Fallback for old/unknown item types
             sourceFile = item.flowData.source_file;
         }

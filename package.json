@@ -48,6 +48,11 @@
         "icon": "$(rocket)"
       },
       {
+        "command": "acmeportal.deployFlow",
+        "title": "Deploy Flow",
+        "icon": "$(cloud-upload)"
+      },
+      {
         "command": "acmeportal.compareFlowVersions",
         "title": "Compare Flow Versions",
         "icon": "$(diff)"
@@ -96,12 +101,13 @@
       ],
       "view/item/context": [
         {
-          "command": "acmeportal.itemClicked",
-          "when": "view == acmePortalView && viewItem == leafNode"
-        },
-        {
           "command": "acmeportal.openFlowFile",
           "when": "view == acmePortalView && viewItem == flow",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.deployFlow",
+          "when": "view == acmePortalView && viewItem =~ /.*deployable.*/",
           "group": "inline"
         },
         {
@@ -123,6 +129,10 @@
         {
           "command": "acmeportal.refreshFlows",
           "title": "ACME: Refresh Flows"
+        },
+        {
+          "command": "acmeportal.deployFlow",
+          "title": "ACME: Deploy Flow"
         },
         {
           "command": "acmeportal.promoteEnvironment",

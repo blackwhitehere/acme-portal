@@ -18,12 +18,22 @@ def find_object_of_class(module, cls_obj):
 
 def main():
     if len(sys.argv) < 4:
-        print(f"Usage: {sys.argv[0]} <module_name> <class_name> <output_file>", file=sys.stderr)
+        print(f"Usage: {sys.argv[0]} <module_name> <class_name> <output_file> [kwargs_json]", file=sys.stderr)
         sys.exit(1)
     
     module_name = sys.argv[1]
     class_name = sys.argv[2]
     output_file = sys.argv[3]
+    
+    # Parse kwargs if provided
+    kwargs = {}
+    if len(sys.argv) > 4:
+        try:
+            kwargs = json.loads(sys.argv[4])
+            print(f"Received kwargs: {kwargs}", file=sys.stderr)
+        except json.JSONDecodeError as e:
+            print(f"Error parsing kwargs JSON: {e}", file=sys.stderr)
+            sys.exit(1)
     
     try:
         # Find the workspace root (where .acme_portal_sdk is expected)
@@ -64,9 +74,9 @@ def main():
         
         print(f"Found object '{obj_name}' of class '{class_name}'", file=sys.stderr)
         
-        # Call the object
-        print("Calling object...", file=sys.stderr)
-        result = obj()
+        # Call the object with kwargs if provided
+        print(f"Calling object with kwargs: {kwargs}", file=sys.stderr)
+        result = obj(**kwargs)
         result = [x.to_dict(x) for x in result]
         # Save the result to a file
         with open(output_file, 'w') as f:

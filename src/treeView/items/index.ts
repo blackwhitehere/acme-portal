@@ -3,3 +3,4 @@ export * from './FlowTreeItem';
 export * from './BranchTreeItem';
 export * from './EnvironmentTreeItem';
 export * from './DetailTreeItem';
+export * from './GroupTreeItem';

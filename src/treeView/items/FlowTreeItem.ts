@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { BaseTreeItem } from './BaseTreeItem';
-import { FlowDetails } from '../../flowDiscovery/flowScanner';
+import { FlowDetails } from '../../actions/findFlows';
 
 /**
  * Tree item representing a Prefect flow
@@ -15,7 +15,7 @@ export class FlowTreeItem extends BaseTreeItem {
         );
         
         this.id = flowData.id || flowData.name;
-        this.contextValue = 'flow';
+        this.contextValue = 'flow deployable'; // Added 'deployable' context to support deploy action
         this.tooltip = flowData.description || `Flow: ${this.label}`;
         this.description = flowData.module || '';
         this.iconPath = new vscode.ThemeIcon('symbol-event');

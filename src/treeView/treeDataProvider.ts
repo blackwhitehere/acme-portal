@@ -1,18 +1,17 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { FlowScanner, FlowDetails } from '../flowDiscovery/flowScanner';
-import { DeploymentScanner, DeploymentDetails } from '../deploymentDiscovery/deploymentScanner';
-import { SettingsManager } from '../settings/settingsManager';
+import { FindFlows, FlowDetails } from '../actions/findFlows';
+import { FindDeployments, DeploymentDetails } from '../actions/findDeployments';
 import { 
     BaseTreeItem,
     FlowTreeItem,
     BranchTreeItem,
     EnvironmentTreeItem,
-    DetailTreeItem
+    DetailTreeItem,
+    GroupTreeItem
 } from './items';
 
 // Tree data provider implementation
-export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeItem> {
+export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<BaseTreeItem | undefined | null | void> = new vscode.EventEmitter<BaseTreeItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<BaseTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
@@ -39,11 +38,11 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
         
         try {
             // Load flows first
-            this.flows = await FlowScanner.scanForFlows();
+            this.flows = await FindFlows.scanForFlows();
             console.log(`Loaded ${this.flows.length} flows`);
             
             // Then load deployments
-            this.deployments = await DeploymentScanner.scanForDeployments();
+            this.deployments = await FindDeployments.scanForDeployments();
             console.log(`Loaded ${this.deployments.length} deployments`);
             
             this.buildTreeData();
@@ -66,15 +65,65 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
 
         console.log(`Building tree data from ${this.flows.length} flows and ${this.deployments.length} deployments`);
         
-        // Create flow items for first level
-        const flowItems = this.flows.map(flow => new FlowTreeItem(flow));
+        // Create root items array and a map to track group nodes
+        const rootItems: BaseTreeItem[] = [];
+        const groupMap = new Map<string, GroupTreeItem>();
         
-        this.data['root'] = flowItems;
-        
-        // For each flow, create its details and branch/env structure
+        // Organize flows into their groupings
         for (const flow of this.flows) {
-            const flowId = flow.id || flow.name; // Fallback to name if id is missing
+            const flowItem = new FlowTreeItem(flow);
+            const grouping = flow.grouping || [];
             
+            if (grouping.length === 0) {
+                // No grouping, add directly to root
+                rootItems.push(flowItem);
+            } else {
+                // Build the grouping path hierarchy
+                let currentPath = '';
+                let parentId: string | undefined = undefined;
+                
+                for (let i = 0; i < grouping.length; i++) {
+                    const groupName = grouping[i];
+                    const isLastGroup = i === grouping.length - 1;
+                    
+                    // Build the path for this level
+                    currentPath = currentPath ? `${currentPath}/${groupName}` : groupName;
+                    
+                    // Check if we already have a group for this path
+                    if (!groupMap.has(currentPath)) {
+                        // Create new group item
+                        const groupItem = new GroupTreeItem(groupName, parentId);
+                        groupMap.set(currentPath, groupItem);
+                        
+                        // Add to root or parent group
+                        if (!parentId) {
+                            rootItems.push(groupItem);
+                        } else {
+                            if (!this.data[parentId]) {
+                                this.data[parentId] = [];
+                            }
+                            this.data[parentId].push(groupItem);
+                        }
+                        
+                        // Initialize empty children array
+                        this.data[groupItem.id!] = [];
+                    }
+                    
+                    // Get the current group item
+                    const groupItem = groupMap.get(currentPath)!;
+                    
+                    // If this is the last group in the path, add the flow to it
+                    if (isLastGroup) {
+                        this.data[groupItem.id!].push(flowItem);
+                    }
+                    
+                    // Update parent ID for next iteration
+                    parentId = groupItem.id;
+                }
+            }
+            
+            // Setup flow details in the tree
+            const flowId = flow.id || flow.name;
             // Find all deployments for this flow
             const flowDeployments = this.deployments.filter(
                 d => d.flow_name === flow.name
@@ -138,7 +187,6 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                 
                 const envItems: BaseTreeItem[] = [];
                 for (const [env, envDeployments] of envMap.entries()) {
-                    // Check if there are multiple deployments for this environment
                     if (envDeployments.length > 1) {
                         vscode.window.showErrorMessage(
                             `Multiple deployments found for environment '${env}' in branch '${branch}' for flow '${flow.name}'.`
@@ -183,7 +231,7 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                         }
                         
                         // Add creation date
-                        const d = new Date(deployment.updated);
+                        const d = new Date(deployment.updated_at);
                         const formattedDate = d.toISOString().replace('T', ' ').substring(0, 19);
                         
                         envDetailItems.push(new DetailTreeItem(
@@ -205,6 +253,9 @@ export class AcmeTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
             // Store all flow children (details + branches)
             this.data[flowId] = children;
         }
+        
+        // Store root items
+        this.data['root'] = rootItems;
     }
 
     refresh(): void {

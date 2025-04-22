@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { AcmeTreeDataProvider } from '../treeView/treeDataProvider';
+import { FlowTreeDataProvider } from '../treeView/treeDataProvider';
 
 export class TreeViewCommands {
     constructor(
-        private readonly treeDataProvider: AcmeTreeDataProvider
+        private readonly treeDataProvider: FlowTreeDataProvider
     ) {}
 
     /**
@@ -11,13 +11,5 @@ export class TreeViewCommands {
      */
     public refreshTreeView(): void {
         this.treeDataProvider.refresh();
-    }
-
-    /**
-     * Handle item click in tree view
-     * @param item The clicked tree item
-     */
-    public itemClicked(item: any): void {
-        vscode.window.showInformationMessage(`Clicked on ${item.label}`);
     }
 }

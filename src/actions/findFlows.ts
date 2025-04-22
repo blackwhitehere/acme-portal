@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { SettingsManager } from '../settings/settingsManager';
 import { SdkObjectRunner } from '../sdk/sdkObjectRunner';
 
 export interface FlowDetails {
@@ -18,7 +17,7 @@ export interface FlowDetails {
     grouping: string[];  // Desired grouping of the flow in the context of the project (for navigation)
 }
 
-export class FlowScanner {
+export class FindFlows {
     private static readonly FLOW_FINDER_MODULE = 'flow_finder';
     private static readonly FLOW_FINDER_CLASS = 'FlowFinder';
 
