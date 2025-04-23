@@ -112,6 +112,9 @@ export class DeploymentCommands {
                         }
                     });
                 }
+                else {
+                    vscode.window.showErrorMessage('Failed to start deployment. Please check the logs for more details.');
+                }
             } catch (error) {
                 vscode.window.showErrorMessage(`Failed to deploy flow: ${error}`);
             }
