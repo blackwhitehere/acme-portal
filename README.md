@@ -1,28 +1,25 @@
 # acme-portal
 
-`VSCode` extension for managing deployments in `acme-prefect` [Link.](https://github.com/blackwhitehere/acme-prefect)
+`VSCode` extension for managing deployments using [`acme-portal-sdk`](https://github.com/blackwhitehere/acme-portal-sdk). Sample project using it at [`acme-prefect`](https://github.com/blackwhitehere/acme-prefect). 
 
 ## Features
 
-* Show and navigate to all `prefect` flows in the project
-* View all flow deployments across `branches` and `environments`
-* Promote a deployment in a given environment to another environment
+* Show and navigate all `Flows` in a project
+* View existing `Flow` deployments across different `Environments` (and `branches`)
+* `Promote` a deployment in a given environment to another environment
 * View source code differences between environments
 
 ## Requirements
 
-* Microsoft Python Extension
-* `git` CLI needs to be installed and the opened project needs to have remote source pointing to a `GitHub` repository
-* GitHub CLI `gh` client needs to be installed.
-* Python environment needs to be selected with `Python: Select Interpreter` command that contains `prefect` package
+* Microsoft Python VSCode Extension needs to be installed
+* Python environment used by your project needs to be selected with `Python: Select Interpreter` command
+* Project needs to setup [`acme-portal-sdk`](https://blackwhitehere.github.io/acme-portal-sdk)
+* `git` CLI needs to be installed
+* Opened project needs to have remote source pointing to a `GitHub` repository (Other repos to be supported)
 
 ## Extension Settings
 
-* Path to directory where `prefect` flows can be discovered
-
 ## Release Notes
-
-Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
