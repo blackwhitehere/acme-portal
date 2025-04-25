@@ -15,6 +15,11 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 * `Promote` a deployment from a given environment to another environment
 * View source code differences between environments
 
+## Video Demonstration
+
+Watch how to deploy a flow:
+
+[![Deploy Flow Demonstration](https://vumbnail.com/1078676313.jpg)](https://vimeo.com/1078676313 "Deploy Flow Demonstration")
 
 ## Requirements
 
