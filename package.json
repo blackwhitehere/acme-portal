@@ -14,6 +14,13 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "acmePortalView",
+        "contents": "In order to use extension features, you need to open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\n The opened project needs to use acme-portal-sdk.\nTo learn more about how to set it up [read our docs](https://blackwhitehere.github.io/acme-portal-sdk/).",
+        "when": "config.git.enabled && git.state == initialized && workbenchState == empty"
+      }
+    ],
     "commands": [
       {
         "command": "acmeportal.helloWorld",
@@ -143,7 +150,54 @@
           "title": "ACME: Compare Flow Versions"
         }
       ]
-    }
+    },
+    "walkthroughs": [
+      {
+        "id": "acmeportal.gettingStarted",
+        "title": "Getting Started with ACME Portal",
+        "description": "Learn how to set up and use the ACME Portal extension.",
+        "steps": [
+          {
+            "id": "installPythonExtension",
+            "title": "Install Microsoft Python Extension",
+            "description": "Ensure the Microsoft Python extension is installed in your VS Code.",
+            "media": {
+              "image": "media/acme_portal_screen.png",
+              "altText": "ACME Portal Extension"
+            },
+            "completionEvents": ["extensionInstalled:ms-python.python"]
+          },
+          {
+            "id": "selectPythonInterpreter",
+            "title": "Select Python Interpreter",
+            "description": "Use the `Python: Select Interpreter` command to choose the Python environment for your project.\n [Python: Select Interpreter](command:python.setInterpreter)",
+            "media": {
+              "image": "media/acme_portal_screen.png",
+              "altText": "ACME Portal Extension"
+            },
+            "completionEvents": ["onCommand:python.setInterpreter"]
+          },
+          {
+            "id": "setupAcmePortalSdk",
+            "title": "Set Up acme-portal-sdk",
+            "description": "Follow the [acme-portal-sdk documentation](https://blackwhitehere.github.io/acme-portal-sdk/) to set up the SDK in your project.",
+            "media": {
+              "image": "media/acme_portal_screen.png",
+              "altText": "ACME Portal Extension"
+            }
+          },
+          {
+            "id": "installGitCli",
+            "title": "Install Git CLI",
+            "description": "Ensure the Git CLI is installed and available in your system's PATH.",
+            "media": {
+              "image": "media/acme_portal_screen.png",
+              "altText": "ACME Portal Extension"
+            }
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
