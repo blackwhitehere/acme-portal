@@ -4,6 +4,20 @@ import { WorkspaceService } from '../utils/workspaceService';
 import { FlowTreeDataProvider } from '../treeView/treeDataProvider';
 import { EnvironmentTreeItem } from '../treeView/items/EnvironmentTreeItem';
 import { DetailTreeItem } from '../treeView/items/DetailTreeItem';
+import { DeploymentDetails } from '../actions/findDeployments';
+
+interface ComparisonOption {
+    label: string;
+    description: string;
+    value: 'deployment' | 'branch';
+}
+
+interface DeploymentOption {
+    label: string;
+    description: string;
+    deploymentData: DeploymentDetails;
+    commitHash?: string;
+}
 
 export class ComparisonCommands {
     constructor(
@@ -11,6 +25,43 @@ export class ComparisonCommands {
         private readonly workspaceService: WorkspaceService,
         private readonly treeDataProvider: FlowTreeDataProvider
     ) {}
+
+    /**
+     * Find all deployments available for comparison
+     * @returns List of deployment options
+     */
+    private async getDeploymentOptions(): Promise<DeploymentOption[]> {
+        const options: DeploymentOption[] = [];
+        
+        // Get all environments from the tree view
+        const rootItems = await this.treeDataProvider.getChildren();
+        
+        // Helper function to recursively search for environment items
+        const findEnvironmentItems = async (items: any[]): Promise<void> => {
+            for (const item of items) {
+                if (item instanceof EnvironmentTreeItem && item.deploymentData) {
+                    const commitHash = item.deploymentData.commit_hash;
+                    if (commitHash) {
+                        options.push({
+                            label: `${item.deploymentData.flow_name} (${item.deploymentData.branch}/${item.environmentName})`,
+                            description: `Commit: ${commitHash.substring(0, 7)}`,
+                            deploymentData: item.deploymentData,
+                            commitHash
+                        });
+                    }
+                }
+                
+                // Check children
+                const children = await this.treeDataProvider.getChildren(item);
+                if (children && children.length > 0) {
+                    await findEnvironmentItems(children);
+                }
+            }
+        };
+        
+        await findEnvironmentItems(rootItems);
+        return options;
+    }
 
     /**
      * Compare flow versions between deployments
@@ -31,40 +82,24 @@ export class ComparisonCommands {
                 return;
             }
 
-            // Find all deployment details for this environment
-            const tagItems = vscode.workspace.textDocuments.filter(doc => doc.uri.fsPath === sourceFile);
-            if (tagItems.length === 0) {
-                // Open the file first since it's not currently open
-                await vscode.commands.executeCommand('acmeportal.openFlowFile', item);
-            }
-
             // Extract the COMMIT_HASH from the environment's deployment
-            let commitHash = '';
-            
-            // First, try to find it in the item's deploymentData
-            if (item.deploymentData?.tags) {
-                const commitTag = item.deploymentData.tags.find((tag: string) => tag.includes('COMMIT_HASH'));
-                if (commitTag) {
-                    commitHash = commitTag.split('=')[1];
-                }
-            }
+            let sourceCommitHash = item.deploymentData.commit_hash;
             
             // If not found directly, try to find in the child nodes (detail items)
-            if (!commitHash && item.id) {
-                // Get environment details from the tree provider
+            if (!sourceCommitHash && item.id) {
                 const childItems = await this.treeDataProvider.getChildren(item);
                 
                 // Look for a DetailTreeItem containing commit hash information
                 for (const child of childItems) {
                     if (child instanceof DetailTreeItem && 
                         child.label.toString().startsWith('Commit: ')) {
-                        commitHash = child.label.toString().replace('Commit: ', '');
+                        sourceCommitHash = child.label.toString().replace('Commit: ', '');
                         break;
                     }
                 }
             }
 
-            if (!commitHash) {
+            if (!sourceCommitHash) {
                 vscode.window.showInformationMessage(
                     'No commit hash found for this deployment. Please ensure the deployment has a COMMIT_HASH tag.',
                     'OK'
@@ -72,43 +107,102 @@ export class ComparisonCommands {
                 return;
             }
 
-            // Check workspace root using workspace service directly
-            const workspaceRoot = this.workspaceService.getWorkspaceRoot();
-            if (!workspaceRoot) {
-                return; // The getWorkspaceRoot function already shows an error message
-            }
-        
-            // Get the current commit hash directly from git service
-            let currentCommitHash;
-            try {
-                currentCommitHash = await this.gitService.getCurrentCommitHash();
-                if (!currentCommitHash) {
-                    throw new Error('Empty result when getting current commit');
+            // Ask user how they want to compare
+            const comparisonOptions: ComparisonOption[] = [
+                {
+                    label: 'Compare with another deployment',
+                    description: 'Compare against a commit from another deployed environment',
+                    value: 'deployment'
+                },
+                {
+                    label: 'Compare with local branch',
+                    description: 'Compare against the HEAD of a local Git branch',
+                    value: 'branch'
                 }
-            } catch (error) {
-                vscode.window.showErrorMessage(`Failed to get current commit: ${error}`);
-                return;
+            ];
+
+            const selectedOption = await vscode.window.showQuickPick(comparisonOptions, {
+                placeHolder: 'How would you like to compare this deployment?'
+            });
+
+            if (!selectedOption) {
+                return; // User cancelled
+            }
+
+            let targetCommitHash: string | undefined;
+            
+            if (selectedOption.value === 'deployment') {
+                // Get deployment options
+                const deploymentOptions = await this.getDeploymentOptions();
+                
+                if (deploymentOptions.length === 0) {
+                    vscode.window.showInformationMessage('No deployments found for comparison.');
+                    return;
+                }
+                
+                // Filter out the current deployment
+                const filteredOptions = deploymentOptions.filter(
+                    opt => opt.commitHash !== sourceCommitHash
+                );
+                
+                if (filteredOptions.length === 0) {
+                    vscode.window.showInformationMessage('No other deployments found for comparison.');
+                    return;
+                }
+                
+                const selectedDeployment = await vscode.window.showQuickPick(filteredOptions, {
+                    placeHolder: 'Select a deployment to compare against'
+                });
+                
+                if (!selectedDeployment) {
+                    return; // User cancelled
+                }
+                
+                targetCommitHash = selectedDeployment.commitHash;
+                
+            } else {
+                // Get local branches
+                const branches = await this.gitService.getLocalBranches();
+                
+                if (!branches || branches.length === 0) {
+                    vscode.window.showErrorMessage('No local branches found.');
+                    return;
+                }
+                
+                const branchOptions = branches.map(branch => ({
+                    label: branch,
+                    description: 'Local branch'
+                }));
+                
+                const selectedBranch = await vscode.window.showQuickPick(branchOptions, {
+                    placeHolder: 'Select a branch to compare against'
+                });
+                
+                if (!selectedBranch) {
+                    return; // User cancelled
+                }
+                
+                targetCommitHash = await this.gitService.getBranchCommitHash(selectedBranch.label);
+                
+                if (!targetCommitHash) {
+                    vscode.window.showErrorMessage(`Could not get commit hash for branch ${selectedBranch.label}`);
+                    return;
+                }
             }
 
             // Get the GitHub repository URL directly from git service
-            let repoUrl;
-            try {
-                repoUrl = await this.gitService.getRepositoryUrl();
-                if (!repoUrl) {
-                    throw new Error('Could not get GitHub repository URL');
-                }
-            } catch (error) {
-                vscode.window.showErrorMessage(`Failed to get repository URL: ${error}`);
+            const repoUrl = await this.gitService.getRepositoryUrl();
+            if (!repoUrl) {
+                vscode.window.showErrorMessage('Could not get GitHub repository URL');
                 return;
             }
 
             // Construct the comparison URL
-            const compareUrl = `${repoUrl}/compare/${commitHash}..${currentCommitHash}`;
+            const compareUrl = `${repoUrl}/compare/${sourceCommitHash}..${targetCommitHash}`;
 
-            // Show notification with warning about uncommitted changes and link to comparison
+            // Show notification with link to comparison
             vscode.window.showInformationMessage(
-                'Opening GitHub comparison view between current commit and selected deployment. ' +
-                'Note: Uncommitted changes on current branch won\'t be visible in the GitHub comparison view.',
+                `Opening GitHub comparison view between commits.`,
                 'View on GitHub'
             ).then(selection => {
                 if (selection === 'View on GitHub') {

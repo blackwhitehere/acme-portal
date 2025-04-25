@@ -106,6 +106,53 @@ export class GitService {
     }
 
     /**
+     * Get list of local branches
+     * @returns Array of branch names or undefined on error
+     */
+    public async getLocalBranches(): Promise<string[] | undefined> {
+        if (!await this.checkGitInstalled()) {
+            return undefined;
+        }
+
+        try {
+            const workspaceRoot = this.workspaceService.getWorkspaceRoot();
+            if (!workspaceRoot) {
+                return undefined;
+            }
+            
+            const { stdout } = await this.commandExecutor.execute('git branch --format="%(refname:short)"', workspaceRoot);
+            return stdout.trim().split('\n').filter(branch => branch.trim() !== '');
+        } catch (error) {
+            console.error('Error getting local branches:', error);
+            return undefined;
+        }
+    }
+
+    /**
+     * Get commit hash of a specific branch
+     * @param branchName Name of the branch
+     * @returns The commit hash of the branch or undefined on error
+     */
+    public async getBranchCommitHash(branchName: string): Promise<string | undefined> {
+        if (!await this.checkGitInstalled()) {
+            return undefined;
+        }
+
+        try {
+            const workspaceRoot = this.workspaceService.getWorkspaceRoot();
+            if (!workspaceRoot) {
+                return undefined;
+            }
+            
+            const { stdout } = await this.commandExecutor.execute(`git rev-parse ${branchName}`, workspaceRoot);
+            return stdout.trim();
+        } catch (error) {
+            console.error(`Error getting commit hash for branch ${branchName}:`, error);
+            return undefined;
+        }
+    }
+
+    /**
      * Get the GitHub repository URL for the current workspace
      * @returns The GitHub repository URL or undefined on error
      */

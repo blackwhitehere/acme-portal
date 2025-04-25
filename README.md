@@ -23,6 +23,7 @@ Watch how to deploy a flow:
 * [Deploy Flow Demonstration](https://vimeo.com/1078676313 "Deploy Flow Demonstration")
 * [View Deployment](https://vimeo.com/1078680347 "View Deployment")
 * [Promote Deployment](https://vimeo.com/1078686510 "Promote Deployment")
+* [Compare Flow Deployment Versions](https://vimeo.com/1078701794 "Compare Flow Deployment Versions")
 
 ## Requirements
 
