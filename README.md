@@ -20,6 +20,7 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 Watch how to deploy a flow:
 
 [Deploy Flow Demonstration](https://vimeo.com/1078676313 "Deploy Flow Demonstration")
+[View Deployment](https://vimeo.com/1078680347 "View Deployment")
 
 ## Requirements
 
