@@ -1,6 +1,6 @@
 # acme-portal
 
-`VSCode` extension for managing deployments using [`acme-portal-sdk`](https://github.com/blackwhitehere/acme-portal-sdk). Sample project using it at [`acme-prefect`](https://github.com/blackwhitehere/acme-prefect).
+`VSCode` extension for managing deployments using [`acme-portal-sdk`](https://github.com/blackwhitehere/acme-portal-sdk). Sample project using it is available at [`acme-prefect`](https://github.com/blackwhitehere/acme-prefect).
 
 For explanation of main concepts used by the extension view `acme-portal-sdk` [docs](https://blackwhitehere.github.io/acme-portal-sdk/)
 
@@ -37,7 +37,7 @@ Follow [link](https://code.visualstudio.com/api/working-with-extensions/publishi
 
 ## Release Notes
 
-### 1.0.0
+### 0.0.1
 
 Initial release of `acme-portal`
 

@@ -1,6 +1,7 @@
 {
   "name": "acmeportal",
-  "displayName": "ACMEPortal",
+  "displayName": "ACME Portal",
+  "publisher": "blackwhitehere",
   "description": "UI to manage python flow deployments via acme-portal-sdk",
   "version": "0.0.1",
   "engines": {
