@@ -29,14 +29,14 @@ Watch how to:
 
 * Microsoft Python VSCode Extension needs to be installed
 * Python environment used by your project needs to be selected with `Python: Select Interpreter` command
-* Project needs to setup [`acme-portal-sdk`](https://blackwhitehere.github.io/acme-portal-sdk)
+* Project needs to add as dependency & setup [`acme-portal-sdk`](https://blackwhitehere.github.io/acme-portal-sdk)
 * `git` CLI needs to be installed
 * Opened project needs to have remote source pointing to a `GitHub` repository (Other repos to be supported)
 
 ## Dev setup
 
 * Go `VSCode` `Run and Debug` tab and run `Run Extension` configuration.
-* Open `acme-prefect` [repo]((https://github.com/blackwhitehere/acme-prefect)
+* Open [`acme-prefect`](https://github.com/blackwhitehere/acme-prefect) repository which you have pulled locally.
 * Create python virtual env according to instructions in the repo and set it using `Python: Select Interpreter`
 
 ## Build and publish
