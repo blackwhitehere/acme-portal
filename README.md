@@ -29,6 +29,10 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 * Open `acme-prefect` [repo]((https://github.com/blackwhitehere/acme-prefect)
 * Create python virtual env according to instructions in the repo and set it using `Python: Select Interpreter`
 
+## Build and publish
+
+Follow [link](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
+
 ## Extension Settings
 
 ## Release Notes

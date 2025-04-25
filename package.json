@@ -1,7 +1,7 @@
 {
   "name": "acmeportal",
   "displayName": "ACMEPortal",
-  "description": "",
+  "description": "UI to manage python flow deployments via acme-portal-sdk",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.97.0"
@@ -13,6 +13,10 @@
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blackwhitehere/acme-portal"
+  },
   "contributes": {
     "viewsWelcome": [
       {
