@@ -10,6 +10,7 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 
 * Show and navigate all `Flows` in a project
 * View existing `Flow` deployments across different `Environments` (and `branches`)
+* Navigate to deployment URL from deployment tree view
 * `Deploy` a flow to a given starting environment, e.g. `dev`
 * `Promote` a deployment from a given environment to another environment
 * View source code differences between environments
