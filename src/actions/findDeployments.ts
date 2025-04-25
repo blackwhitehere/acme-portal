@@ -14,6 +14,7 @@ export interface DeploymentDetails {
     created_at: string;  // Timestamp of when the deployment was created
     updated_at: string;  // Timestamp of when the deployment was last updated
     flow_id: string;  // Unique identifier for the flow in the deployment system
+    url: string;  // URL to the deployment in the deployment system
 }
 
 export class FindDeployments {

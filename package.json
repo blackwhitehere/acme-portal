@@ -68,6 +68,11 @@
         "command": "acmeportal.compareFlowVersions",
         "title": "Compare Flow Versions",
         "icon": "$(diff)"
+      },
+      {
+        "command": "acmeportal.openExternalUrl",
+        "title": "Open URL",
+        "icon": "$(link)"
       }
     ],
     "configuration": {
@@ -129,6 +134,11 @@
         },
         {
           "command": "acmeportal.compareFlowVersions",
+          "when": "view == acmePortalView && viewItem == environment",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.openExternalUrl",
           "when": "view == acmePortalView && viewItem == environment",
           "group": "inline"
         }

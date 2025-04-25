@@ -32,6 +32,10 @@ export class CommandManager {
                 'acmeportal.refreshTreeView',
                 this.treeViewCommands.refreshTreeView.bind(this.treeViewCommands)
             ),
+            vscode.commands.registerCommand(
+                'acmeportal.openExternalUrl',
+                this.treeViewCommands.openExternalUrl.bind(this.treeViewCommands)
+            )
         );
 
         // Settings commands
