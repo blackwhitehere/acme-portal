@@ -17,7 +17,7 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 
 ## Video Demonstration
 
-Watch how to deploy a flow:
+Watch how to:
 
 * [Navigate Flows and View Deployments](https://vimeo.com/1078687975 "Navigate Flows and View Deployments")
 * [Deploy Flow Demonstration](https://vimeo.com/1078676313 "Deploy Flow Demonstration")
