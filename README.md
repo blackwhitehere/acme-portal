@@ -21,11 +21,11 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 
 Watch how to:
 
-* [Navigate Flows and View Deployments](https://vimeo.com/1078680347/53b0f567f0 "Navigate Flows and View Deployments")
-* [Deploy Flow Demonstration](https://vimeo.com/1078680347/53b0f567f0 "Deploy Flow Demonstration")
-* [View Deployment](https://vimeo.com/1078680347/53b0f567f0 "View Deployment")
-* [Promote Deployment](https://vimeo.com/1078680347/53b0f567f0 "Promote Deployment")
-* [Compare Flow Deployment Versions](https://vimeo.com/1078680347/53b0f567f0 "Compare Flow Deployment Versions")
+* [Navigate Flows and View Deployments](https://vimeo.com/1078687975/38ca31d450?share=copy "Navigate Flows and View Deployments")
+* [Deploy Flow Demonstration](https://vimeo.com/1078676313/8c957e07db?share=copy "Deploy Flow Demonstration")
+* [View Deployment](https://vimeo.com/1078680347/53b0f567f0?share=copy "View Deployment")
+* [Promote Deployment](https://vimeo.com/1078686510/fcf1ce0d2c?share=copy "Promote Deployment")
+* [Compare Flow Deployment Versions](https://vimeo.com/1078701794/21ed88bdf9?share=copy "Compare Flow Deployment Versions")
 
 ## Requirements
 
