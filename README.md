@@ -18,17 +18,6 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 * View source code differences between environments
 * **Progress Notifications**: Real-time progress updates in the notification bar for all operations
 
-### Progress Notifications
-
-The extension now provides immediate visual feedback for all long-running operations:
-
-- **Deployment Operations**: Shows progress while triggering deployment workflows
-- **Promotion Operations**: Displays progress during flow promotion between environments  
-- **Data Loading**: Indicates progress when scanning for flows and deployments
-- **Comparison Setup**: Shows progress while preparing flow version comparisons
-
-Progress notifications appear instantly when operations start and update with meaningful status messages, providing transparency about what's happening behind the scenes.
-
 ## Video Demonstration
 
 Watch how to:
