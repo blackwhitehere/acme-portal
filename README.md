@@ -16,6 +16,7 @@ For explanation of main concepts used by the extension view `acme-portal-sdk` [d
 * `Deploy` a flow to a given starting environment, e.g. `dev`
 * `Promote` a deployment from a given environment to another environment
 * View source code differences between environments
+* **Progress Notifications**: Real-time progress updates in the notification bar for all operations
 
 ## Video Demonstration
 

@@ -180,7 +180,9 @@
               "image": "media/acme_portal_screen.png",
               "altText": "ACME Portal Extension"
             },
-            "completionEvents": ["extensionInstalled:ms-python.python"]
+            "completionEvents": [
+              "extensionInstalled:ms-python.python"
+            ]
           },
           {
             "id": "selectPythonInterpreter",
@@ -190,7 +192,9 @@
               "image": "media/acme_portal_screen.png",
               "altText": "ACME Portal Extension"
             },
-            "completionEvents": ["onCommand:python.setInterpreter"]
+            "completionEvents": [
+              "onCommand:python.setInterpreter"
+            ]
           },
           {
             "id": "setupAcmePortalSdk",
