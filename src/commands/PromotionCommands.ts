@@ -162,28 +162,47 @@ export class PromotionCommands {
         );
         
         if (confirmation === 'Promote') {
-            try {
-                // Use the new FlowPromoter to handle promotion
-                const runUrl = await FlowPromoter.promoteFlows(
-                    [flowName],
-                    sourceEnv,
-                    targetEnv,
-                    branchName
-                );
-                
-                if (runUrl) {
-                    vscode.window.showInformationMessage(
-                        `Started promotion of flow "${flowName}" from ${sourceEnv} to ${targetEnv} on branch ${branchName}`,
-                        'View Workflow'
-                    ).then(selection => {
-                        if (selection === 'View Workflow') {
-                            vscode.env.openExternal(vscode.Uri.parse(runUrl));
-                        }
-                    });
+            // Show progress notification during promotion
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: `Promoting flow "${flowName}"`,
+                cancellable: false
+            }, async (progress) => {
+                try {
+                    progress.report({ increment: 10, message: 'Starting promotion...' });
+                    
+                    // Use the new FlowPromoter to handle promotion
+                    progress.report({ increment: 30, message: `Promoting from ${sourceEnv} to ${targetEnv}...` });
+                    const runUrl = await FlowPromoter.promoteFlows(
+                        [flowName],
+                        sourceEnv,
+                        targetEnv,
+                        branchName
+                    );
+                    
+                    progress.report({ increment: 90, message: 'Promotion workflow started' });
+                    
+                    if (runUrl) {
+                        progress.report({ increment: 100, message: 'Promotion initiated successfully!' });
+                        
+                        // Show success notification with link
+                        vscode.window.showInformationMessage(
+                            `✅ Started promotion of flow "${flowName}" from ${sourceEnv} to ${targetEnv} on branch ${branchName}`,
+                            'View Workflow'
+                        ).then(selection => {
+                            if (selection === 'View Workflow') {
+                                vscode.env.openExternal(vscode.Uri.parse(runUrl));
+                            }
+                        });
+                    } else {
+                        progress.report({ increment: 100, message: 'Promotion failed to start' });
+                        vscode.window.showErrorMessage('❌ Failed to start promotion. Please check the logs for more details.');
+                    }
+                } catch (error) {
+                    progress.report({ increment: 100, message: 'Promotion failed' });
+                    vscode.window.showErrorMessage(`❌ Failed to promote flow: ${error}`);
                 }
-            } catch (error) {
-                vscode.window.showErrorMessage(`Failed to promote flow: ${error}`);
-            }
+            });
         }
     }
 }

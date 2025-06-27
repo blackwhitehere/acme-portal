@@ -36,25 +36,42 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
         this.isLoading = true;
         this.refresh(); // Show loading indicator
         
-        try {
-            // Load flows first
-            this.flows = await FindFlows.scanForFlows();
-            console.log(`Loaded ${this.flows.length} flows`);
-            
-            // Then load deployments
-            this.deployments = await FindDeployments.scanForDeployments();
-            console.log(`Loaded ${this.deployments.length} deployments`);
-            
-            this.buildTreeData();
-        } catch (error) {
-            vscode.window.showErrorMessage(`Error loading data: ${error}`);
-            this.flows = [];
-            this.deployments = [];
-            this.data = {};
-        } finally {
-            this.isLoading = false;
-            this.refresh();
-        }
+        // Show progress notification during data loading
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: 'Loading ACME Portal data',
+            cancellable: false
+        }, async (progress) => {
+            try {
+                progress.report({ increment: 10, message: 'Scanning for flows...' });
+                
+                // Load flows first
+                this.flows = await FindFlows.scanForFlows();
+                console.log(`Loaded ${this.flows.length} flows`);
+                
+                progress.report({ increment: 50, message: `Found ${this.flows.length} flows, scanning deployments...` });
+                
+                // Then load deployments
+                this.deployments = await FindDeployments.scanForDeployments();
+                console.log(`Loaded ${this.deployments.length} deployments`);
+                
+                progress.report({ increment: 80, message: `Found ${this.deployments.length} deployments, building tree...` });
+                
+                this.buildTreeData();
+                
+                progress.report({ increment: 100, message: `✅ Loaded ${this.flows.length} flows and ${this.deployments.length} deployments` });
+                
+            } catch (error) {
+                progress.report({ increment: 100, message: 'Loading failed' });
+                vscode.window.showErrorMessage(`❌ Error loading data: ${error}`);
+                this.flows = [];
+                this.deployments = [];
+                this.data = {};
+            } finally {
+                this.isLoading = false;
+                this.refresh();
+            }
+        });
     }
 
     /**

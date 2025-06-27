@@ -95,29 +95,45 @@ export class DeploymentCommands {
         );
         
         if (confirmation === 'Deploy') {
-            try {
-                // Use the FlowDeployer to handle deployment
-                const runUrl = await FlowDeployer.deployFlows(
-                    [flowName],
-                    branchName
-                );
-                
-                if (runUrl) {
-                    vscode.window.showInformationMessage(
-                        `Started deployment of flow "${flowName}" on branch ${branchName}`,
-                        'View Workflow'
-                    ).then(selection => {
-                        if (selection === 'View Workflow') {
-                            vscode.env.openExternal(vscode.Uri.parse(runUrl));
-                        }
-                    });
+            // Show progress notification during deployment
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: `Deploying flow "${flowName}"`,
+                cancellable: false
+            }, async (progress) => {
+                try {
+                    progress.report({ increment: 10, message: 'Starting deployment...' });
+                    
+                    // Use the FlowDeployer to handle deployment
+                    progress.report({ increment: 30, message: 'Triggering deployment workflow...' });
+                    const runUrl = await FlowDeployer.deployFlows(
+                        [flowName],
+                        branchName
+                    );
+                    
+                    progress.report({ increment: 90, message: 'Deployment workflow started' });
+                    
+                    if (runUrl) {
+                        progress.report({ increment: 100, message: 'Deployment initiated successfully!' });
+                        
+                        // Show success notification with link
+                        vscode.window.showInformationMessage(
+                            `✅ Started deployment of flow "${flowName}" on branch ${branchName}`,
+                            'View Workflow'
+                        ).then(selection => {
+                            if (selection === 'View Workflow') {
+                                vscode.env.openExternal(vscode.Uri.parse(runUrl));
+                            }
+                        });
+                    } else {
+                        progress.report({ increment: 100, message: 'Deployment failed to start' });
+                        vscode.window.showErrorMessage('❌ Failed to start deployment. Please check the logs for more details.');
+                    }
+                } catch (error) {
+                    progress.report({ increment: 100, message: 'Deployment failed' });
+                    vscode.window.showErrorMessage(`❌ Failed to deploy flow: ${error}`);
                 }
-                else {
-                    vscode.window.showErrorMessage('Failed to start deployment. Please check the logs for more details.');
-                }
-            } catch (error) {
-                vscode.window.showErrorMessage(`Failed to deploy flow: ${error}`);
-            }
+            });
         }
     }
 }
