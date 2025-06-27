@@ -180,7 +180,9 @@
               "image": "media/acme_portal_screen.png",
               "altText": "ACME Portal Extension"
             },
-            "completionEvents": ["extensionInstalled:ms-python.python"]
+            "completionEvents": [
+              "extensionInstalled:ms-python.python"
+            ]
           },
           {
             "id": "selectPythonInterpreter",
@@ -190,7 +192,9 @@
               "image": "media/acme_portal_screen.png",
               "altText": "ACME Portal Extension"
             },
-            "completionEvents": ["onCommand:python.setInterpreter"]
+            "completionEvents": [
+              "onCommand:python.setInterpreter"
+            ]
           },
           {
             "id": "setupAcmePortalSdk",
@@ -225,7 +229,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.17.19",
+    "@types/node": "^20.19.1",
     "@types/vscode": "^1.97.0",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",
