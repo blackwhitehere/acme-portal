@@ -229,7 +229,10 @@
     "lint": "eslint src",
     "test": "vscode-test",
     "knip": "knip",
-    "package-check": "vsce package --allow-star-activation"
+    "package-check": "vsce package --allow-star-activation",
+    "docs:build": "mkdocs build",
+    "docs:serve": "mkdocs serve",
+    "docs:deploy": "mkdocs gh-deploy --force"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

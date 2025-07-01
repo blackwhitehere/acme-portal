@@ -12,3 +12,8 @@ vsc-extension-quickstart.md
 **/.vscode-test.*
 # Exclude webpack config from packaged extension - build tool only, not needed at runtime
 webpack.config.js
+# Exclude documentation development files
+docs/**
+mkdocs.yml
+site/**
+knip.json

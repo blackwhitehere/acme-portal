@@ -64,5 +64,12 @@ jobs:
         
     - name: Publish to VS Code Marketplace
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-      run: npx vsce publish --pat ${{ secrets.VSCE_PAT }}
-      continue-on-error: true  # Don't fail if marketplace publish fails
+      run: |
+        if [ -z "${{ secrets.VSCE_PAT }}" ]; then
+          echo "⚠️  VSCE_PAT secret not configured - skipping marketplace publishing"
+          echo "To enable marketplace publishing, configure VSCE_PAT secret in repository settings"
+          exit 0
+        else
+          echo "🚀 Publishing to VS Code Marketplace..."
+          npx vsce publish --pat ${{ secrets.VSCE_PAT }}
+        fi

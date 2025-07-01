@@ -6,6 +6,8 @@
 
 For explanation of main concepts used by the extension view `acme-portal-sdk` [docs](https://blackwhitehere.github.io/acme-portal-sdk/)
 
+📚 **[Extension Documentation](https://blackwhitehere.github.io/acme-portal/)** - Complete user guide, API reference, and contributing guidelines
+
 ![acme-portal](https://raw.githubusercontent.com/blackwhitehere/acme-portal/main/media/acme_portal_screen2.png)
 
 ## Features

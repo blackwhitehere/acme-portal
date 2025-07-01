@@ -1,5 +1,5 @@
 {
-  "ignoreBinaries": ["xvfb-run"],
+  "ignoreBinaries": ["mkdocs"],
   "ignoreDependencies": ["@vscode/test-electron"],
   "ignore": [
     "src/test/**/*.ts",
