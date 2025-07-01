@@ -5,4 +5,5 @@ node_modules
 *.vsix
 .DS_Store
 *.py[cod]
+demo-child-attributes.js
 
