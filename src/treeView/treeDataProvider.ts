@@ -177,6 +177,18 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                 ));
             }
             
+            // Add child attributes if present
+            if (flow.child_attributes) {
+                for (const [key, value] of Object.entries(flow.child_attributes)) {
+                    children.push(new DetailTreeItem(
+                        `${key}: ${String(value)}`,
+                        flow,
+                        undefined,
+                        flowId
+                    ));
+                }
+            }
+            
             // Group deployments by branch
             const branchMap = new Map<string, DeploymentDetails[]>();
             for (const deployment of flowDeployments) {
@@ -257,6 +269,18 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                             deployment,
                             `${envId}-detail-${detailIndex++}`
                         ));
+                        
+                        // Add child attributes if present
+                        if (deployment.child_attributes) {
+                            for (const [key, value] of Object.entries(deployment.child_attributes)) {
+                                envDetailItems.push(new DetailTreeItem(
+                                    `${key}: ${String(value)}`,
+                                    flow,
+                                    deployment,
+                                    `${envId}-detail-${detailIndex++}`
+                                ));
+                            }
+                        }
                     }
                     
                     // Store env details

@@ -15,6 +15,7 @@ export interface DeploymentDetails {
     updated_at: string;  // Timestamp of when the deployment was last updated
     flow_id: string;  // Unique identifier for the flow in the deployment system
     url: string;  // URL to the deployment in the deployment system
+    child_attributes?: Record<string, any>;  // Additional attributes from subclassed SDK DeploymentDetails
 }
 
 export class FindDeployments {

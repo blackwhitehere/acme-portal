@@ -16,11 +16,21 @@ export class DeploymentCommands {
     public async deployFlow(item: any): Promise<void> {
         let flowName = '';
         let branchName = '';
+        let additionalContext: Record<string, any> | undefined = undefined;
         
         // Check if we're deploying a flow from the tree
         if (item instanceof FlowTreeItem) {
             flowName = item.flowData.name || '';
+            
+            // Extract additional context from child_attributes if present
+            if (item.flowData.child_attributes) {
+                additionalContext = item.flowData.child_attributes;
+            }
+            
             console.log(`Deploying from flow item: flow=${flowName}`);
+            if (additionalContext) {
+                console.log(`Additional context available:`, additionalContext);
+            }
         }
         
         // If no valid data, let user select from available flows
@@ -48,6 +58,12 @@ export class DeploymentCommands {
             }
             
             flowName = selectedFlow.label;
+            
+            // Extract additional context from selected flow's child_attributes if present
+            if (selectedFlow.flow.child_attributes) {
+                additionalContext = selectedFlow.flow.child_attributes;
+                console.log(`Additional context from selected flow:`, additionalContext);
+            }
         }
         
         // Get current branch
@@ -108,7 +124,8 @@ export class DeploymentCommands {
                     progress.report({ increment: 30, message: 'Triggering deployment workflow...' });
                     const runUrl = await FlowDeployer.deployFlows(
                         [flowName],
-                        branchName
+                        branchName,
+                        additionalContext
                     );
                     
                     progress.report({ increment: 90, message: 'Deployment workflow started' });
