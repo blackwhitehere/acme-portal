@@ -8,12 +8,14 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [18.x, 20.x]
-        
+        vscode-version: [stable, insiders]
+    
+    runs-on: ${{ matrix.os }}
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -30,11 +32,44 @@ jobs:
     - name: Run linter
       run: npm run lint
       
+    - name: Check for unused dependencies
+      run: npm run knip
+      
     - name: Compile TypeScript
       run: npm run compile
       
-    - name: Run tests
+    - name: Run tests (Linux)
+      if: runner.os == 'Linux'
       run: xvfb-run -a npm test
+      env:
+        VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
+      
+    - name: Run tests (Windows/macOS)
+      if: runner.os != 'Linux'
+      run: npm test
+      env:
+        VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
       
     - name: Package extension
       run: npm run vscode:prepublish
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run audit
+      run: npm audit --audit-level=moderate
+      
+    - name: Check package integrity
+      run: npm run compile && npm run vscode:prepublish
