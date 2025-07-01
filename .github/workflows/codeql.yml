@@ -1,0 +1,59 @@
+# CodeQL Security Analysis Pipeline
+#
+# This workflow performs automated security vulnerability detection using GitHub's CodeQL engine.
+# It analyzes the codebase for potential security issues, coding errors, and code quality problems.
+#
+# Features:
+# - Runs on every PR and push to main branch
+# - Weekly scheduled scans on Sundays
+# - JavaScript/TypeScript code analysis
+# - Automated security alerts and reporting
+#
+# Usage:
+# - Automatically triggered on code changes
+# - Results appear in the Security tab under Code scanning alerts
+# - Failed checks indicate potential security vulnerabilities that should be reviewed
+# - No manual intervention required for routine scans
+#
+# For more information: https://docs.github.com/en/code-security/code-scanning
+
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '43 21 * * 0'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"

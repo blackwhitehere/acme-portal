@@ -1,0 +1,9 @@
+{
+  "ignoreBinaries": ["mkdocs"],
+  "ignoreDependencies": ["@vscode/test-electron"],
+  "ignore": [
+    "src/test/**/*.ts",
+    ".vscode-test.mjs"
+  ],
+  "ignoreExportsUsedInFile": true
+}

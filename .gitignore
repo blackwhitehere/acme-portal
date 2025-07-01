@@ -6,3 +6,5 @@ node_modules
 .DS_Store
 *.py[cod]
 
+# Documentation build output
+site/
