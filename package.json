@@ -90,7 +90,7 @@
         {
           "id": "acme-portal-container",
           "title": "ACME Portal",
-          "icon": "media/acme-icon.svg"
+          "icon": "media/acme-icon.png"
         }
       ]
     },
@@ -177,7 +177,7 @@
             "title": "Install Microsoft Python Extension",
             "description": "Ensure the Microsoft Python extension is installed in your VS Code.",
             "media": {
-              "image": "media/acme_portal_screen.png",
+              "image": "media/acme_portal_screen2.png",
               "altText": "ACME Portal Extension"
             },
             "completionEvents": [
@@ -189,7 +189,7 @@
             "title": "Select Python Interpreter",
             "description": "Use the `Python: Select Interpreter` command to choose the Python environment for your project.\n [Python: Select Interpreter](command:python.setInterpreter)",
             "media": {
-              "image": "media/acme_portal_screen.png",
+              "image": "media/acme_portal_screen2.png",
               "altText": "ACME Portal Extension"
             },
             "completionEvents": [
@@ -201,7 +201,7 @@
             "title": "Set Up acme-portal-sdk",
             "description": "Follow the [acme-portal-sdk documentation](https://blackwhitehere.github.io/acme-portal-sdk/) to set up the SDK in your project.",
             "media": {
-              "image": "media/acme_portal_screen.png",
+              "image": "media/acme_portal_screen2.png",
               "altText": "ACME Portal Extension"
             }
           },
@@ -210,7 +210,7 @@
             "title": "Install Git CLI",
             "description": "Ensure the Git CLI is installed and available in your system's PATH.",
             "media": {
-              "image": "media/acme_portal_screen.png",
+              "image": "media/acme_portal_screen2.png",
               "altText": "ACME Portal Extension"
             }
           }
