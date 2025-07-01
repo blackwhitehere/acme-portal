@@ -28,6 +28,7 @@ export class PromotionCommands {
             // Extract additional context from flow's child_attributes if present
             if (item.flowData.child_attributes) {
                 additionalContext = item.flowData.child_attributes;
+                console.log(`Additional context available:`, additionalContext);
             }
             
             // Try to extract branch name from parent ID
@@ -45,9 +46,6 @@ export class PromotionCommands {
             }
             
             console.log(`Promoting from environment item: flow=${flowName}, sourceEnv=${sourceEnv}, branch=${branchName}`);
-            if (additionalContext) {
-                console.log(`Additional context available:`, additionalContext);
-            }
         } 
         // Check if we're promoting from a flow
         else if (item instanceof FlowTreeItem) {
