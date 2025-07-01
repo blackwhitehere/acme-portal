@@ -1,5 +1,19 @@
+# Dependabot configuration for automated dependency updates
+# 
+# This configuration enables automatic dependency updates for npm packages and GitHub Actions.
+# Dependabot will create pull requests weekly on Mondays to keep dependencies up to date.
+#
+# Usage:
+# - Dependabot automatically creates PRs when new versions are available
+# - PRs are labeled "automerge" for dependencies that pass all checks
+# - Major version updates are ignored to prevent breaking changes
+# - Manual review is recommended for security updates
+#
+# For more information: https://docs.github.com/en/code-security/dependabot
+
 version: 2
 updates:
+  # NPM package dependencies
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -20,6 +34,7 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
         
+  # GitHub Actions dependencies  
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

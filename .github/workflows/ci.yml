@@ -1,3 +1,22 @@
+# Continuous Integration Pipeline for VS Code Extension
+#
+# This workflow provides comprehensive testing and quality assurance for the VS Code extension.
+# It runs on every pull request and push to the main branch.
+#
+# Features:
+# - Multi-platform testing (Linux/Windows/macOS) - can be controlled with 'full-test' input  
+# - Multiple Node.js versions (18.x, 20.x)
+# - Multiple VS Code versions (stable, insiders)
+# - Code quality checks (ESLint, knip, npm audit)
+# - Automated packaging validation
+#
+# Usage:
+# - Automatically triggered on PR/push events
+# - Use workflow_dispatch with 'full-test: true' to run cross-platform tests
+# - All quality gates must pass before merging
+#
+# For more information: https://code.visualstudio.com/api/working-with-extensions/continuous-integration
+
 name: CI
 
 on:
@@ -5,12 +24,21 @@ on:
     branches: [ main ]
   push:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      full-test:
+        description: 'Run tests on all platforms (Linux, Windows, macOS)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # Run on multiple platforms only when explicitly requested via workflow_dispatch
+        # Default: Ubuntu only for faster CI, Full test: All platforms
+        os: ${{ inputs.full-test && fromJSON('["ubuntu-latest", "windows-latest", "macos-latest"]') || fromJSON('["ubuntu-latest"]') }}
         node-version: [18.x, 20.x]
         vscode-version: [stable, insiders]
     
