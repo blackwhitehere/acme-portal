@@ -18,11 +18,18 @@ export class PromotionCommands {
         let flowName = '';
         let sourceEnv = '';
         let branchName = '';
+        let additionalContext: Record<string, any> | undefined = undefined;
         
         // Check if we're promoting from an environment
         if (item instanceof EnvironmentTreeItem) {
             flowName = item.flowData.name || '';
             sourceEnv = item.getEnvironmentName();
+            
+            // Extract additional context from flow's child_attributes if present
+            if (item.flowData.child_attributes) {
+                additionalContext = item.flowData.child_attributes;
+                console.log(`Additional context available:`, additionalContext);
+            }
             
             // Try to extract branch name from parent ID
             if (item.parentId && item.parentId.includes('Branch:')) {
@@ -43,7 +50,16 @@ export class PromotionCommands {
         // Check if we're promoting from a flow
         else if (item instanceof FlowTreeItem) {
             flowName = item.flowData.name || '';
+            
+            // Extract additional context from flow's child_attributes if present
+            if (item.flowData.child_attributes) {
+                additionalContext = item.flowData.child_attributes;
+            }
+            
             console.log(`Promoting from flow item: flow=${flowName}`);
+            if (additionalContext) {
+                console.log(`Additional context available:`, additionalContext);
+            }
         }
         
         // If no valid data, let user select from available flows
@@ -71,6 +87,12 @@ export class PromotionCommands {
             }
             
             flowName = selectedFlow.label;
+            
+            // Extract additional context from selected flow's child_attributes if present
+            if (selectedFlow.flow.child_attributes) {
+                additionalContext = selectedFlow.flow.child_attributes;
+                console.log(`Additional context from selected flow:`, additionalContext);
+            }
         }
         
         // If source environment not set from tree item, prompt user
@@ -177,7 +199,8 @@ export class PromotionCommands {
                         [flowName],
                         sourceEnv,
                         targetEnv,
-                        branchName
+                        branchName,
+                        additionalContext
                     );
                     
                     progress.report({ increment: 90, message: 'Promotion workflow started' });
