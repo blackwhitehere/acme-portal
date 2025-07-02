@@ -1,0 +1,10 @@
+# Code Owners file for ACME Portal
+#
+# This file defines the default reviewers for all files in the repository.
+# GitHub will automatically request reviews from the code owners when PRs are created,
+# including Dependabot PRs which will replace the deprecated 'reviewers' field in dependabot.yml.
+#
+# For more information: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owner for all files
+* @blackwhitehere

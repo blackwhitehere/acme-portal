@@ -21,8 +21,6 @@ updates:
       day: "monday"
       time: "10:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - "blackwhitehere"
     commit-message:
       prefix: "deps"
       include: "scope"
@@ -42,8 +40,6 @@ updates:
       day: "monday" 
       time: "10:00"
     open-pull-requests-limit: 5
-    reviewers:
-      - "blackwhitehere"
     commit-message:
       prefix: "ci"
       include: "scope"
