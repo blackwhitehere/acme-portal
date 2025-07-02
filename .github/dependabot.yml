@@ -5,7 +5,6 @@
 #
 # Usage:
 # - Dependabot automatically creates PRs when new versions are available
-# - PRs are labeled "automerge" for dependencies that pass all checks
 # - Major version updates are ignored to prevent breaking changes
 # - Manual review is recommended for security updates
 #
@@ -27,8 +26,7 @@ updates:
       prefix: "deps"
       include: "scope"
     labels:
-      - "dependencies"
-      - "automerge"
+      - "npm"
     ignore:
       # Ignore major version updates for breaking changes
       - dependency-name: "*"
@@ -49,4 +47,3 @@ updates:
       include: "scope"
     labels:
       - "github-actions"
-      - "automerge"
