@@ -145,9 +145,9 @@ export class PythonScriptExecutor {
      */
     public static async getScriptPath(scriptName: string): Promise<string | undefined> {
         // First, try to locate the script in the extension's directory
-        const extension = vscode.extensions.getExtension('acmeportal');
+        const extension = vscode.extensions.getExtension('blackwhitehere.acmeportal');
         if (extension) {
-            const scriptPath = path.join(extension.extensionPath, 'src', 'scripts', scriptName);
+            const scriptPath = path.join(extension.extensionPath, 'out', 'scripts', scriptName);
             if (await this.fileExists(scriptPath)) {
                 return scriptPath;
             }
