@@ -1,6 +1,7 @@
 .vscode/**
 .vscode-test/**
 src/**
+media/acme_portal_screen2.png
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md
@@ -9,3 +10,4 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+**/__pycache__/**
