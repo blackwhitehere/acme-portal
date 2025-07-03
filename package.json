@@ -3,7 +3,7 @@
   "displayName": "ACME Portal",
   "publisher": "blackwhitehere",
   "description": "UI to manage python flow deployments via acme-portal-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.101.0"
   },
