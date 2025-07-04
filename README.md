@@ -66,20 +66,12 @@ npm run compile
 # Run tests
 npm test
 
-# Package extension (with webpack bundling)
+# Package extension
 npm run package
 
 # Verify package integrity
 npm run package-check
 ```
-
-### Bundling
-
-The extension uses webpack for bundling to optimize size and startup performance:
-- Source files are bundled into `dist/extension.js` (47.1KB)
-- Webpack configuration is in `webpack.config.js`
-- Development build: `npm run compile-web`
-- Production build: `npm run package`
 
 ### CI/CD Pipeline
 

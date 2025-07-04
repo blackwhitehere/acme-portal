@@ -1,7 +1,9 @@
 .vscode/**
 .vscode-test/**
-out/**
 src/**
+dist/**
+.github/**
+media/acme_portal_screen2.png
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md
@@ -17,3 +19,6 @@ docs/**
 mkdocs.yml
 site/**
 knip.json
+**/__pycache__/**
+**/*.code-workspace
+node_modules/**

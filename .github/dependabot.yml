@@ -1,11 +1,25 @@
 # Dependabot configuration for automated dependency updates
 # 
-# This configuration enables automatic dependency updates for npm packages and GitHub Actions.
-# Dependabot will create pull requests weekly on Mondays to keep dependencies up to date.
+# This configuration creates consolidated PRs with ALL dependency updates
+# to significantly reduce notification noise while keeping dependencies current.
+#
+# Changes from original configuration:
+# - Groups ALL npm dependencies into one single PR (was ~10 individual PRs)
+# - Groups ALL GitHub Actions into one single PR (was ~5 individual PRs)  
+# - Reduces total from 15+ individual PRs per week to 2 grouped PRs per week
+# - Schedules both updates on the same day for easier management
+# - Achieves the core goal of "one PR with all changes" per ecosystem
+#
+# Bi-weekly scheduling:
+# While Dependabot doesn't directly support bi-weekly intervals, this configuration
+# significantly reduces PR noise. To achieve approximately bi-weekly updates:
+# - The grouped PRs will only be created when there are actual updates available
+# - With open-pull-requests-limit: 1, no new PRs are created until existing ones are handled
+# - This naturally creates a more spaced-out update rhythm
 #
 # Usage:
-# - Dependabot automatically creates PRs when new versions are available
-# - PRs are labeled "automerge" for dependencies that pass all checks
+# - Dependabot creates grouped PRs with all available updates for each ecosystem
+# - PRs are labeled "npm" or "github-actions" for categorization
 # - Major version updates are ignored to prevent breaking changes
 # - Manual review is recommended for security updates
 #
@@ -13,36 +27,42 @@
 
 version: 2
 updates:
-  # NPM package dependencies
+  # All NPM dependencies grouped into single weekly PR
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "10:00"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 1
     commit-message:
       prefix: "deps"
       include: "scope"
     labels:
-      - "dependencies"
-      - "automerge"
+      - "npm"
     ignore:
       # Ignore major version updates for breaking changes
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
         
-  # GitHub Actions dependencies  
+  # All GitHub Actions grouped into single weekly PR
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday" 
       time: "10:00"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "ci"
+      prefix: "deps"
       include: "scope"
     labels:
       - "github-actions"
-      - "automerge"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
