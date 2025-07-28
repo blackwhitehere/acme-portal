@@ -233,15 +233,15 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.19.7",
+    "@types/node": "^20.19.9",
     "@types/vscode": "^1.102.0",
-    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.22.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.2.1",
-    "eslint": "^9.31.0",
-    "knip": "^5.61.3",
+    "eslint": "^9.32.0",
+    "knip": "^5.62.0",
     "typescript": "^5.8.3"
   }
 }
