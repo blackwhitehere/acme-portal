@@ -82,28 +82,79 @@ We follow [Semantic Versioning](https://semver.org/):
 - New features increment MINOR  
 - Bug fixes increment PATCH
 
+### Release Notes Process
+
+#### Contributing Changes to Release Notes
+**Every pull request must include a release notes entry**. This ensures proper documentation of all changes and enables automated release generation.
+
+1. **Add Your Change to CHANGELOG.md**
+   - Open `CHANGELOG.md` 
+   - Find the `## [Unreleased]` section at the top
+   - Add your change under the appropriate subsection:
+     - `### Added` - for new features
+     - `### Changed` - for changes in existing functionality  
+     - `### Deprecated` - for soon-to-be removed features
+     - `### Removed` - for now removed features
+     - `### Fixed` - for any bug fixes
+     - `### Security` - for security-related changes
+
+2. **Format Your Entry**
+   ```markdown
+   ### Added
+   - **Feature Name**: Brief description of the change (#PR_NUMBER)
+   ```
+   
+   **Examples:**
+   ```markdown
+   ### Added
+   - **Deploy Progress Notifications**: Real-time progress updates during flow deployments (#42)
+   
+   ### Fixed
+   - **Tree View Refresh**: Fixed issue where tree view wasn't updating after deployments (#43)
+   
+   ### Changed
+   - **Settings UI**: Improved settings panel layout and validation (#44)
+   ```
+
+3. **Link Your Pull Request**
+   - Always include the PR number in parentheses: `(#123)`
+   - This creates automatic linking and enables automated validation
+
+#### Release Notes Validation
+- **CI Check**: Automated validation ensures all PRs are referenced in release notes
+- **PR Requirements**: Your PR will fail CI if release notes entry is missing
+- **Review Process**: Maintainers will verify release notes during code review
+
 ### Creating a Release
-1. **Update Version**
+1. **Prepare Release Notes**
+   - Review all entries in the `[Unreleased]` section
+   - Ensure all changes are properly categorized and described
+   - Verify all PR numbers are correct and linked
+
+2. **Update Version**
    ```bash
    # Update package.json version
    npm version patch|minor|major
    ```
 
-2. **Update Changelog**
-   - Move items from `[Unreleased]` to new version section
-   - Follow [Keep a Changelog](https://keepachangelog.com/) format
+3. **Move Release Notes**
+   - Create new version section in `CHANGELOG.md`
+   - Move all items from `[Unreleased]` to the new version section
+   - Add release date: `## [1.0.0] - 2024-01-15`
+   - Leave `[Unreleased]` section empty for future changes
 
-3. **Create and Push Tag**
+4. **Create and Push Tag**
    ```bash
    git tag v1.0.0
    git push origin v1.0.0
    ```
 
-4. **Automated Release**
+5. **Automated Release**
    - GitHub Actions will automatically:
      - Run all tests and quality checks
      - Bundle the extension
-     - Create GitHub release with assets
+     - Extract release notes from `CHANGELOG.md`
+     - Create GitHub release with proper release notes
      - Publish to VS Code Marketplace (if configured)
 
 ## Code Style
@@ -145,7 +196,7 @@ src/
    ```
 
 2. **Update documentation** if needed
-3. **Add changelog entry** in appropriate section
+3. **Add release notes entry** in `CHANGELOG.md` `[Unreleased]` section (required)
 4. **Test extension functionality** in VS Code
 
 ### PR Description Template
@@ -159,12 +210,17 @@ Context and motivation
 ## How were these changes tested?
 Testing approach and results
 
+## Release Notes Entry
+Added to CHANGELOG.md under [Unreleased] section:
+- **Feature/Fix Name**: Description of change (#PR_NUMBER)
+
 ## Checklist
 - [ ] Code compiles without errors
 - [ ] Linting passes
 - [ ] Tests pass
 - [ ] Documentation updated
-- [ ] Changelog updated
+- [ ] **Release notes added to CHANGELOG.md [Unreleased] section**
+- [ ] PR number will be added to release notes entry after PR creation
 ```
 
 ## Security

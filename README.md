@@ -40,6 +40,8 @@ Watch how to:
 
 ## Development
 
+For detailed development setup, contribution guidelines, and release notes process, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ### Dev setup
 
 * Go to `VSCode` `Run and Debug` tab and run `Run Extension` configuration.

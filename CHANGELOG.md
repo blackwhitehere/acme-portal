@@ -7,6 +7,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 ### Added
+- **Release Notes Process**: Standardized release notes workflow with automated validation and extraction (#56)
+
+### Added (Historical - No PR refs)
 - **Comprehensive CI/CD Pipeline**: Implemented full automation following VS Code extension best practices
   - Multi-platform testing (Ubuntu, Windows, macOS)
   - Multiple Node.js versions (18.x, 20.x)
@@ -31,14 +34,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - All notifications appear immediately when operations start and update with meaningful status messages
   - Success/error states are clearly indicated with emoji visual indicators (✅ ❌)
 
-### Changed
+### Changed (Historical - No PR refs)
 - **Build Process**: Switched from TypeScript compilation to webpack bundling for main distribution
 - **Package Structure**: Updated entry point to bundled extension for better performance
 - **Development Workflow**: Enhanced with comprehensive quality checks and automated testing
 - Improved user experience with immediate feedback instead of only showing results at completion
 - Enhanced error messages with visual indicators for better clarity
 
-### Developer Experience
+### Developer Experience (Historical - No PR refs)
 - Added comprehensive documentation for CI/CD setup and development workflow
 - Configured development tools for better code quality
 - Automated security and dependency management
