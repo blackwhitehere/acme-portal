@@ -4,7 +4,7 @@ Welcome to the ACME Portal VS Code Extension documentation.
 
 ## Overview
 
-ACME Portal is a comprehensive VS Code extension that provides a user interface for managing Python flow deployments via the acme-portal-sdk. It integrates seamlessly into your VS Code workspace to streamline flow development, deployment, and environment management workflows.
+ACME Portal is a VS Code extension that provides a user interface for managing Python flow deployments for a project utilizing `acme-portal-sdk`.
 
 ## Key Features
 
