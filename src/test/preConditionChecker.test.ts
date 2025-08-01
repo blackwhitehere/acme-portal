@@ -44,8 +44,12 @@ suite('PreConditionChecker Test Suite', () => {
         const results = await checker.checkAllPreconditions();
         
         assert.strictEqual(results.workspace.success, true);
-        // Python check should fail but workspace should pass
-        assert.strictEqual(results.pythonInterpreter.success, false);
+        // Python check should succeed with default 'python' fallback
+        // In CI environment, PythonScriptExecutor.getPythonPath() falls back to 'python'
+        // which is considered a valid (but with warning) interpreter
+        assert.strictEqual(results.pythonInterpreter.success, true);
+        // Should have a warning about using default interpreter
+        assert.ok(results.pythonInterpreter.warning?.includes('Using default system Python interpreter'));
     });
 
     test('should warn when using default python interpreter', async () => {
