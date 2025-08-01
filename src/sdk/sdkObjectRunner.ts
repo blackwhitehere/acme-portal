@@ -46,35 +46,39 @@ export class SdkObjectRunner {
             }
             
             // Execute the script using the instance method
+            let executionError: any = null;
             try {
                 await pythonExecutor.executeScript(scriptPath, ...args);
-            } catch (executionError) {
-                // Check if there's structured error information available
-                if (await PythonScriptExecutor.fileExists(errorFile)) {
-                    try {
-                        const errorContent = await fs.promises.readFile(errorFile, 'utf8');
-                        const sdkError: SdkError = JSON.parse(errorContent);
-                        
-                        // Clean up the error file
-                        fs.promises.unlink(errorFile).catch(err => {
-                            console.warn(`Failed to delete error file ${errorFile}:`, err);
-                        });
-                        
-                        // Show user-friendly error notification
-                        ErrorNotificationService.showSdkError(sdkError);
-                        
-                        // Re-throw with the original SDK error message for upstream handling
-                        throw new Error(`SDK Error: ${sdkError.error_message}`);
-                    } catch (parseError) {
-                        console.warn('Failed to parse SDK error information:', parseError);
-                        // Fall through to show generic error
-                    }
+            } catch (err) {
+                executionError = err;
+            }
+            
+            // Always check if there's structured error information available
+            if (await PythonScriptExecutor.fileExists(errorFile)) {
+                try {
+                    const errorContent = await fs.promises.readFile(errorFile, 'utf8');
+                    const sdkError: SdkError = JSON.parse(errorContent);
+                    
+                    // Clean up the error file
+                    fs.promises.unlink(errorFile).catch(err => {
+                        console.warn(`Failed to delete error file ${errorFile}:`, err);
+                    });
+                    
+                    // Show user-friendly error notification
+                    ErrorNotificationService.showSdkError(sdkError);
+                    
+                    // Re-throw with the original SDK error message for upstream handling
+                    throw new Error(`SDK Error: ${sdkError.error_message}`);
+                } catch (parseError) {
+                    console.warn('Failed to parse SDK error information:', parseError);
+                    // Fall through to handle execution error if any
                 }
-                
-                // If no structured error info available, show generic error notification
+            }
+            
+            // If there was an execution error but no structured error info, show generic error
+            if (executionError) {
                 const operation = this.getOperationNameFromClass(className);
                 ErrorNotificationService.showGenericSdkError(String(executionError), operation);
-                
                 throw executionError;
             }
             
