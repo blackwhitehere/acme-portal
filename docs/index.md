@@ -4,30 +4,151 @@ Welcome to the ACME Portal VS Code Extension documentation.
 
 ## Overview
 
-ACME Portal is a VS Code extension that provides a UI to manage Python flow deployments via the acme-portal-sdk. It integrates directly into your VS Code workspace to streamline flow development and deployment workflows.
+ACME Portal is a comprehensive VS Code extension that provides a user interface for managing Python flow deployments via the acme-portal-sdk. It integrates seamlessly into your VS Code workspace to streamline flow development, deployment, and environment management workflows.
 
-## Features
+## Key Features
 
-- **Flow Management**: Browse and manage Python flows in your workspace
-- **Deployment Controls**: Deploy flows directly from VS Code
-- **Environment Promotion**: Promote flows between different environments
-- **Version Comparison**: Compare different versions of your flows
-- **Settings Management**: Configure extension settings through VS Code preferences
+### 🔍 **Flow Discovery and Management**
+- **Automatic Detection**: Scans your project for SDK-compatible flows
+- **Tree View Navigation**: Hierarchical display of flows, environments, and deployments
+- **File Integration**: Direct access to flow source files from the tree view
+- **Metadata Display**: Shows flow descriptions, paths, and organizational grouping
+
+### 🚀 **Deployment Operations**
+- **One-Click Deployment**: Deploy flows directly from the VS Code interface
+- **Environment Promotion**: Move flows through environment chains (dev → staging → production)
+- **Progress Tracking**: Real-time notifications for all deployment operations
+- **Error Handling**: Comprehensive error reporting and troubleshooting guidance
+
+### 🔄 **Version Control Integration**
+- **Git Integration**: Automatic detection of current branch and commit
+- **Version Comparison**: Compare flow versions across environments and branches
+- **Diff Views**: Visual comparison of code changes between deployments
+- **Branch Management**: Track deployments across different Git branches
+
+### ⚙️ **Configuration and Settings**
+- **Flexible Configuration**: Customizable flows directory paths
+- **Environment Management**: Support for multiple deployment environments
+- **Extension Settings**: Integration with VS Code's settings system
+- **Multi-Project Support**: Works with multi-root workspaces
+
+### 🔗 **External Integrations**
+- **Dashboard Links**: Direct access to deployment dashboards and monitoring tools
+- **URL Management**: Open external resources related to deployments
+- **API Integration**: Seamless communication with external deployment systems
+
+## How It Works
+
+The extension serves as a bridge between VS Code and the acme-portal-sdk:
+
+1. **Discovery**: Scans your project for flows using SDK's FlowFinder
+2. **Display**: Presents flows in an organized tree view with deployment status
+3. **Actions**: Provides commands for deployment, promotion, and comparison operations
+4. **Communication**: Uses Python scripts to interface with SDK objects
+5. **Feedback**: Displays progress and results through VS Code's notification system
+
+## Architecture
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   VS Code UI    │ ←→ │  ACME Extension  │ ←→ │ acme-portal-sdk │
+│                 │    │                  │    │                 │
+│ • Tree View     │    │ • Commands       │    │ • FlowFinder    │
+│ • Commands      │    │ • Tree Provider  │    │ • DeployWorkflow│
+│ • Notifications │    │ • SDK Interface  │    │ • PromoteFlow   │
+│ • Settings      │    │ • Error Handling │    │ • Comparisons   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+## Prerequisites
+
+Before getting started, ensure you have:
+
+- **VS Code** 1.102.0 or later
+- **Microsoft Python Extension** installed
+- **Git CLI** installed and accessible
+- **acme-portal-sdk** configured in your Python project
 
 ## Quick Start
 
-1. Install the extension from the VS Code marketplace
-2. Open a workspace containing Python flows that use acme-portal-sdk
-3. Configure the flows path in extension settings
-4. Use the ACME Portal sidebar to manage your flows
+1. **Install the Extension**
+   - Search for "ACME Portal" in VS Code Extensions marketplace
+   - Click "Install" and reload VS Code
 
-## Navigation
+2. **Setup Your Project**
+   - Open a workspace with Python flows configured for acme-portal-sdk
+   - Select the correct Python interpreter
+   - Configure the flows directory path in extension settings
 
-- [Getting Started](user/getting-started.md) - Setup and configuration guide
-- [User Guide](user/user-guide.md) - How to use the extension features
-- [API Reference](user/api-reference.md) - SDK integration details
-- [Contributing](developer/contributing.md) - How to contribute to the project
+3. **Start Using**
+   - Open the ACME Portal sidebar (click the ACME icon)
+   - View your flows in the tree structure
+   - Use context menus and toolbar actions for deployments
 
-## Support
+## Navigation Guide
 
-For questions, issues, or contributions, please visit our [GitHub repository](https://github.com/blackwhitehere/acme-portal).
+This documentation is organized into the following sections:
+
+### User Documentation
+- **[Getting Started](user/getting-started.md)** - Installation, setup, and initial configuration
+- **[User Guide](user/user-guide.md)** - Comprehensive feature guide and workflows
+- **[API Reference](user/api-reference.md)** - Technical details and SDK integration
+
+### Developer Documentation
+- **[Contributing](developer/contributing.md)** - Guidelines for contributing to the project
+- **[CI Strategy](developer/ci-strategy.md)** - Continuous integration and deployment information
+
+## SDK Integration
+
+The extension is tightly integrated with the [acme-portal-sdk](https://blackwhitehere.github.io/acme-portal-sdk/), which provides the core functionality for:
+
+- **Flow Discovery**: Scanning projects for compatible flows
+- **Deployment Management**: Executing deployment workflows
+- **Environment Operations**: Managing environment promotions
+- **Data Interfaces**: Standardized data structures and APIs
+
+**Important**: The extension requires a properly configured acme-portal-sdk installation. Visit the [SDK documentation](https://blackwhitehere.github.io/acme-portal-sdk/) for setup instructions.
+
+## Sample Project
+
+For a complete working example of the extension in action, check out the [acme-prefect sample project](https://github.com/blackwhitehere/acme-prefect), which demonstrates:
+
+- Proper SDK configuration
+- Flow structure and organization
+- Integration with deployment systems
+- Best practices for project setup
+
+## Demonstration Videos
+
+See the extension in action:
+
+- [Navigate Flows and View Deployments](https://vimeo.com/1078687975/38ca31d450?share=copy)
+- [Deploy Flow Demonstration](https://vimeo.com/1078676313/8c957e07db?share=copy)
+- [View Deployment](https://vimeo.com/1078680347/53b0f567f0?share=copy)
+- [Promote Deployment](https://vimeo.com/1078686510/fcf1ce0d2c?share=copy)
+- [Compare Flow Deployment Versions](https://vimeo.com/1078701794/21ed88bdf9?share=copy)
+
+## Support and Community
+
+### Getting Help
+
+- **Documentation**: Start with this documentation for comprehensive guides
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/blackwhitehere/acme-portal/issues)
+- **Discussions**: Ask questions or share ideas in [GitHub Discussions](https://github.com/blackwhitehere/acme-portal/discussions)
+
+### Contributing
+
+We welcome contributions! See our [Contributing Guide](developer/contributing.md) for:
+
+- Development setup instructions
+- Coding standards and guidelines
+- Pull request process
+- Issue reporting guidelines
+
+### Project Status
+
+> **Note**: This extension is currently in alpha and primarily for demonstration purposes. APIs may change frequently as we refine the functionality based on user feedback.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/blackwhitehere/acme-portal/blob/main/LICENSE) file for details.
