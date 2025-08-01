@@ -21,9 +21,8 @@ ACME Portal is a VS Code extension that provides a user interface for managing P
 - **Error Handling**: Comprehensive error reporting and troubleshooting guidance
 
 ### 🔄 **Version Control Integration**
-- **Git Integration**: Automatic detection of current branch and commit
-- **Version Comparison**: Compare flow versions across environments and branches
-- **Diff Views**: Visual comparison of code changes between deployments
+- **Robust Versioning**: View semantic version and `git` hash contained in each deployment
+- **Diff Views**: Compare flow versions between two deployments
 - **Branch Management**: Track deployments across different Git branches
 
 ### ⚙️ **Configuration and Settings**
