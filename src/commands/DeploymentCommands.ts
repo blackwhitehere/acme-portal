@@ -3,6 +3,7 @@ import { GitService } from '../utils/gitService';
 import { FindFlows } from '../actions/findFlows';
 import { FlowTreeItem } from '../treeView/items/FlowTreeItem';
 import { FlowDeployer } from '../actions/deploy';
+import { PreConditionChecker } from '../utils/preConditionChecker';
 
 export class DeploymentCommands {
     constructor(
@@ -35,6 +36,15 @@ export class DeploymentCommands {
         
         // If no valid data, let user select from available flows
         if (!flowName) {
+            // Check preconditions before scanning for flows
+            const preConditionChecker = new PreConditionChecker();
+            const results = await preConditionChecker.checkAllPreconditions();
+            
+            if (!results.allPassed) {
+                PreConditionChecker.displayResults(results);
+                return;
+            }
+            
             const flows = await FindFlows.scanForFlows();
             if (flows.length === 0) {
                 vscode.window.showInformationMessage('No flows found to deploy.');

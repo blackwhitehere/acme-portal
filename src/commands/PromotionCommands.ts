@@ -4,6 +4,7 @@ import { FindFlows } from '../actions/findFlows';
 import { FlowTreeItem } from '../treeView/items/FlowTreeItem';
 import { EnvironmentTreeItem } from '../treeView/items/EnvironmentTreeItem';
 import { FlowPromoter } from '../actions/promote';
+import { PreConditionChecker } from '../utils/preConditionChecker';
 
 export class PromotionCommands {
     constructor(
@@ -64,6 +65,15 @@ export class PromotionCommands {
         
         // If no valid data, let user select from available flows
         if (!flowName) {
+            // Check preconditions before scanning for flows
+            const preConditionChecker = new PreConditionChecker();
+            const results = await preConditionChecker.checkAllPreconditions();
+            
+            if (!results.allPassed) {
+                PreConditionChecker.displayResults(results);
+                return;
+            }
+            
             const flows = await FindFlows.scanForFlows();
             if (flows.length === 0) {
                 vscode.window.showInformationMessage('No flows found to promote.');
