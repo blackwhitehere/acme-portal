@@ -226,9 +226,11 @@
     "lint": "eslint src",
     "test": "node scripts/test.js",
     "test:vscode": "vscode-test",
-    "test:unit": "echo 'Unit tests would run here - currently using VS Code integration tests only'",
+    "test:unit": "npm run compile && npx mocha 'out/test-unit/**/*.test.js' --ui tdd --timeout 20000",
+    "test:integration": "vscode-test",
     "test:ci-fallback": "echo 'VS Code tests skipped due to environment limitations'",
     "knip": "knip",
+    "package": "vsce package --allow-star-activation",
     "package-check": "vsce package --allow-star-activation",
     "docs:build": "mkdocs build",
     "docs:serve": "mkdocs serve",
@@ -245,6 +247,7 @@
     "@vscode/vsce": "^3.2.1",
     "eslint": "^9.31.0",
     "knip": "^5.61.3",
+    "mocha": "^11.7.1",
     "typescript": "^5.8.3"
   }
 }

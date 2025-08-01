@@ -1,19 +1,19 @@
 # Continuous Integration Pipeline for VS Code Extension
 #
-# This workflow provides comprehensive testing and quality assurance for the VS Code extension.
-# It runs on every pull request and push to the main branch.
+# This workflow provides separated testing strategy to address VS Code download issues:
+# - basic-tests: Runs linting, compilation, unit tests, and packaging (no VS Code required)
+# - integration-tests: Runs VS Code integration tests (only on manual trigger or releases)
 #
 # Features:
-# - Multi-platform testing (Linux/Windows/macOS) - can be controlled with 'full-test' input  
-# - Multiple Node.js versions (18.x, 20.x)
-# - Multiple VS Code versions (stable, insiders)
-# - Code quality checks (ESLint, knip, npm audit)
-# - Automated packaging validation
+# - Fast basic tests on every PR/push (Node 20.x, stable VS Code config only per issue #40)
+# - Optional full platform testing via workflow_dispatch
+# - Integration tests only when explicitly needed (manual trigger, releases)
+# - Handles firewall restrictions preventing update.code.visualstudio.com downloads
 #
 # Usage:
-# - Automatically triggered on PR/push events
-# - Use workflow_dispatch with 'full-test: true' to run cross-platform tests
-# - All quality gates must pass before merging
+# - Automatically triggered on PR/push events (basic tests only)
+# - Use workflow_dispatch with 'run-integration-tests: true' for VS Code integration tests
+# - Use workflow_dispatch with 'full-test: true' for cross-platform testing
 #
 # For more information: https://code.visualstudio.com/api/working-with-extensions/continuous-integration
 
@@ -26,21 +26,66 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
+      run-integration-tests:
+        description: 'Run VS Code integration tests (requires network access to update.code.visualstudio.com)'
+        required: false
+        default: false
+        type: boolean
       full-test:
-        description: 'Run tests on all platforms (Linux, Windows, macOS)'
+        description: 'Run tests on all platforms (Linux, Windows, macOS) - applies to integration tests only'
         required: false
         default: false
         type: boolean
 
 jobs:
-  test:
+  # Basic tests that run on every PR/push - no VS Code installation required
+  basic-tests:
+    name: Basic Tests (Lint, Compile, Unit Tests, Package)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linter
+      run: npm run lint
+      
+    - name: Check for unused dependencies
+      run: npm run knip
+      
+    - name: Compile TypeScript
+      run: npm run compile
+      
+    - name: Run unit tests (no VS Code required)
+      run: npm run test:unit
+      
+    - name: Package extension
+      run: npm run vscode:prepublish
+      
+    - name: Validate package integrity
+      run: npm run package-check
+
+  # Integration tests that require VS Code installation - only run when explicitly requested
+  integration-tests:
+    name: VS Code Integration Tests
+    # Only run integration tests when explicitly requested
+    if: ${{ inputs.run-integration-tests == true }}
     strategy:
       matrix:
-        # Run on multiple platforms only when explicitly requested via workflow_dispatch
-        # Default: Ubuntu only for faster CI, Full test: All platforms
+        # Simplified matrix per issue #40: default to Ubuntu + Node 20.x + stable VS Code
+        # Full test only when explicitly requested via workflow_dispatch
         os: ${{ inputs.full-test && fromJSON('["ubuntu-latest", "windows-latest", "macos-latest"]') || fromJSON('["ubuntu-latest"]') }}
-        node-version: [18.x, 20.x]
-        vscode-version: [stable, insiders]
+        node-version: ['20.x']  # Simplified to Node 20.x only per issue #40
+        vscode-version: ['stable']  # Simplified to stable only per issue #40
     
     runs-on: ${{ matrix.os }}
     
@@ -57,37 +102,29 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Run linter
-      run: npm run lint
-      
-    - name: Check for unused dependencies
-      run: npm run knip
-      
     - name: Compile TypeScript
       run: npm run compile
       
-    - name: Run tests (Linux)
+    - name: Run VS Code integration tests (Linux)
       if: runner.os == 'Linux'
-      run: xvfb-run -a npm test
+      run: xvfb-run -a npm run test:integration
       env:
         VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
       
-    - name: Run tests (Windows/macOS)
+    - name: Run VS Code integration tests (Windows/macOS)
       if: runner.os != 'Linux'
-      run: npm test
+      run: npm run test:integration
       env:
         VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
-      
-    - name: Package extension
-      run: npm run vscode:prepublish
 
   code-quality:
+    name: Code Quality Checks
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
+    - name: Setup Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
@@ -96,13 +133,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Run audit
+    - name: Run security audit
       run: npm audit --audit-level=moderate
-      
-    - name: Check package integrity
-      run: npm run compile && npm run vscode:prepublish
-      
+
   docs-build:
+    name: Documentation Build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code

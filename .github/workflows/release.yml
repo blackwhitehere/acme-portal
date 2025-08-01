@@ -6,7 +6,9 @@ on:
       - 'v*'
 
 jobs:
-  publish:
+  # Run comprehensive tests including VS Code integration before release
+  pre-release-tests:
+    name: Pre-Release Testing (Full Suite)
     runs-on: ubuntu-latest
     
     steps:
@@ -31,14 +33,43 @@ jobs:
     - name: Compile TypeScript
       run: npm run compile
       
-    - name: Run tests
-      run: xvfb-run -a npm test
-      continue-on-error: true  # Don't fail release if tests fail due to environment issues
+    - name: Run unit tests
+      run: npm run test:unit
+      
+    - name: Run VS Code integration tests (with fallback)
+      run: xvfb-run -a node scripts/test.js
+      env:
+        VSCODE_TEST_VERSION: stable
+      # Note: This will fall back to unit tests if VS Code download fails
       
     - name: Package extension
-      run: npm run package
+      run: npm run vscode:prepublish
       
     - name: Verify package
+      run: npm run package-check
+
+  publish:
+    name: Publish Release
+    needs: pre-release-tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build and package
+      run: npm run vscode:prepublish
+      
+    - name: Create package
       run: npm run package-check
       
     - name: Create Release
