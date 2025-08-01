@@ -14,14 +14,35 @@ const isCI = process.env.CI || process.env.GITHUB_ACTIONS || process.env.BUILD_I
 // Check if tests should be skipped due to network restrictions
 const shouldSkipTests = process.env.SKIP_VSCODE_TESTS === 'true';
 
+// Check if we should use alternative test strategy (unit tests without VS Code integration)
+const useAlternativeStrategy = process.env.VSCODE_TEST_ALTERNATIVE === 'true';
+
 console.log('🧪 VS Code Extension Test Runner');
 console.log(`📍 CI Environment: ${isCI ? 'Yes' : 'No'}`);
 console.log(`⏭️  Skip Tests: ${shouldSkipTests ? 'Yes' : 'No'}`);
+console.log(`🔄 Alternative Strategy: ${useAlternativeStrategy ? 'Yes' : 'No'}`);
 
 if (shouldSkipTests) {
     console.log('⚠️  Skipping VS Code tests due to environment configuration');
     console.log('   Set SKIP_VSCODE_TESTS=false to enable tests');
     process.exit(0);
+}
+
+// Use alternative test strategy if requested
+if (useAlternativeStrategy) {
+    try {
+        console.log('🚀 Running unit tests without VS Code integration...');
+        execSync('npm run test:unit', { 
+            stdio: 'inherit',
+            cwd: process.cwd()
+        });
+        console.log('✅ Unit tests completed successfully!');
+        process.exit(0);
+    } catch (error) {
+        console.error('❌ Unit tests failed');
+        console.error('Error details:', error.message);
+        process.exit(1);
+    }
 }
 
 try {
@@ -54,9 +75,12 @@ try {
         console.log('   VS Code extension tests require downloading VS Code from update.code.visualstudio.com');
         console.log('');
         console.log('💡 Possible solutions:');
-        console.log('   1. Configure Actions setup steps to pre-install VS Code');
-        console.log('   2. Add update.code.visualstudio.com to firewall allowlist');
-        console.log('   3. Set SKIP_VSCODE_TESTS=true to skip tests in restricted environments');
+        console.log('   1. Use self-hosted runners with network access');
+        console.log('   2. Configure repository allowlist to include VS Code download domains');
+        console.log('   3. Set SKIP_VSCODE_TESTS=true to skip VS Code tests entirely');
+        console.log('   4. Set VSCODE_TEST_ALTERNATIVE=true to run unit tests only');
+        console.log('   5. Run integration tests manually on workflow_dispatch events');
+        console.log('   6. Separate CI jobs for unit tests vs integration tests');
         console.log('');
         
         if (isCI) {
