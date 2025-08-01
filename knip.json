@@ -3,7 +3,9 @@
   "ignoreDependencies": ["@vscode/test-electron"],
   "ignore": [
     "src/test/**/*.ts",
-    ".vscode-test.mjs"
+    "src/test-unit/**/*.ts",
+    ".vscode-test.mjs",
+    ".vscode-test-unit.mjs"
   ],
   "ignoreExportsUsedInFile": true
 }

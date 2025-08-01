@@ -23,10 +23,10 @@ ACME Portal is a VS Code extension that provides a UI to manage Python flow depl
 
 ## Navigation
 
-- [Getting Started](getting-started.md) - Setup and configuration guide
-- [User Guide](user-guide.md) - How to use the extension features
-- [API Reference](api-reference.md) - SDK integration details
-- [Contributing](contributing.md) - How to contribute to the project
+- [Getting Started](user/getting-started.md) - Setup and configuration guide
+- [User Guide](user/user-guide.md) - How to use the extension features
+- [API Reference](user/api-reference.md) - SDK integration details
+- [Contributing](developer/contributing.md) - How to contribute to the project
 
 ## Support
 

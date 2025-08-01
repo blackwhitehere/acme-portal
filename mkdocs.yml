@@ -43,10 +43,13 @@ theme:
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
-  - User Guide: user-guide.md
-  - API Reference: api-reference.md
-  - Contributing: contributing.md
+  - User:
+    - Getting Started: user/getting-started.md
+    - User Guide: user/user-guide.md
+    - API Reference: user/api-reference.md
+  - Developer:
+    - Contributing: developer/contributing.md
+    - CI Strategy: developer/ci-strategy.md
 
 markdown_extensions:
   - admonition
