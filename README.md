@@ -2,7 +2,7 @@
 
 > **Important:** This extension is currently in alpha and primarily for demonstration purposes. APIs may still change frequently.
 
-`VSCode` extension for managing deployments using [`acme-portal-sdk`](https://github.com/blackwhitehere/acme-portal-sdk). Sample project using it is available at [`acme-prefect`](https://github.com/blackwhitehere/acme-prefect).
+This project is a `VSCode` extension that allows users to manage deployments of their python projects. Data for the extension is provided via the open project using [`acme-portal-sdk`](https://github.com/blackwhitehere/acme-portal-sdk). Sample project using it is available at [`acme-prefect`](https://github.com/blackwhitehere/acme-prefect).
 
 For explanation of main concepts used by the extension view `acme-portal-sdk` [docs](https://blackwhitehere.github.io/acme-portal-sdk/)
 
