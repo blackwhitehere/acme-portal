@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import { PythonScriptExecutor } from '../utils/pythonScriptExecutor';
+import { ErrorNotificationService, SdkError } from '../utils/errorNotificationService';
 
 /**
  * Class that handles running objects from the ACME Portal SDK
@@ -33,6 +34,7 @@ export class SdkObjectRunner {
 
             // Create a temporary file to store the output
             const outputFile = path.join(os.tmpdir(), `acme_portal_${Date.now()}.json`);
+            const errorFile = outputFile.replace('.json', '_error.json');
             
             // Prepare arguments for the Python script
             const args = [moduleName, className, outputFile];
@@ -44,7 +46,41 @@ export class SdkObjectRunner {
             }
             
             // Execute the script using the instance method
-            await pythonExecutor.executeScript(scriptPath, ...args);
+            let executionError: any = null;
+            try {
+                await pythonExecutor.executeScript(scriptPath, ...args);
+            } catch (err) {
+                executionError = err;
+            }
+            
+            // Always check if there's structured error information available
+            if (await PythonScriptExecutor.fileExists(errorFile)) {
+                try {
+                    const errorContent = await fs.promises.readFile(errorFile, 'utf8');
+                    const sdkError: SdkError = JSON.parse(errorContent);
+                    
+                    // Clean up the error file
+                    fs.promises.unlink(errorFile).catch(err => {
+                        console.warn(`Failed to delete error file ${errorFile}:`, err);
+                    });
+                    
+                    // Show user-friendly error notification
+                    ErrorNotificationService.showSdkError(sdkError);
+                    
+                    // Re-throw with the original SDK error message for upstream handling
+                    throw new Error(`SDK Error: ${sdkError.error_message}`);
+                } catch (parseError) {
+                    console.warn('Failed to parse SDK error information:', parseError);
+                    // Fall through to handle execution error if any
+                }
+            }
+            
+            // If there was an execution error but no structured error info, show generic error
+            if (executionError) {
+                const operation = this.getOperationNameFromClass(className);
+                ErrorNotificationService.showGenericSdkError(String(executionError), operation);
+                throw executionError;
+            }
             
             // Read the result from the output file
             if (await PythonScriptExecutor.fileExists(outputFile)) {
@@ -55,6 +91,13 @@ export class SdkObjectRunner {
                     console.warn(`Failed to delete temporary file ${outputFile}:`, err);
                 });
                 
+                // Also clean up error file if it exists
+                if (await PythonScriptExecutor.fileExists(errorFile)) {
+                    fs.promises.unlink(errorFile).catch(err => {
+                        console.warn(`Failed to delete error file ${errorFile}:`, err);
+                    });
+                }
+                
                 // Parse and return the result
                 return JSON.parse(jsonContent);
             } else {
@@ -63,6 +106,26 @@ export class SdkObjectRunner {
         } catch (error) {
             console.error('Error running SDK object:', error);
             throw error;
+        }
+    }
+
+    /**
+     * Get a human-readable operation name based on the SDK class
+     * @param className The SDK class name
+     * @returns A human-readable operation description
+     */
+    private static getOperationNameFromClass(className: string): string {
+        switch (className) {
+            case 'DeploymentFinder':
+                return 'scanning for deployments';
+            case 'FlowFinder':
+                return 'scanning for flows';
+            case 'FlowDeployer':
+                return 'deploying flow';
+            case 'EnvironmentPromoter':
+                return 'promoting environment';
+            default:
+                return `running ${className}`;
         }
     }
 }

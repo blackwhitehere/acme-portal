@@ -53,7 +53,7 @@ export class FindFlows {
                 return flows;
             } catch (sdkError) {
                 console.error('Error using SDK FlowFinder:', sdkError);
-                vscode.window.showErrorMessage(`Error scanning for flows: ${sdkError}`);
+                // Error notification is now handled by SdkObjectRunner
                 return [];
             }
         } catch (error) {

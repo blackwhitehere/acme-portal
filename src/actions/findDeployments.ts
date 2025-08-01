@@ -50,7 +50,7 @@ export class FindDeployments {
                 return result;
             } catch (sdkError) {
                 console.error('Error using SDK DeploymentFinder:', sdkError);
-                vscode.window.showErrorMessage(`Error scanning for deployments: ${sdkError}`);
+                // Error notification is now handled by SdkObjectRunner
                 return [];
             }
         } catch (error) {
