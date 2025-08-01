@@ -9,16 +9,22 @@ jobs:
   # Run comprehensive tests including VS Code integration before release
   pre-release-tests:
     name: Pre-Release Testing (Full Suite)
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: ['18.x', '20.x']
+        vscode-version: [stable, insiders]
+      fail-fast: false
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
+    - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
-        node-version: '20.x'
+        node-version: ${{ matrix.node-version }}
         cache: 'npm'
         
     - name: Install dependencies
@@ -36,11 +42,17 @@ jobs:
     - name: Run unit tests
       run: npm run test:unit
       
-    - name: Run VS Code integration tests (with fallback)
+    - name: Run VS Code integration tests (Linux)
+      if: matrix.os == 'ubuntu-latest'
       run: xvfb-run -a node scripts/test.js
       env:
-        VSCODE_TEST_VERSION: stable
-      # Note: This will fall back to unit tests if VS Code download fails
+        VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
+      
+    - name: Run VS Code integration tests (Windows/macOS)
+      if: matrix.os != 'ubuntu-latest'
+      run: node scripts/test.js
+      env:
+        VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
       
     - name: Package extension
       run: npm run vscode:prepublish

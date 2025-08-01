@@ -230,7 +230,6 @@
     "test:integration": "vscode-test",
     "test:ci-fallback": "echo 'VS Code tests skipped due to environment limitations'",
     "knip": "knip",
-    "package": "vsce package --allow-star-activation",
     "package-check": "vsce package --allow-star-activation",
     "docs:build": "mkdocs build",
     "docs:serve": "mkdocs serve",

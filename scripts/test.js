@@ -4,9 +4,9 @@
  * Test runner script that handles CI environments with network restrictions
  * 
  * This script provides intelligent test routing based on environment:
- * - In basic CI: runs unit tests that don't require VS Code installation
- * - In integration CI: runs VS Code integration tests
- * - In development: provides fallback for network issues
+ * - By default: attempts VS Code integration tests with fallback to unit tests
+ * - In basic CI: runs unit tests only (set VSCODE_TEST_UNIT_ONLY=true)
+ * - In integration CI: runs full VS Code integration tests
  */
 
 const { execSync } = require('child_process');
@@ -16,48 +16,17 @@ const path = require('path');
 // Check if we're in a CI environment
 const isCI = process.env.CI || process.env.GITHUB_ACTIONS || process.env.BUILD_ID;
 
-// Check if tests should be skipped due to network restrictions
-const shouldSkipTests = process.env.SKIP_VSCODE_TESTS === 'true';
-
-// Check if we should use unit tests only (no VS Code integration)
+// Simplified environment variable: run unit tests only
 const useUnitTestsOnly = process.env.VSCODE_TEST_UNIT_ONLY === 'true';
-
-// Check if we should use alternative test strategy (unit tests without VS Code integration)
-const useAlternativeStrategy = process.env.VSCODE_TEST_ALTERNATIVE === 'true';
 
 console.log('🧪 VS Code Extension Test Runner');
 console.log(`📍 CI Environment: ${isCI ? 'Yes' : 'No'}`);
-console.log(`⏭️  Skip Tests: ${shouldSkipTests ? 'Yes' : 'No'}`);
 console.log(`🔧 Unit Tests Only: ${useUnitTestsOnly ? 'Yes' : 'No'}`);
-console.log(`🔄 Alternative Strategy: ${useAlternativeStrategy ? 'Yes' : 'No'}`);
 
-if (shouldSkipTests) {
-    console.log('⚠️  Skipping VS Code tests due to environment configuration');
-    console.log('   Set SKIP_VSCODE_TESTS=false to enable tests');
-    process.exit(0);
-}
-
-// Use unit tests only if requested
+// Use unit tests only if requested (typically in basic CI)
 if (useUnitTestsOnly) {
     try {
         console.log('🚀 Running unit tests only (no VS Code integration)...');
-        execSync('npm run test:unit', { 
-            stdio: 'inherit',
-            cwd: process.cwd()
-        });
-        console.log('✅ Unit tests completed successfully!');
-        process.exit(0);
-    } catch (error) {
-        console.error('❌ Unit tests failed');
-        console.error('Error details:', error.message);
-        process.exit(1);
-    }
-}
-
-// Use alternative test strategy if requested
-if (useAlternativeStrategy) {
-    try {
-        console.log('🚀 Running unit tests without VS Code integration...');
         execSync('npm run test:unit', { 
             stdio: 'inherit',
             cwd: process.cwd()
@@ -105,9 +74,7 @@ try {
         console.log('   2. Use separated CI: Run basic tests on every PR, integration tests only on releases');
         console.log('   3. Use self-hosted runners with network access for integration tests');
         console.log('   4. Configure repository allowlist to include VS Code download domains');
-        console.log('   5. Set SKIP_VSCODE_TESTS=true to skip VS Code tests entirely');
-        console.log('   6. Set VSCODE_TEST_ALTERNATIVE=true to run unit tests only');
-        console.log('   7. Run integration tests manually on workflow_dispatch events');
+        console.log('   5. Run integration tests manually on workflow_dispatch events');
         console.log('');
         
         if (isCI) {

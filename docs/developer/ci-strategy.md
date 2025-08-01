@@ -65,11 +65,17 @@ Integration tests run automatically on git tag pushes (`v*`).
 
 ## Environment Variables
 
-The test runner script supports several environment variables for different scenarios:
+The test runner script supports one primary environment variable for different scenarios:
 
-- `VSCODE_TEST_UNIT_ONLY=true` - Run only unit tests
-- `VSCODE_TEST_ALTERNATIVE=true` - Fall back to unit tests if VS Code fails
-- `SKIP_VSCODE_TESTS=true` - Skip all VS Code tests entirely
+- `VSCODE_TEST_UNIT_ONLY=true` - Run only unit tests, skip VS Code integration tests
+
+**When to use:**
+- **Basic CI**: Set `VSCODE_TEST_UNIT_ONLY=true` to run fast tests without VS Code downloads
+- **Integration CI**: Leave unset to run full VS Code integration tests
+- **Local development**: Leave unset for automatic fallback behavior
+
+**Default behavior (no environment variables):**
+The test runner will attempt VS Code integration tests and automatically fall back to unit tests if network issues are detected. This provides the best experience for local development while maintaining robustness in CI environments.
 
 ## Fallback Mechanism
 
