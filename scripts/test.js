@@ -32,7 +32,7 @@ try {
     });
     console.log('✅ Tests completed successfully!');
 } catch (error) {
-    // Check if this is a network connectivity issue by looking at the error output
+    // Extract error information for analysis
     const stderr = error.stderr ? error.stderr.toString() : '';
     const stdout = error.stdout ? error.stdout.toString() : '';
     const errorMessage = error.message || '';
@@ -44,12 +44,10 @@ try {
     
     console.error('❌ Test execution failed');
     
-    // Check if this is a network connectivity issue
-    if (fullOutput.includes('getaddrinfo') || 
-        fullOutput.includes('update.code.visualstudio.com') ||
-        fullOutput.includes('EAI_AGAIN') ||
-        fullOutput.includes('ENOTFOUND')) {
-        
+    // More specific network connectivity detection
+    const isNetworkError = isDefinitelyNetworkError(error, fullOutput);
+    
+    if (isNetworkError) {
         console.log('');
         console.log('🌐 Network connectivity issue detected');
         console.log('   This is likely due to firewall restrictions in the CI environment');
@@ -70,5 +68,43 @@ try {
     
     // For other errors or non-CI environments, exit with failure
     console.error('Error details:', error.message);
+    if (error.code) console.error('Error code:', error.code);
+    if (error.errno) console.error('Error number:', error.errno);
     process.exit(1);
+}
+
+/**
+ * Determines if an error is definitely a network connectivity issue
+ * Uses multiple criteria to avoid false positives
+ */
+function isDefinitelyNetworkError(error, fullOutput) {
+    // Check error codes that are specifically for network issues
+    const networkErrorCodes = ['ENOTFOUND', 'EAI_AGAIN', 'ECONNREFUSED', 'ETIMEDOUT', 'ENETUNREACH'];
+    if (error.code && networkErrorCodes.includes(error.code)) {
+        return true;
+    }
+    
+    // Check for specific VS Code download related errors
+    const vsCodeNetworkIndicators = [
+        'update.code.visualstudio.com',
+        'download.visualstudio.microsoft.com',
+        'az764295.vo.msecnd.net' // VS Code CDN
+    ];
+    
+    const networkDnsIndicators = [
+        'getaddrinfo',
+        'ENOTFOUND',
+        'EAI_AGAIN'
+    ];
+    
+    // Must have both a network DNS error AND reference to VS Code download
+    const hasNetworkDnsError = networkDnsIndicators.some(indicator => 
+        fullOutput.includes(indicator)
+    );
+    
+    const hasVSCodeDownloadReference = vsCodeNetworkIndicators.some(indicator => 
+        fullOutput.includes(indicator)
+    );
+    
+    return hasNetworkDnsError && hasVSCodeDownloadReference;
 }
