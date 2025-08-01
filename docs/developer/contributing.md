@@ -211,52 +211,9 @@ When making changes that affect users or developers:
 
 ## Release Notes Process
 
-**Every pull request must include a release notes entry** in `CHANGELOG.md`. This ensures all changes are properly documented and enables automated release generation.
+**Every pull request must include a release notes entry** in `CHANGELOG.md`. 
 
-### Quick Guidelines
-
-1. **Add to [Unreleased] Section**
-   ```markdown
-   ## [Unreleased]
-   
-   ### Added
-   - **Your Feature**: Brief description of the change (#PR_NUMBER)
-   ```
-
-2. **Choose Correct Category**
-   - `### Added` - for new features
-   - `### Changed` - for changes in existing functionality  
-   - `### Fixed` - for bug fixes
-   - `### Security` - for security-related changes
-   - `### Deprecated` - for soon-to-be removed features
-   - `### Removed` - for removed features
-
-3. **Format Requirements**
-   - Use `**Feature Name**:` for the entry title
-   - Include brief user-focused description
-   - Always add `(#PR_NUMBER)` at the end
-   - Write from the user's perspective, not implementation details
-
-### Examples
-
-```markdown
-### Added
-- **Deploy Progress Notifications**: Real-time progress updates during flow deployments (#42)
-
-### Fixed  
-- **Tree View Refresh**: Fixed issue where tree view wasn't updating after deployments (#43)
-
-### Changed
-- **Settings UI**: Improved settings panel layout and validation (#44)
-```
-
-### Validation
-
-- **Automated Check**: CI validates that all PRs are referenced in release notes
-- **Manual Check**: Run `npm run check-release-notes [PR_NUMBER]` to validate
-- **Required for Merge**: PRs without release notes entries will fail CI
-
-For complete release process details, see the main [CONTRIBUTING.md](../CONTRIBUTING.md).
+For complete guidelines, examples, and validation details, see the [Release Notes Process](../../CONTRIBUTING.md#release-notes-process) in the main contributing guide.
 
 ## Release Process
 
