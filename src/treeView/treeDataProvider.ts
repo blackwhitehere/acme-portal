@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { FindFlows, FlowDetails } from '../actions/findFlows';
 import { FindDeployments, DeploymentDetails } from '../actions/findDeployments';
+import { PreConditionChecker } from '../utils/preConditionChecker';
 import { 
     BaseTreeItem,
     FlowTreeItem,
@@ -43,7 +44,25 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
             cancellable: false
         }, async (progress) => {
             try {
-                progress.report({ increment: 10, message: 'Scanning for flows...' });
+                progress.report({ increment: 5, message: 'Checking preconditions...' });
+                
+                // Check all preconditions before attempting to load data
+                const preConditionChecker = new PreConditionChecker();
+                const results = await preConditionChecker.checkAllPreconditions();
+                
+                // Display any error or warning messages to the user
+                PreConditionChecker.displayResults(results);
+                
+                // If preconditions are not met, stop loading
+                if (!results.allPassed) {
+                    progress.report({ increment: 100, message: 'Preconditions not met - loading stopped' });
+                    this.flows = [];
+                    this.deployments = [];
+                    this.data = {};
+                    return;
+                }
+                
+                progress.report({ increment: 15, message: 'Scanning for flows...' });
                 
                 // Load flows first
                 this.flows = await FindFlows.scanForFlows();
