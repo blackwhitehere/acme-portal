@@ -201,3 +201,97 @@ Once set up, you can:
 - Verify SDK configuration
 
 For more help, visit our [GitHub repository](https://github.com/blackwhitehere/acme-portal) or check the [acme-portal-sdk documentation](https://blackwhitehere.github.io/acme-portal-sdk/).
+
+## Extension Walkthrough
+
+The ACME Portal extension includes a built-in walkthrough to help you get started:
+
+1. **Access the Walkthrough**:
+   - Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+   - Search for "Getting Started with ACME Portal"
+   - Or open the Welcome tab and look for ACME Portal walkthrough
+
+2. **Walkthrough Steps**:
+   - Install Microsoft Python Extension
+   - Select Python Interpreter
+   - Set up acme-portal-sdk (with link to detailed documentation)
+   - Install Git CLI
+
+3. **Interactive Guidance**:
+   - Each step provides specific instructions
+   - Links to relevant commands and documentation
+   - Completion tracking for setup verification
+
+## Next Steps
+
+Once your setup is complete, explore these features:
+
+### Immediate Actions
+1. **Browse Your Flows**: Explore the tree structure in ACME Resources
+2. **Open a Flow File**: Click the file icon next to any flow
+3. **Check Settings**: Review and adjust extension configuration
+4. **Test Refresh**: Use the refresh button to reload flow data
+
+### Learn the Interface
+1. **Tree Navigation**: Practice expanding and collapsing flow groups
+2. **Context Menus**: Right-click on different items to see available actions
+3. **Toolbar Actions**: Familiarize yourself with global actions
+4. **Output Panel**: Check the "ACME Portal" output for detailed logs
+
+### Try Operations
+1. **Deploy a Flow**: If you have deployable flows, try a development deployment
+2. **Compare Versions**: If you have existing deployments, try version comparison
+3. **Promote a Flow**: Practice promoting between environments
+
+### Advanced Setup
+1. **Multi-Root Workspaces**: Configure settings for multiple projects
+2. **Custom Keyboard Shortcuts**: Set up shortcuts for frequent operations
+3. **VS Code Tasks**: Create tasks for automated workflows
+4. **Integration**: Connect with other VS Code extensions and tools
+
+## Common Post-Setup Tasks
+
+### Workspace Configuration
+
+**Setting up Multiple Projects**:
+```json
+// .vscode/settings.json for project-specific configuration
+{
+  "acmeportal.flowsPath": "src/data_flows",
+  "python.defaultInterpreterPath": "./venv/bin/python"
+}
+```
+
+**Multi-Root Workspace Example**:
+```json
+// workspace.code-workspace
+{
+  "folders": [
+    {"name": "Project A", "path": "./project-a"},
+    {"name": "Project B", "path": "./project-b"}
+  ],
+  "settings": {
+    "acmeportal.flowsPath": "flows"
+  }
+}
+```
+
+### Integration with Development Workflow
+
+**Git Configuration**:
+- Ensure remote origin is configured
+- Set up branch protection rules if needed
+- Configure commit hooks for validation
+
+**Python Environment**:
+- Activate virtual environment if using one
+- Verify all required packages are installed
+- Test SDK functionality outside VS Code
+
+**CI/CD Integration**:
+- Ensure deployment pipelines are configured
+- Verify environment access permissions
+- Test external system connectivity
+
+For comprehensive feature documentation, see the [User Guide](user-guide.md).  
+For technical details, see the [API Reference](api-reference.md).

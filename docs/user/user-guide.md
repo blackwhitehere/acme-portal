@@ -655,6 +655,226 @@ JSONDecodeError: Expecting value
 
 For more details on SDK setup and configuration, see the [acme-portal-sdk documentation](https://blackwhitehere.github.io/acme-portal-sdk/).
 
+## Workflow Examples
+
+### Typical Development Workflow
+
+**1. Development Phase**
+```
+📁 My Flow
+├── 🌍 dev (current: feature/new-logic)
+│   └── 🌿 feature/new-logic
+│       └── 📊 Deployed 2 hours ago
+```
+
+- Edit flow files in VS Code
+- Refresh the tree view to see changes
+- Deploy to dev environment for testing
+- Verify functionality in development
+
+**2. Testing and Staging**
+```
+📁 My Flow
+├── 🌍 dev (feature/new-logic deployed)
+├── 🌍 staging (ready for promotion)
+└── 🌍 production (current version)
+```
+
+- Promote from dev to staging
+- Perform integration testing
+- Compare versions between staging and production
+- Review deployment differences
+
+**3. Production Release**
+```
+📁 My Flow
+├── 🌍 dev (✓ deployed)
+├── 🌍 staging (✓ tested)
+└── 🌍 production (🚀 promoting...)
+```
+
+- Final review and approval
+- Promote to production
+- Monitor deployment status
+- Verify production functionality
+
+### Multi-Environment Management
+
+**1. Viewing All Environments**
+- Expand flows to see all environments
+- Check deployment status across environments
+- Identify which environments need updates
+
+**2. Selective Promotion**
+- Choose specific flows for promotion
+- Skip environments when necessary
+- Manage different release schedules
+
+**3. Version Control Integration**
+- Track which Git branches are deployed where
+- Compare code differences between environments
+- Manage feature branch deployments
+
+### Emergency Response Workflow
+
+**1. Hotfix Deployment**
+```
+main (production) → hotfix/urgent-fix (dev) → staging → production
+```
+
+- Create hotfix branch
+- Deploy directly to dev for testing
+- Fast-track through staging
+- Emergency promotion to production
+
+**2. Rollback Scenario**
+- Compare current production with previous stable version
+- Identify problematic changes
+- Deploy previous stable version if needed
+
+## Tips and Best Practices
+
+### Organization and Structure
+
+**Project Organization**
+- Keep flows in a dedicated, consistently named directory
+- Use descriptive flow names that reflect functionality
+- Maintain consistent directory structure across projects
+- Group related flows using SDK grouping features
+
+**Naming Conventions**
+```
+flows/
+├── data-processing/
+│   ├── etl_customer_data.py
+│   └── etl_transaction_data.py
+├── ml-pipelines/
+│   ├── model_training.py
+│   └── model_inference.py
+└── reporting/
+    ├── daily_reports.py
+    └── monthly_analytics.py
+```
+
+### Development Best Practices
+
+**Code Quality**
+- Write comprehensive flow documentation
+- Include meaningful descriptions in flow definitions
+- Use type hints and proper error handling
+- Follow Python coding standards
+
+**Version Control**
+- Commit changes before deploying
+- Use descriptive commit messages
+- Tag important releases
+- Maintain clean Git history
+
+**Testing Strategy**
+- Test flows in development environment first
+- Verify all dependencies are properly configured
+- Validate data integrity after deployments
+- Monitor flow execution in each environment
+
+### Deployment Practices
+
+**Pre-Deployment Checklist**
+- [ ] Code reviewed and approved
+- [ ] All tests passing locally
+- [ ] Dependencies up to date
+- [ ] Configuration validated
+- [ ] Documentation updated
+
+**Deployment Strategy**
+1. **Dev First**: Always deploy to development environment first
+2. **Incremental Promotion**: Move through environments systematically
+3. **Validation Gates**: Verify functionality at each stage
+4. **Monitoring**: Watch deployment progress and logs
+
+**Post-Deployment**
+- Monitor flow execution
+- Check deployment dashboards
+- Verify data flow integrity
+- Update documentation if needed
+
+### Troubleshooting Workflows
+
+**Common Issue Resolution**
+
+**1. Flows Not Appearing**
+```bash
+# Check flows path configuration
+# Verify SDK installation
+# Refresh tree view
+# Check Output panel for errors
+```
+
+**2. Deployment Failures**
+```bash
+# Review error messages in notifications
+# Check Output panel for detailed logs  
+# Verify Git repository state
+# Validate SDK configuration
+```
+
+**3. Environment Sync Issues**
+```bash
+# Refresh tree view
+# Compare versions across environments
+# Check external deployment systems
+# Verify network connectivity
+```
+
+### Integration with Other Tools
+
+**VS Code Features**
+- Use integrated terminal for Git operations
+- Leverage VS Code's debugging capabilities
+- Set up tasks for automated workflows
+- Configure launch configurations for flow testing
+
+**Git Integration**
+- Use VS Code's Git features for version control
+- Set up Git hooks for automated validation
+- Configure branch protection rules
+- Integrate with CI/CD pipelines
+
+**External Tools**
+- Monitor deployment dashboards
+- Use external logging and monitoring tools
+- Integrate with issue tracking systems
+- Set up automated notifications
+
+### Performance Optimization
+
+**Large Projects**
+- Configure appropriate flows path to limit scanning
+- Use refresh sparingly for large flow directories
+- Organize flows hierarchically for better navigation
+- Consider splitting large projects into multiple workspaces
+
+**Network Operations**
+- Be patient with deployment operations
+- Monitor progress notifications
+- Cancel operations if needed
+- Use refresh to update status after external changes
+
+### Security Considerations
+
+**Credentials and Secrets**
+- Never commit credentials to source control
+- Use environment variables for sensitive configuration
+- Configure SDK authentication properly
+- Follow organizational security policies
+
+**Access Control**
+- Ensure proper permissions for deployment operations
+- Use appropriate Git access controls
+- Validate environment-specific access rights
+- Monitor deployment activities
+
+For more advanced SDK configuration and customization, refer to the [acme-portal-sdk documentation](https://blackwhitehere.github.io/acme-portal-sdk/).
+
 ## Tips and Best Practices
 
 ### Organization
