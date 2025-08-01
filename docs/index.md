@@ -43,7 +43,7 @@ The extension serves as a bridge between VS Code and the acme-portal-sdk:
 1. **Discovery**: Scans your project for flows using SDK's FlowFinder
 2. **Display**: Presents flows in an organized tree view with deployment status
 3. **Actions**: Provides commands for deployment, promotion, and comparison operations
-4. **Communication**: Uses Python scripts to interface with SDK objects
+4. **Communication**: Uses Python scripts to interface with python SDK objects
 5. **Feedback**: Displays progress and results through VS Code's notification system
 
 ## Architecture
@@ -76,8 +76,7 @@ Before getting started, ensure you have:
 
 2. **Setup Your Project**
    - Open a workspace with Python flows configured for acme-portal-sdk
-   - Select the correct Python interpreter
-   - Configure the flows directory path in extension settings
+   - Select the correct Python interpreter using VSCode command `Python: Select Interpreter`
 
 3. **Start Using**
    - Open the ACME Portal sidebar (click the ACME icon)
@@ -150,4 +149,4 @@ We welcome contributions! See our [Contributing Guide](developer/contributing.md
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/blackwhitehere/acme-portal/blob/main/LICENSE) file for details.
+This project is licensed using [LICENSE](https://github.com/blackwhitehere/acme-portal/blob/main/LICENSE) file for details.
