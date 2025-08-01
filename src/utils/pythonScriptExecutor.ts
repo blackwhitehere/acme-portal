@@ -93,11 +93,17 @@ export class PythonScriptExecutor {
             const pythonApi = pythonExtension.exports;
 
             if (pythonApi && pythonApi.settings) {
-                const activeInterpreterPath = pythonApi.settings.getExecutionDetails().execCommand;
+                const executionDetails = pythonApi.settings.getExecutionDetails();
+                const activeInterpreterPath = executionDetails?.execCommand;
 
                 if (activeInterpreterPath) {
-                    console.log(`Using Python interpreter from Python extension: ${activeInterpreterPath}`);
-                    return activeInterpreterPath;
+                    // Handle case where execCommand is an array (e.g., ['python', '-m', 'pip'])
+                    const pythonPath = Array.isArray(activeInterpreterPath) 
+                        ? activeInterpreterPath[0] 
+                        : activeInterpreterPath;
+                    
+                    console.log(`Using Python interpreter from Python extension: ${pythonPath}`);
+                    return pythonPath;
                 }
             }
 

@@ -313,10 +313,10 @@ export class PreConditionChecker {
             errors.push(results.sdkModules.message);
         }
 
-        // Show errors first
+        // Show errors as info messages (user feedback requested info instead of error)
         if (errors.length > 0) {
             const errorMessage = `ACME Portal requirements not met:\n\n${errors.join('\n\n')}`;
-            vscode.window.showErrorMessage(errorMessage);
+            vscode.window.showInformationMessage(errorMessage);
         }
 
         // Show warnings
