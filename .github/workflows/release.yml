@@ -85,11 +85,34 @@ jobs:
     - name: Create package
       run: npm run package-check
       
+    - name: Extract release notes
+      id: extract_notes
+      run: |
+        echo "Extracting release notes from CHANGELOG.md..."
+        # Extract version from git tag (remove 'v' prefix)
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "Version: $VERSION"
+        
+        # Try to extract notes for specific version, fallback to unreleased section
+        RELEASE_NOTES=$(node scripts/extract-release-notes.js "$VERSION" 2>/dev/null || node scripts/extract-release-notes.js)
+        
+        # Save to file and environment variable for GitHub Actions
+        echo "$RELEASE_NOTES" > release-notes.txt
+        
+        # Set output for use in release creation
+        echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+        echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+        echo "Release notes extracted successfully"
+    
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: ${{ github.ref }}
+        name: Release ${{ github.ref }}
+        body: ${{ steps.extract_notes.outputs.release_notes }}
         files: acmeportal-*.vsix
-        name: Release ${{ github.ref_name }}
         draft: false
         prerelease: false
         

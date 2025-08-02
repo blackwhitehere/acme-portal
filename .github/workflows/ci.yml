@@ -62,6 +62,9 @@ jobs:
     - name: Check for unused dependencies
       run: npm run knip
       
+    - name: Check release notes format
+      run: npm run check-release-notes
+      
     - name: Compile TypeScript
       run: npm run compile
       

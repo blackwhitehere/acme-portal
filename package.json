@@ -233,7 +233,9 @@
     "package-check": "vsce package --allow-star-activation",
     "docs:build": "mkdocs build",
     "docs:serve": "mkdocs serve",
-    "docs:deploy": "mkdocs gh-deploy --force"
+    "docs:deploy": "mkdocs gh-deploy --force",
+    "check-release-notes": "node scripts/check-release-notes.js",
+    "extract-release-notes": "node scripts/extract-release-notes.js"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

@@ -142,9 +142,16 @@ suite('Extension Test Suite', () => {
    npm run lint
    npm run test
    npm run compile
+   npm run check-release-notes  # Validate release notes entry
    ```
 
-4. **Commit Your Changes**
+4. **Add Release Notes Entry**
+   - Open `CHANGELOG.md`
+   - Add your change to the `[Unreleased]` section
+   - Format: `- **Feature Name**: Description (#PR_NUMBER)`
+   - See [Release Notes Process](#release-notes-process) below
+
+5. **Commit Your Changes**
    ```bash
    git add .
    git commit -m "feat: add your feature description"
@@ -201,6 +208,12 @@ When making changes that affect users or developers:
 - Include code examples where helpful
 - Keep screenshots up to date
 - Link to related documentation
+
+## Release Notes Process
+
+**Every pull request must include a release notes entry** in `CHANGELOG.md`. 
+
+For complete guidelines, examples, and validation details, see the [Release Notes Process](https://github.com/blackwhitehere/acme-portal/blob/main/CONTRIBUTING.md#release-notes-process) in the main contributing guide.
 
 ## Release Process
 
