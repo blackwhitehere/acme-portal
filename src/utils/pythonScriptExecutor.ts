@@ -65,7 +65,7 @@ export class PythonScriptExecutor {
      * @returns A single string with all arguments properly escaped
      */
     private escapeCommandArguments(args: string[]): string {
-        return args.map(arg => `"${arg.replace(/"/g, '\\"')}"`).join(' ');
+        return args.map(arg => `"${arg.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(' ');
     }
 
     /**
