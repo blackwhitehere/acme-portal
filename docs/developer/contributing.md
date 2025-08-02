@@ -213,7 +213,7 @@ When making changes that affect users or developers:
 
 **Every pull request must include a release notes entry** in `CHANGELOG.md`. 
 
-For complete guidelines, examples, and validation details, see the [Release Notes Process](../../CONTRIBUTING.md#release-notes-process) in the main contributing guide.
+For complete guidelines, examples, and validation details, see the [Release Notes Process](https://github.com/blackwhitehere/acme-portal/blob/main/CONTRIBUTING.md#release-notes-process) in the main contributing guide.
 
 ## Release Process
 
