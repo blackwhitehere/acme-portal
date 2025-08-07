@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## 0.0.5
+
 ### Fixed
 - **GitHub Release Action Permissions**: Fixed 403 "Resource not accessible by integration" error in release workflow by adding required `contents: write` permission (#60)
 
