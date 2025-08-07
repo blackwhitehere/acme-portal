@@ -7,6 +7,7 @@ This guide covers all features and functionality of the ACME Portal VS Code exte
 ## Extension Architecture
 
 The ACME Portal extension acts as a bridge between VS Code and the acme-portal-sdk, providing:
+
 - **Visual Interface**: Tree view for flows, environments, and deployments
 - **Command Integration**: Direct access to deployment operations
 - **SDK Communication**: Python script execution to interact with SDK objects
@@ -44,6 +45,7 @@ The extension organizes your flows in a hierarchical tree structure:
 ### Flow Level Information
 
 For each flow, the tree displays:
+
 - **Flow Name**: The name as defined in your Python code
 - **Description**: Flow description from the SDK
 - **Source File**: Path to the Python file containing the flow
@@ -52,6 +54,7 @@ For each flow, the tree displays:
 ### Environment Level Information
 
 For each environment under a flow:
+
 - **Environment Name**: dev, staging, production, etc.
 - **Deployment Status**: Whether the flow is deployed to this environment
 - **Branch Information**: Which Git branches have deployments
@@ -60,6 +63,7 @@ For each environment under a flow:
 ### Branch Level Information
 
 For each branch within an environment:
+
 - **Branch Name**: Git branch name (main, develop, feature branches, etc.)
 - **Commit Information**: Latest deployed commit details
 - **Deployment Timestamp**: When the deployment was made
@@ -68,6 +72,7 @@ For each branch within an environment:
 ### Detail Level Information
 
 Additional details may include:
+
 - **Deployment ID**: Unique identifier for the deployment
 - **Status**: Running, completed, failed, etc.
 - **Version**: Semantic version or commit SHA
@@ -119,6 +124,7 @@ The extension automatically discovers flows in your project by:
 #### Flow Information Display
 
 Each flow shows:
+
 - **Name**: Flow name as defined in Python code
 - **Description**: Documentation from the flow definition
 - **Source Path**: Location of the Python file
@@ -138,6 +144,7 @@ Each flow shows:
 - Use `Ctrl+Shift+P` → "ACME: Open Flow File" (when a flow is selected)
 
 **What happens:**
+
 - Opens the Python source file in VS Code editor
 - File opens at the main definition location
 - Full VS Code editing capabilities available
@@ -150,6 +157,7 @@ Each flow shows:
 Deploy flows from your local workspace to target environments.
 
 **Prerequisites for deployment:**
+
 - Flow must be marked as deployable by the SDK
 - Git repository must have a clean working state or committed changes
 - Python environment must have acme-portal-sdk properly configured
@@ -158,17 +166,21 @@ Deploy flows from your local workspace to target environments.
 **How to deploy:**
 
 1. **Via Context Menu**: 
+
    - Right-click on a deployable flow
    - Click "Deploy Flow" or the cloud upload icon (☁️)
 
 2. **Via Command Palette**:
+
    - Select a flow in the tree
    - Use `Ctrl+Shift+P` → "ACME: Deploy Flow"
 
 3. **Via Toolbar** (when flow is selected):
+
    - Click the deploy button in the context menu
 
 **Deployment process:**
+
 1. Extension validates prerequisites
 2. Determines current Git branch/commit
 3. Calls SDK's DeployWorkflow object
@@ -197,6 +209,7 @@ Flow groups are organizational structures defined in your flows using the `group
 **How to deploy flow groups:**
 
 1. **Via Command Palette**:
+
    - Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
    - Run "ACME: Deploy Flow Group"
    - Enter the group path (e.g., "backend/data/etl")
@@ -204,11 +217,13 @@ Flow groups are organizational structures defined in your flows using the `group
    - Confirm deployment
 
 2. **Via Tree View Context Menu**:
+
    - Right-click on any group folder in the ACME Resources tree
    - Select "Deploy All Flows in Group" (cloud upload icon ☁️)
    - Review and confirm the deployment
 
 **Group Deployment Process:**
+
 1. Extension validates prerequisites (Git state, SDK configuration)
 2. Finds all flows matching the exact group path
 3. Shows confirmation dialog listing all flows to be deployed
@@ -243,20 +258,24 @@ Move deployments from one environment to the next (e.g., dev → staging → pro
 **How to promote:**
 
 1. **From Flow Level**:
+
    - Right-click on a flow
    - Click "Promote Flow" or rocket icon (🚀)
    - Promotes from the flow's current environment to the next
 
 2. **From Environment Level**:
+
    - Right-click on a specific environment
    - Click "Promote Flow" or rocket icon (🚀)
    - Promotes from that environment to the next
 
 3. **Via Command Palette**:
+
    - Select flow or environment
    - Use `Ctrl+Shift+P` → "ACME: Promote Flow"
 
 **Promotion process:**
+
 1. Identifies source and target environments
 2. Validates promotion eligibility
 3. Calls SDK's PromoteWorkflow object
@@ -270,6 +289,7 @@ Promote multiple flows at once by specifying a group path and environments. This
 **How to promote flow groups:**
 
 1. **Via Command Palette**:
+
    - Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
    - Run "ACME: Promote Flow Group"
    - Enter the group path (e.g., "backend/data/etl")
@@ -279,11 +299,13 @@ Promote multiple flows at once by specifying a group path and environments. This
    - Confirm promotion
 
 2. **Via Tree View Context Menu**:
+
    - Right-click on any group folder in the ACME Resources tree
    - Select "Promote All Flows in Group" (rocket icon 🚀)
    - Review and confirm the promotion
 
 **Group Promotion Process:**
+
 1. Extension validates prerequisites (Git state, SDK configuration)
 2. Finds all flows matching the exact group path
 3. Shows confirmation dialog listing all flows to be promoted
@@ -314,6 +336,7 @@ Action: Promotes all flows from dev to staging environment
 Compare different versions of flows across environments or branches.
 
 **What you can compare:**
+
 - Same flow across different environments
 - Same flow across different branches
 - Different versions of the same flow over time
@@ -321,14 +344,17 @@ Compare different versions of flows across environments or branches.
 **How to compare versions:**
 
 1. **From Environment**:
+
    - Right-click on an environment
    - Click "Compare Flow Versions" or diff icon (🔄)
 
 2. **Via Command Palette**:
+
    - Select an environment
    - Use `Ctrl+Shift+P` → "ACME: Compare Flow Versions"
 
 **Comparison process:**
+
 1. Identifies versions to compare
 2. Retrieves source code from different Git references
 3. Uses SDK's comparison functionality
@@ -351,6 +377,7 @@ Access deployment dashboards, monitoring tools, or other external resources.
 2. **Direct Click**: Click link icons where available
 
 **What opens:**
+
 - Deployment dashboards
 - Monitoring interfaces
 - Documentation pages

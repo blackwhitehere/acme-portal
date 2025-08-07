@@ -40,16 +40,9 @@ For development or preview versions:
 
 ### Setting Up acme-portal-sdk
 
-Before using the extension, your Python project must be configured with the acme-portal-sdk. Follow the comprehensive setup guide in the [acme-portal-sdk documentation](https://blackwhitehere.github.io/acme-portal-sdk/).
+Before using the extension, your Python project must be configured with the acme-portal-sdk. Follow the comprehensive setup guide in the [acme-portal-sdk documentation](https://blackwhitehere.github.io/acme-portal-sdk/user/getting-started/#step-2-project-setup).
 
-**Quick Setup Summary:**
-
-1. **Install the SDK**: `pip install acme-portal-sdk` 
-2. **Initialize SDK in your project**: Run the SDK initialization command in your project root
-3. **Configure your flows**: Set up your Python flows to work with the SDK
-4. **Verify setup**: Ensure the `.acme_portal_sdk` directory exists in your project root
-
-For a complete working example, see the [acme-prefect sample project](https://github.com/blackwhitehere/acme-prefect).
+For a complete working example, see the [acme-prefect sample project](https://github.com/blackwhitehere/acme-prefect/tree/main/.acme_portal_sdk).
 
 ## Initial Configuration
 
@@ -58,10 +51,11 @@ For a complete working example, see the [acme-prefect sample project](https://gi
 Open a folder or workspace that contains Python flows configured with the acme-portal-sdk.
 
 **Requirements for the project:**
+
 - Must be a Git repository with a remote origin
 - Must contain a `.acme_portal_sdk` directory (created during SDK setup)
 - Must have Python flows that are SDK-compatible
-- Must have the acme-portal-sdk Python package installed
+- Must have the `acme-portal-sdk` Python package installed
 
 ### 2. Configure Python Interpreter
 
@@ -104,8 +98,7 @@ After setup, verify everything is working:
 
 1. **Check ACME Resources View**: Should display your flows in a tree structure
 2. **Test Refresh**: Click the refresh button (🔄) in the ACME Resources toolbar
-3. **Try Opening a Flow**: Click the file icon (📄) next to a flow to open its source file
-4. **Check Output Panel**: Look for "ACME Portal" in the Output panel for any error messages
+3. **Try Opening a Flow**: Click the flow entry to open its source file
 
 ## Troubleshooting Initial Setup
 
