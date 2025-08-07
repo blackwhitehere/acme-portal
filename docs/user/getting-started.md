@@ -187,7 +187,7 @@ Once set up, you can:
 - Promote individual flows through environment chains
 - Compare versions across environments
 
-**Group Operations (New!):**
+**Group Operations:**
 - Deploy all flows in a group using commands like "ACME: Deploy Flow Group"
 - Promote entire groups between environments with "ACME: Promote Flow Group"
 - Right-click on group folders for quick group actions
