@@ -43,10 +43,6 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.openSettings',
                 this.settingsCommands.openSettings.bind(this.settingsCommands)
-            ),
-            vscode.commands.registerCommand(
-                'acmeportal.setFlowsPath',
-                this.settingsCommands.setFlowsPath.bind(this.settingsCommands)
             )
         );
 

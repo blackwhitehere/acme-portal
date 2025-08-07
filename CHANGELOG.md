@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Removed
+- **Flow Path Settings**: Removed obsolete `acmeportal.flowsPath` setting and `setFlowsPath` command as flow discovery is now handled entirely by acme-portal-sdk (#62)
+
 ## 0.0.5
 
 ### Fixed

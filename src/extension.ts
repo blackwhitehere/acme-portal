@@ -57,14 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Add the tree view to subscriptions
     context.subscriptions.push(treeView);
 
-    // Watch for settings changes
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeConfiguration(e => {
-            if (e.affectsConfiguration('acmeportal.flowsPath')) {
-                acmeTreeDataProvider.loadFlows();
-            }
-        })
-    );
+
 }
 
 // This method is called when your extension is deactivated

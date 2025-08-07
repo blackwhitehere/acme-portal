@@ -36,10 +36,7 @@
         "command": "acmeportal.itemClicked",
         "title": "Item Clicked"
       },
-      {
-        "command": "acmeportal.setFlowsPath",
-        "title": "Set Path to Flows"
-      },
+
       {
         "command": "acmeportal.openSettings",
         "title": "ACME: Open Settings",
@@ -96,16 +93,7 @@
         "icon": "$(link)"
       }
     ],
-    "configuration": {
-      "title": "ACME Portal",
-      "properties": {
-        "acmeportal.flowsPath": {
-          "type": "string",
-          "default": "flows",
-          "description": "Path to directory containing Python flow programs (relative to workspace root)"
-        }
-      }
-    },
+
     "viewsContainers": {
       "activitybar": [
         {

@@ -227,14 +227,6 @@ Opens VS Code settings filtered to ACME Portal extension.
 
 #### Utility Commands
 
-**acmeportal.setFlowsPath**
-```typescript
-command: 'acmeportal.setFlowsPath'
-title: 'Set Path to Flows'
-implementation: SettingsCommands.setFlowsPath()
-```
-Interactive command to set the flows directory path.
-
 **acmeportal.openExternalUrl**
 ```typescript
 command: 'acmeportal.openExternalUrl'
@@ -247,14 +239,7 @@ Opens external URLs associated with deployments.
 
 #### Extension Settings
 
-**acmeportal.flowsPath**
-```json
-{
-  "type": "string",
-  "default": "flows",
-  "description": "Path to directory containing Python flow programs (relative to workspace root)"
-}
-```
+All configuration is now handled automatically by the acme-portal-sdk. No manual settings are required for flow discovery.
 
 ### Tree Data Provider
 
@@ -376,7 +361,6 @@ class PreConditionChecker {
 ### Error Types
 
 **ConfigurationError**
-- Invalid flows path
 - Missing Python interpreter
 - Incorrect VS Code settings
 
