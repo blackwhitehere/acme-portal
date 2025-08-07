@@ -67,6 +67,14 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.promoteEnvironment',
                 this.promotionCommands.promoteEnvironment.bind(this.promotionCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.promoteFlowGroup',
+                this.promotionCommands.promoteFlowGroup.bind(this.promotionCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.promoteFlowGroupFromContext',
+                this.promotionCommands.promoteFlowGroupFromContext.bind(this.promotionCommands)
             )
         );
 
@@ -75,6 +83,14 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.deployFlow',
                 this.deploymentCommands.deployFlow.bind(this.deploymentCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.deployFlowGroup',
+                this.deploymentCommands.deployFlowGroup.bind(this.deploymentCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.deployFlowGroupFromContext',
+                this.deploymentCommands.deployFlowGroupFromContext.bind(this.deploymentCommands)
             )
         );
 
