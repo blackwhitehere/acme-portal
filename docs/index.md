@@ -29,7 +29,6 @@ ACME Portal is a VS Code extension that provides a user interface for managing P
 - **Automatic Configuration**: Uses acme-portal-sdk configuration for all flow discovery
 - **Environment Management**: Support for multiple deployment environments
 - **Extension Settings**: Integration with VS Code's settings system
-- **Multi-Project Support**: Works with multi-root workspaces
 
 ### 🔗 **External Integrations**
 - **Dashboard Links**: Direct access to deployment dashboards and monitoring tools
@@ -75,7 +74,7 @@ Before getting started, ensure you have:
    - Click "Install" and reload VS Code
 
 2. **Setup Your Project**
-   - Open a workspace with Python flows configured for acme-portal-sdk
+   - Open a folder containing Python flows configured for acme-portal-sdk
    - Select the correct Python interpreter using VSCode command `Python: Select Interpreter`
 
 3. **Start Using**
