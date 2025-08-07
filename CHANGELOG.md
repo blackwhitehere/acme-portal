@@ -7,6 +7,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 ### Added
+- **Group Flow Deployment**: Added ability to deploy all flows in a specified group using group path format "aaa/bbb/ccc" (#41)
+- **Group Flow Promotion**: Added ability to promote all flows in a specified group between environments (#41)
+- **Group Context Menu Actions**: Added right-click context menu options on groups to deploy or promote all flows in that group (#41)
+- **Command Palette Integration**: New commands "ACME: Deploy Flow Group" and "ACME: Promote Flow Group" available in command palette (#41)
 - **Release Notes Process**: Standardized release notes workflow with automated validation and extraction (#56)
 
 ### Added (Historical - No PR refs)

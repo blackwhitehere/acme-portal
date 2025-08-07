@@ -7,7 +7,8 @@ import { BaseTreeItem } from './BaseTreeItem';
 export class GroupTreeItem extends BaseTreeItem {
     constructor(
         public readonly groupName: string,
-        parentId?: string
+        parentId?: string,
+        public readonly fullGroupPath?: string
     ) {
         super(
             groupName,

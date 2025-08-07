@@ -5,6 +5,8 @@ import { FlowTreeItem } from '../treeView/items/FlowTreeItem';
 import { EnvironmentTreeItem } from '../treeView/items/EnvironmentTreeItem';
 import { FlowPromoter } from '../actions/promote';
 import { PreConditionChecker } from '../utils/preConditionChecker';
+import { GroupUtils } from '../utils/groupUtils';
+import { GroupTreeItem } from '../treeView/items/GroupTreeItem';
 
 export class PromotionCommands {
     constructor(
@@ -237,5 +239,349 @@ export class PromotionCommands {
                 }
             });
         }
+    }
+
+    /**
+     * Promote all flows in a specified group from one environment to another
+     */
+    public async promoteFlowGroup(): Promise<void> {
+        // Check preconditions before proceeding
+        const preConditionChecker = new PreConditionChecker();
+        const results = await preConditionChecker.checkAllPreconditions();
+        
+        if (!results.allPassed) {
+            PreConditionChecker.displayResults(results);
+            return;
+        }
+
+        // Get available flows
+        const flows = await FindFlows.scanForFlows();
+        if (flows.length === 0) {
+            vscode.window.showInformationMessage('No flows found to promote.');
+            return;
+        }
+
+        // Ask user for group path
+        const groupPath = await vscode.window.showInputBox({
+            title: 'Promote Flow Group',
+            prompt: 'Enter the group path to promote (e.g., "aaa/bbb/ccc")',
+            placeHolder: 'group/subgroup/category',
+            validateInput: value => {
+                if (!value || value.trim().length === 0) {
+                    return 'Group path cannot be empty';
+                }
+                // Basic validation for path format
+                if (value.includes('//') || value.startsWith('/') || value.endsWith('/')) {
+                    return 'Invalid group path format. Use format like "aaa/bbb/ccc"';
+                }
+                return null;
+            }
+        });
+
+        if (!groupPath) {
+            return; // User cancelled
+        }
+
+        // Find flows matching the group path
+        const matchingFlows = GroupUtils.findFlowsByGroupPath(flows, groupPath);
+        
+        if (matchingFlows.length === 0) {
+            vscode.window.showInformationMessage(`No flows found for group "${groupPath}".`);
+            return;
+        }
+
+        // Show flows that will be promoted and ask for confirmation
+        const flowNames = matchingFlows.map(flow => flow.name);
+        const flowsList = flowNames.join(', ');
+        
+        const confirmation = await vscode.window.showInformationMessage(
+            `Promote ${matchingFlows.length} flow(s) in group "${GroupUtils.getGroupDisplayName(groupPath)}"?\n\nFlows: ${flowsList}`,
+            { modal: true },
+            'Promote All'
+        );
+
+        if (confirmation !== 'Promote All') {
+            return; // User cancelled
+        }
+
+        // Ask for source environment
+        const sourceEnv = await vscode.window.showInputBox({
+            title: 'Source Environment',
+            prompt: 'Enter the source environment to promote from',
+            placeHolder: 'e.g., dev, staging',
+            validateInput: value => {
+                if (!value || value.trim().length === 0) {
+                    return 'Source environment cannot be empty';
+                }
+                return null;
+            }
+        });
+
+        if (!sourceEnv) {
+            return; // User cancelled
+        }
+
+        // Ask for target environment
+        const targetEnv = await vscode.window.showInputBox({
+            title: 'Target Environment',
+            prompt: 'Enter the target environment to promote to',
+            placeHolder: 'e.g., prod, production',
+            validateInput: value => {
+                if (!value || value.trim().length === 0) {
+                    return 'Target environment cannot be empty';
+                }
+                if (value.trim() === sourceEnv.trim()) {
+                    return 'Target environment must be different from source environment';
+                }
+                return null;
+            }
+        });
+
+        if (!targetEnv) {
+            return; // User cancelled
+        }
+
+        // Get current branch
+        let branchName = await this.gitService.getCurrentBranch() || 'main';
+        
+        // Ask for branch name, prepopulated with current branch
+        const userBranchName = await vscode.window.showInputBox({
+            title: 'Branch Name for Group Promotion',
+            prompt: 'Enter the branch name where the workflow should run',
+            value: branchName,
+            placeHolder: 'e.g., main, master, develop',
+            validateInput: value => {
+                if (!value || value.trim().length === 0) {
+                    return 'Branch name cannot be empty';
+                }
+                return null;
+            }
+        });
+        
+        if (!userBranchName) {
+            return; // User cancelled
+        }
+        
+        branchName = userBranchName;
+
+        // Promote all flows in the group
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Promoting ${matchingFlows.length} flows from group "${GroupUtils.getGroupDisplayName(groupPath)}"`,
+            cancellable: false
+        }, async (progress) => {
+            try {
+                progress.report({ increment: 10, message: 'Starting group promotion...' });
+                
+                // Collect additional context from all flows (if any have child_attributes)
+                const additionalContexts: Record<string, any>[] = [];
+                for (const flow of matchingFlows) {
+                    if (flow.child_attributes) {
+                        additionalContexts.push(flow.child_attributes);
+                    }
+                }
+                
+                // For group promotion, we'll use the first flow's additional context if available
+                // In the future, this could be enhanced to merge contexts appropriately
+                const additionalContext = additionalContexts.length > 0 ? additionalContexts[0] : undefined;
+                
+                progress.report({ increment: 30, message: 'Triggering promotion workflow...' });
+                
+                // Use the FlowPromoter to handle promotion of all flows
+                const runUrl = await FlowPromoter.promoteFlows(
+                    flowNames,
+                    sourceEnv,
+                    targetEnv,
+                    branchName,
+                    additionalContext
+                );
+                
+                progress.report({ increment: 90, message: 'Group promotion workflow started' });
+                
+                if (runUrl) {
+                    progress.report({ increment: 100, message: 'Group promotion initiated successfully!' });
+                    
+                    // Show success notification with link
+                    vscode.window.showInformationMessage(
+                        `✅ Started promotion of ${matchingFlows.length} flows from group "${GroupUtils.getGroupDisplayName(groupPath)}" (${sourceEnv} → ${targetEnv}) on branch ${branchName}`,
+                        'View Workflow'
+                    ).then(selection => {
+                        if (selection === 'View Workflow') {
+                            vscode.env.openExternal(vscode.Uri.parse(runUrl));
+                        }
+                    });
+                } else {
+                    progress.report({ increment: 100, message: 'Group promotion failed to start' });
+                    vscode.window.showErrorMessage('❌ Failed to start group promotion. Please check the logs for more details.');
+                }
+            } catch (error) {
+                progress.report({ increment: 100, message: 'Group promotion failed' });
+                vscode.window.showErrorMessage(`❌ Failed to promote flow group: ${error}`);
+            }
+        });
+    }
+
+    /**
+     * Promote flows in a group from a tree view context (right-click on group)
+     * @param item The GroupTreeItem representing the group
+     */
+    public async promoteFlowGroupFromContext(item: GroupTreeItem): Promise<void> {
+        if (!item || !item.fullGroupPath) {
+            vscode.window.showErrorMessage('Invalid group selected for promotion.');
+            return;
+        }
+
+        // Check preconditions before proceeding
+        const preConditionChecker = new PreConditionChecker();
+        const results = await preConditionChecker.checkAllPreconditions();
+        
+        if (!results.allPassed) {
+            PreConditionChecker.displayResults(results);
+            return;
+        }
+
+        // Get available flows
+        const flows = await FindFlows.scanForFlows();
+        if (flows.length === 0) {
+            vscode.window.showInformationMessage('No flows found to promote.');
+            return;
+        }
+
+        // Find flows matching the group path
+        const matchingFlows = GroupUtils.findFlowsByGroupPath(flows, item.fullGroupPath);
+        
+        if (matchingFlows.length === 0) {
+            vscode.window.showInformationMessage(`No flows found for group "${item.fullGroupPath}".`);
+            return;
+        }
+
+        // Show flows that will be promoted and ask for confirmation
+        const flowNames = matchingFlows.map(flow => flow.name);
+        const flowsList = flowNames.join(', ');
+        
+        const confirmation = await vscode.window.showInformationMessage(
+            `Promote ${matchingFlows.length} flow(s) in group "${GroupUtils.getGroupDisplayName(item.fullGroupPath)}"?\n\nFlows: ${flowsList}`,
+            { modal: true },
+            'Promote All'
+        );
+
+        if (confirmation !== 'Promote All') {
+            return; // User cancelled
+        }
+
+        // Ask for source environment
+        const sourceEnv = await vscode.window.showInputBox({
+            title: 'Source Environment',
+            prompt: 'Enter the source environment to promote from',
+            placeHolder: 'e.g., dev, staging',
+            validateInput: value => {
+                if (!value || value.trim().length === 0) {
+                    return 'Source environment cannot be empty';
+                }
+                return null;
+            }
+        });
+
+        if (!sourceEnv) {
+            return; // User cancelled
+        }
+
+        // Ask for target environment
+        const targetEnv = await vscode.window.showInputBox({
+            title: 'Target Environment',
+            prompt: 'Enter the target environment to promote to',
+            placeHolder: 'e.g., prod, production',
+            validateInput: value => {
+                if (!value || value.trim().length === 0) {
+                    return 'Target environment cannot be empty';
+                }
+                if (value.trim() === sourceEnv.trim()) {
+                    return 'Target environment must be different from source environment';
+                }
+                return null;
+            }
+        });
+
+        if (!targetEnv) {
+            return; // User cancelled
+        }
+
+        // Get current branch
+        let branchName = await this.gitService.getCurrentBranch() || 'main';
+        
+        // Ask for branch name, prepopulated with current branch
+        const userBranchName = await vscode.window.showInputBox({
+            title: 'Branch Name for Group Promotion',
+            prompt: 'Enter the branch name where the workflow should run',
+            value: branchName,
+            placeHolder: 'e.g., main, master, develop',
+            validateInput: value => {
+                if (!value || value.trim().length === 0) {
+                    return 'Branch name cannot be empty';
+                }
+                return null;
+            }
+        });
+        
+        if (!userBranchName) {
+            return; // User cancelled
+        }
+        
+        branchName = userBranchName;
+
+        // Promote all flows in the group
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Promoting ${matchingFlows.length} flows from group "${GroupUtils.getGroupDisplayName(item.fullGroupPath)}"`,
+            cancellable: false
+        }, async (progress) => {
+            try {
+                progress.report({ increment: 10, message: 'Starting group promotion...' });
+                
+                // Collect additional context from all flows (if any have child_attributes)
+                const additionalContexts: Record<string, any>[] = [];
+                for (const flow of matchingFlows) {
+                    if (flow.child_attributes) {
+                        additionalContexts.push(flow.child_attributes);
+                    }
+                }
+                
+                // For group promotion, we'll use the first flow's additional context if available
+                const additionalContext = additionalContexts.length > 0 ? additionalContexts[0] : undefined;
+                
+                progress.report({ increment: 30, message: 'Triggering promotion workflow...' });
+                
+                // Use the FlowPromoter to handle promotion of all flows
+                const runUrl = await FlowPromoter.promoteFlows(
+                    flowNames,
+                    sourceEnv,
+                    targetEnv,
+                    branchName,
+                    additionalContext
+                );
+                
+                progress.report({ increment: 90, message: 'Group promotion workflow started' });
+                
+                if (runUrl) {
+                    progress.report({ increment: 100, message: 'Group promotion initiated successfully!' });
+                    
+                    // Show success notification with link
+                    vscode.window.showInformationMessage(
+                        `✅ Started promotion of ${matchingFlows.length} flows from group "${GroupUtils.getGroupDisplayName(item.fullGroupPath!)}" (${sourceEnv} → ${targetEnv}) on branch ${branchName}`,
+                        'View Workflow'
+                    ).then(selection => {
+                        if (selection === 'View Workflow') {
+                            vscode.env.openExternal(vscode.Uri.parse(runUrl));
+                        }
+                    });
+                } else {
+                    progress.report({ increment: 100, message: 'Group promotion failed to start' });
+                    vscode.window.showErrorMessage('❌ Failed to start group promotion. Please check the logs for more details.');
+                }
+            } catch (error) {
+                progress.report({ increment: 100, message: 'Group promotion failed' });
+                vscode.window.showErrorMessage(`❌ Failed to promote flow group: ${error}`);
+            }
+        });
     }
 }

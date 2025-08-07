@@ -173,11 +173,24 @@ If you continue to have issues:
 
 Once set up, you can:
 
-- **Browse Flows**: View all flows in your project
+- **Browse Flows**: View all flows in your project organized in groups
 - **Open Flow Files**: Click the file icon next to any flow
-- **Deploy Flows**: Use the deploy button for flows ready for deployment
-- **Promote Environments**: Move flows between environments
+- **Deploy Individual Flows**: Use the deploy button for single flows ready for deployment
+- **Deploy Flow Groups**: Deploy multiple related flows at once using group paths
+- **Promote Environments**: Move flows between environments individually or in groups
 - **Compare Versions**: See differences between flow versions
+
+### Key Features to Explore
+
+**Individual Operations:**
+- Deploy single flows to specific environments
+- Promote individual flows through environment chains
+- Compare versions across environments
+
+**Group Operations:**
+- Deploy all flows in a group using commands like "ACME: Deploy Flow Group"
+- Promote entire groups between environments with "ACME: Promote Flow Group"
+- Right-click on group folders for quick group actions
 
 ## Troubleshooting
 

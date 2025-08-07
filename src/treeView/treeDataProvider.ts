@@ -128,7 +128,7 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                     // Check if we already have a group for this path
                     if (!groupMap.has(currentPath)) {
                         // Create new group item
-                        const groupItem = new GroupTreeItem(groupName, parentId);
+                        const groupItem = new GroupTreeItem(groupName, parentId, currentPath);
                         groupMap.set(currentPath, groupItem);
                         
                         // Add to root or parent group

@@ -60,8 +60,28 @@
         "icon": "$(rocket)"
       },
       {
+        "command": "acmeportal.promoteFlowGroup",
+        "title": "Promote Flow Group",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "acmeportal.promoteFlowGroupFromContext",
+        "title": "Promote All Flows in Group",
+        "icon": "$(rocket)"
+      },
+      {
         "command": "acmeportal.deployFlow",
         "title": "Deploy Flow",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "acmeportal.deployFlowGroup",
+        "title": "Deploy Flow Group",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "acmeportal.deployFlowGroupFromContext",
+        "title": "Deploy All Flows in Group",
         "icon": "$(cloud-upload)"
       },
       {
@@ -128,8 +148,18 @@
           "group": "inline"
         },
         {
+          "command": "acmeportal.deployFlowGroupFromContext",
+          "when": "view == acmePortalView && viewItem == group",
+          "group": "inline"
+        },
+        {
           "command": "acmeportal.promoteEnvironment",
           "when": "view == acmePortalView && viewItem == flow || view == acmePortalView && viewItem == environment",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.promoteFlowGroupFromContext",
+          "when": "view == acmePortalView && viewItem == group",
           "group": "inline"
         },
         {
@@ -157,8 +187,16 @@
           "title": "ACME: Deploy Flow"
         },
         {
+          "command": "acmeportal.deployFlowGroup",
+          "title": "ACME: Deploy Flow Group"
+        },
+        {
           "command": "acmeportal.promoteEnvironment",
           "title": "ACME: Promote Flow"
+        },
+        {
+          "command": "acmeportal.promoteFlowGroup",
+          "title": "ACME: Promote Flow Group"
         },
         {
           "command": "acmeportal.compareFlowVersions",
