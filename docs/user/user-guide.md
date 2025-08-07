@@ -145,7 +145,7 @@ Each flow shows:
 
 ### Deployment Operations
 
-#### Deploying Flows
+#### Deploying Individual Flows
 
 Deploy flows from your local workspace to target environments.
 
@@ -181,6 +181,56 @@ Deploy flows from your local workspace to target environments.
 - Git reference (branch/tag/commit)
 - Additional context from flow metadata
 
+#### Deploying Flow Groups
+
+Deploy multiple flows at once by specifying a group path. This feature allows you to deploy all flows that belong to the same organizational group.
+
+**What are Flow Groups?**
+
+Flow groups are organizational structures defined in your flows using the `grouping` attribute. For example, if you have flows with grouping `["backend", "data", "etl"]`, they belong to the group path "backend/data/etl".
+
+**Group Path Format:**
+- Use forward slashes to separate group levels: `"aaa/bbb/ccc"`
+- Matches flows with grouping `["aaa", "bbb", "ccc"]`
+- Must match the exact grouping structure (no partial matches)
+
+**How to deploy flow groups:**
+
+1. **Via Command Palette**:
+   - Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+   - Run "ACME: Deploy Flow Group"
+   - Enter the group path (e.g., "backend/data/etl")
+   - Review the list of flows that will be deployed
+   - Confirm deployment
+
+2. **Via Tree View Context Menu**:
+   - Right-click on any group folder in the ACME Resources tree
+   - Select "Deploy All Flows in Group" (cloud upload icon ☁️)
+   - Review and confirm the deployment
+
+**Group Deployment Process:**
+1. Extension validates prerequisites (Git state, SDK configuration)
+2. Finds all flows matching the exact group path
+3. Shows confirmation dialog listing all flows to be deployed
+4. Prompts for Git branch name (prepopulated with current branch)
+5. Warns about uncommitted changes if present
+6. Executes deployment for all flows simultaneously
+7. Shows progress notification with group name and flow count
+8. Provides workflow URL link upon successful initiation
+
+**Example Group Deployment:**
+```
+Group path: "data-processing/etl"
+Matches flows with grouping: ["data-processing", "etl"]
+Action: Deploys customer_etl, transaction_etl, sales_etl (all flows in that group)
+```
+
+**Benefits of Group Deployment:**
+- **Efficiency**: Deploy related flows together in one operation
+- **Consistency**: Ensure all flows in a logical group are deployed to the same environment
+- **Organization**: Leverage your existing flow grouping structure
+- **Progress Tracking**: Single progress notification for the entire group operation
+
 #### Environment Promotion
 
 Move deployments from one environment to the next (e.g., dev → staging → production).
@@ -212,6 +262,52 @@ Move deployments from one environment to the next (e.g., dev → staging → pro
 3. Calls SDK's PromoteWorkflow object
 4. Shows progress notification
 5. Updates tree to reflect new deployment state
+
+#### Promoting Flow Groups
+
+Promote multiple flows at once by specifying a group path and environments. This feature allows you to promote all flows that belong to the same organizational group from one environment to another.
+
+**How to promote flow groups:**
+
+1. **Via Command Palette**:
+   - Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+   - Run "ACME: Promote Flow Group"
+   - Enter the group path (e.g., "backend/data/etl")
+   - Review the list of flows that will be promoted
+   - Specify source environment (e.g., "dev", "staging")
+   - Specify target environment (e.g., "staging", "prod")
+   - Confirm promotion
+
+2. **Via Tree View Context Menu**:
+   - Right-click on any group folder in the ACME Resources tree
+   - Select "Promote All Flows in Group" (rocket icon 🚀)
+   - Review and confirm the promotion
+
+**Group Promotion Process:**
+1. Extension validates prerequisites (Git state, SDK configuration)
+2. Finds all flows matching the exact group path
+3. Shows confirmation dialog listing all flows to be promoted
+4. Prompts for source environment to promote from
+5. Prompts for target environment to promote to
+6. Prompts for Git branch name (prepopulated with current branch)
+7. Executes promotion for all flows simultaneously
+8. Shows progress notification with group name, environment flow, and flow count
+9. Provides workflow URL link upon successful initiation
+
+**Example Group Promotion:**
+```
+Group path: "data-processing/etl"
+Source environment: "dev"
+Target environment: "staging"
+Matches flows: customer_etl, transaction_etl, sales_etl
+Action: Promotes all flows from dev to staging environment
+```
+
+**Benefits of Group Promotion:**
+- **Coordination**: Promote related flows together maintaining consistency
+- **Efficiency**: Single operation instead of multiple individual promotions
+- **Environment Management**: Ensure entire logical groups move through environments together
+- **Workflow Integration**: Leverages existing promotion workflows and environment chains
 
 #### Version Comparison
 
@@ -345,7 +441,9 @@ All ACME Portal commands are available through the Command Palette (`Ctrl+Shift+
 | `ACME: Open Settings` | Open extension settings | None | Always available |
 | `ACME: Refresh Flows` | Reload the flow list and deployments | None | Always available |
 | `ACME: Deploy Flow` | Deploy the selected flow to target environment | None | Deployable flows only |
+| `ACME: Deploy Flow Group` | Deploy all flows in a specified group | None | Always available |
 | `ACME: Promote Flow` | Promote flow to next environment | None | Flows/environments with deployments |
+| `ACME: Promote Flow Group` | Promote all flows in a specified group between environments | None | Always available |
 | `ACME: Compare Flow Versions` | Show differences between versions | None | Environments with deployments |
 
 ### Context Menu Commands
@@ -356,6 +454,10 @@ Available when right-clicking on tree items:
 - **Open Flow File** (📄): Opens the Python source file
 - **Deploy Flow** (☁️): Deploys the flow (if deployable)
 - **Promote Flow** (🚀): Promotes to next environment
+
+#### Group Context Menu
+- **Deploy All Flows in Group** (☁️): Deploys all flows in the group
+- **Promote All Flows in Group** (🚀): Promotes all flows in the group between environments
 
 #### Environment Context Menu  
 - **Promote Flow** (🚀): Promotes from this environment
@@ -715,6 +817,33 @@ For more details on SDK setup and configuration, see the [acme-portal-sdk docume
 - Compare code differences between environments
 - Manage feature branch deployments
 
+### Group-Based Workflow
+
+**1. Coordinated Group Deployment**
+```
+📁 Data Processing Group (data/etl)
+├── 🔄 customer_etl
+├── 🔄 transaction_etl  
+└── 🔄 sales_etl
+```
+
+- Develop related flows together in the same group
+- Deploy entire group to development environment at once
+- Test group functionality as a cohesive unit
+- Promote entire group through environments together
+
+**2. Group Release Management**
+```
+Group: "data/etl" (3 flows)
+Dev → Staging → Production
+All flows promoted together maintaining consistency
+```
+
+- Coordinate release schedules for interdependent flows
+- Ensure version alignment across related components
+- Simplify rollback operations when needed
+- Maintain operational consistency
+
 ### Emergency Response Workflow
 
 **1. Hotfix Deployment**
@@ -742,18 +871,42 @@ main (production) → hotfix/urgent-fix (dev) → staging → production
 - Maintain consistent directory structure across projects
 - Group related flows using SDK grouping features
 
+**Flow Grouping Strategy**
+- Use meaningful group hierarchies that reflect your business domains
+- Keep group names concise and descriptive
+- Align grouping with your team's organizational structure
+- Consider operational boundaries when defining groups
+
+**Example Grouping Structure:**
+```python
+# Customer data processing flows
+grouping = ["data", "customer", "processing"]
+
+# Machine learning model flows  
+grouping = ["ml", "models", "training"]
+
+# Reporting and analytics flows
+grouping = ["reporting", "analytics", "daily"]
+```
+
+**Benefits of Proper Grouping:**
+- **Bulk Operations**: Deploy or promote entire logical groups at once
+- **Organization**: Easy navigation and discovery of related flows
+- **Team Coordination**: Clear ownership and responsibility boundaries
+- **Environment Management**: Coordinate releases of interdependent flows
+
 **Naming Conventions**
 ```
 flows/
 ├── data-processing/
-│   ├── etl_customer_data.py
-│   └── etl_transaction_data.py
+│   ├── etl_customer_data.py      # grouping: ["data", "customer", "etl"]
+│   └── etl_transaction_data.py   # grouping: ["data", "transaction", "etl"]
 ├── ml-pipelines/
-│   ├── model_training.py
-│   └── model_inference.py
+│   ├── model_training.py         # grouping: ["ml", "models", "training"]
+│   └── model_inference.py        # grouping: ["ml", "models", "inference"]
 └── reporting/
-    ├── daily_reports.py
-    └── monthly_analytics.py
+    ├── daily_reports.py          # grouping: ["reporting", "daily"]
+    └── monthly_analytics.py      # grouping: ["reporting", "monthly"]
 ```
 
 ### Development Best Practices
