@@ -94,6 +94,8 @@ function validateFormat(unreleasedContent) {
       }
     }
     
+    // Reset regex lastIndex to avoid issues with global flag
+    PR_LINK_REGEX.lastIndex = 0;
     return !PR_LINK_REGEX.test(line);
   });
   
