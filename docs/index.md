@@ -26,7 +26,7 @@ ACME Portal is a VS Code extension that provides a user interface for managing P
 - **Branch Management**: Track deployments across different Git branches
 
 ### ⚙️ **Configuration and Settings**
-- **Flexible Configuration**: Customizable flows directory paths
+- **Automatic Configuration**: Uses acme-portal-sdk configuration for all flow discovery
 - **Environment Management**: Support for multiple deployment environments
 - **Extension Settings**: Integration with VS Code's settings system
 - **Multi-Project Support**: Works with multi-root workspaces

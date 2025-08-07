@@ -126,7 +126,6 @@ After setup, verify everything is working:
 **Symptoms**: ACME Resources view is empty or shows "No flows found"
 
 **Solutions**:
-- Verify the flows path in extension settings matches your project structure
 - Ensure your flows are properly configured with acme-portal-sdk
 - Check that Python interpreter points to environment with acme-portal-sdk installed
 - Look for errors in Output panel (select "ACME Portal")
@@ -149,9 +148,7 @@ After setup, verify everything is working:
 
 **Solutions**:
 - Ensure VS Code has proper permissions to access your project directory
-- Check that flows path in settings uses forward slashes (even on Windows)
-- Verify the flows path is relative to workspace root, not absolute
-- Make sure the flows directory actually exists in your project
+- Make sure the flows directory exists in your project and is configured in acme-portal-sdk
 
 ## Getting Help
 
@@ -195,8 +192,7 @@ Once set up, you can:
 
 ### No Flows Visible
 
-- Verify the flows path in settings
-- Ensure your project uses acme-portal-sdk
+- Ensure your project uses acme-portal-sdk and flows are properly configured
 - Check that Python interpreter is selected
 - Look for errors in the Output panel (select "ACME Portal" from the dropdown)
 
@@ -263,21 +259,20 @@ Once your setup is complete, explore these features:
 ```json
 // .vscode/settings.json for project-specific configuration
 {
-  "acmeportal.flowsPath": "src/data_flows",
   "python.defaultInterpreterPath": "./venv/bin/python"
 }
 ```
 
 **Multi-Root Workspace Example**:
 ```json
-// workspace.code-workspace
+// workspace.code-workspace  
 {
   "folders": [
     {"name": "Project A", "path": "./project-a"},
     {"name": "Project B", "path": "./project-b"}
   ],
   "settings": {
-    "acmeportal.flowsPath": "flows"
+    "python.defaultInterpreterPath": "./venv/bin/python"
   }
 }
 ```

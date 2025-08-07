@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Removed
+- **Flow Path Settings**: Removed obsolete `acmeportal.flowsPath` setting and `setFlowsPath` command as flow discovery is now handled entirely by acme-portal-sdk (#62)
+
 ### Added
 - **Group Flow Deployment**: Added ability to deploy all flows in a specified group using group path format "aaa/bbb/ccc" (#41)
 - **Group Flow Promotion**: Added ability to promote all flows in a specified group between environments (#41)

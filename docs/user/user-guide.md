@@ -116,10 +116,9 @@ The tree automatically loads when you open a workspace, but you can manually ref
 
 The extension automatically discovers flows in your project by:
 
-1. **Scanning the configured flows directory** (set in extension settings)
-2. **Using the acme-portal-sdk FlowFinder** to identify compatible flows
-3. **Reading flow metadata** including names, descriptions, and source paths
-4. **Detecting flow grouping** for organized display
+1. **Using the acme-portal-sdk FlowFinder** to identify compatible flows throughout your project
+2. **Reading flow metadata** including names, descriptions, and source paths  
+3. **Detecting flow grouping** for organized display
 
 #### Flow Information Display
 
@@ -402,60 +401,17 @@ Access extension settings through multiple methods:
 
 ### Available Settings
 
-#### Flows Path Configuration
-
-**Setting**: `acmeportal.flowsPath`
-- **Type**: String
-- **Default**: `flows`
-- **Description**: Directory containing Python flow files (relative to workspace root)
-
-**Examples**:
-```json
-{
-  "acmeportal.flowsPath": "flows"              // Default: flows directory in root
-  "acmeportal.flowsPath": "src/flows"          // Flows in src subdirectory
-  "acmeportal.flowsPath": "packages/my-flows"  // Custom nested directory
-  "acmeportal.flowsPath": "my_flows"           // Custom directory name
-}
-```
-
-**Important Notes**:
-- Path must be relative to workspace root
-- Use forward slashes (/) even on Windows
-- Directory must exist and contain SDK-compatible flows
-- Changes require refreshing the tree view
+Currently, all flow discovery and configuration is handled automatically by the acme-portal-sdk. No manual configuration of flow paths is needed.
 
 ### Workspace Configuration
 
 #### Multi-Root Workspaces
 
-For multi-root workspaces, configure settings per folder:
-
-```json
-{
-  "folders": [
-    {
-      "name": "Project A",
-      "path": "./project-a"
-    },
-    {
-      "name": "Project B", 
-      "path": "./project-b"
-    }
-  ],
-  "settings": {
-    "acmeportal.flowsPath": "src/flows"
-  }
-}
-```
+The extension works with multi-root workspaces and will automatically discover flows in each workspace folder using the acme-portal-sdk configuration.
 
 #### Folder-Specific Settings
 
-Configure different flows paths for different projects:
-
-1. Open Command Palette (`Ctrl+Shift+P`)
-2. Run "Preferences: Open Folder Settings"
-3. Add folder-specific ACME Portal settings
+The extension automatically handles different project structures through the acme-portal-sdk configuration in each project.
 
 ## Commands Reference
 
@@ -497,7 +453,6 @@ Available when right-clicking on tree items:
 |---------|-------------|-------|
 | `acmeportal.helloWorld` | Test command for debugging | Development only |
 | `acmeportal.itemClicked` | Internal tree item handler | Internal use |
-| `acmeportal.setFlowsPath` | Set flows directory path | Internal use |
 | `acmeportal.openExternalUrl` | Open external deployment URLs | Context menu |
 
 ## Progress Notifications
@@ -709,7 +664,6 @@ Before any SDK operation, the extension validates:
 #### Error Types and Handling
 
 **Configuration Errors:**
-- Missing or incorrect flows path
 - Invalid Python interpreter
 - Missing SDK installation
 
@@ -983,7 +937,6 @@ flows/
 
 **1. Flows Not Appearing**
 ```bash
-# Check flows path configuration
 # Verify SDK installation
 # Refresh tree view
 # Check Output panel for errors
@@ -1028,7 +981,6 @@ flows/
 ### Performance Optimization
 
 **Large Projects**
-- Configure appropriate flows path to limit scanning
 - Use refresh sparingly for large flow directories
 - Organize flows hierarchically for better navigation
 - Consider splitting large projects into multiple workspaces
