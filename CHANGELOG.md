@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Changed
+- **VSCode Version Compatibility**: Updated minimum VSCode version requirement from 1.102.0 to 1.99.3 to support older but still supported VSCode versions (#66)
+
+### Added  
+- **Multi-Version Testing**: Enhanced testing infrastructure with multi-version test configuration to validate extension compatibility across different VSCode versions (#66)
+
 ### Removed
 - **Flow Path Settings**: Removed obsolete `acmeportal.flowsPath` setting and `setFlowsPath` command as flow discovery is now handled entirely by acme-portal-sdk (#62)
 
