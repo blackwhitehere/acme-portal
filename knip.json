@@ -5,7 +5,8 @@
     "src/test/**/*.ts",
     "src/test-unit/**/*.ts",
     ".vscode-test.mjs",
-    ".vscode-test-unit.mjs"
+    ".vscode-test-unit.mjs",
+    ".vscode-test-multi.mjs"
   ],
   "ignoreExportsUsedInFile": true
 }

@@ -32,6 +32,7 @@ Watch how to:
 
 ## Requirements
 
+* VSCode version 1.99.3 or higher
 * Microsoft Python VSCode Extension needs to be installed
 * Python environment used by your project needs to be selected with `Python: Select Interpreter` command
 * Project needs to add as dependency & setup [`acme-portal-sdk`](https://blackwhitehere.github.io/acme-portal-sdk)
