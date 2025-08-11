@@ -50,8 +50,6 @@ suite('Extension Integration Test Suite', () => {
 		
 		// Check if our extension commands are registered
 		const extensionCommands = [
-			'acmeportal.helloWorld',
-			'acmeportal.itemClicked',
 			'acmeportal.openSettings',
 			'acmeportal.refreshFlows',
 			'acmeportal.openFlowFile',

@@ -29,15 +29,6 @@
     ],
     "commands": [
       {
-        "command": "acmeportal.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "acmeportal.itemClicked",
-        "title": "Item Clicked"
-      },
-
-      {
         "command": "acmeportal.openSettings",
         "title": "ACME: Open Settings",
         "icon": "$(gear)"

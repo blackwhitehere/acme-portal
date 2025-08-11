@@ -8,20 +8,6 @@ export class TreeViewCommands {
     ) {}
 
     /**
-     * Hello World command - displays a simple greeting message
-     */
-    public helloWorld(): void {
-        vscode.window.showInformationMessage('Hello World from ACME Portal!');
-    }
-
-    /**
-     * Item clicked command - handles generic item click events
-     */
-    public itemClicked(): void {
-        vscode.window.showInformationMessage('Item clicked in ACME Portal!');
-    }
-
-    /**
      * Refresh the tree view
      */
     public refreshTreeView(): void {
