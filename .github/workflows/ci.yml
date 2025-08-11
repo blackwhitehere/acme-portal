@@ -1,19 +1,24 @@
 # Continuous Integration Pipeline for VS Code Extension
 #
-# This workflow provides separated testing strategy to address VS Code download issues:
-# - basic-tests: Runs linting, compilation, unit tests, and packaging (no VS Code required)
-# - integration-tests: Runs VS Code integration tests (only on manual trigger or releases)
+# This workflow runs comprehensive testing on every PR and push:
+# - basic-tests: Runs linting, compilation, unit tests, and packaging (no VS Code required)  
+# - integration-tests: Runs VS Code integration tests (now runs automatically on every PR/push)
 #
 # Features:
-# - Fast basic tests on every PR/push (Node 20.x, stable VS Code config only per issue #40)
+# - Fast basic tests on every PR/push (Node 20.x, Ubuntu by default)
+# - Full VS Code integration tests on every PR/push (with caching and retry logic)
 # - Optional full platform testing via workflow_dispatch
-# - Integration tests only when explicitly needed (manual trigger, releases)
-# - Handles firewall restrictions preventing update.code.visualstudio.com downloads
+# - Handles network restrictions with caching and enhanced retry logic
+#
+# Changes from previous version:
+# - Integration tests now run automatically on every PR/push (previously manual only)
+# - Added VSCode download caching to improve reliability
+# - Enhanced network retry logic for better success rates
 #
 # Usage:
-# - Automatically triggered on PR/push events (basic tests only)
-# - Use workflow_dispatch with 'run-integration-tests: true' for VS Code integration tests
+# - Automatically triggered on PR/push events (both basic and integration tests)
 # - Use workflow_dispatch with 'full-test: true' for cross-platform testing
+# - Integration tests include extension activation, command registration, and compatibility checks
 #
 # For more information: https://code.visualstudio.com/api/working-with-extensions/continuous-integration
 
@@ -27,7 +32,7 @@ on:
   workflow_dispatch:
     inputs:
       run-integration-tests:
-        description: 'Run VS Code integration tests (requires network access to update.code.visualstudio.com)'
+        description: 'Force additional integration test runs (integration tests now run automatically on all PRs)'
         required: false
         default: false
         type: boolean
