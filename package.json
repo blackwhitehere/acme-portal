@@ -6,7 +6,7 @@
   "icon": "media/acme-icon.png",
   "version": "0.0.5",
   "engines": {
-    "vscode": "^1.102.0"
+    "vscode": "^1.99.3"
   },
   "categories": [
     "Other"
@@ -255,6 +255,9 @@
     "test:vscode": "vscode-test",
     "test:unit": "npm run compile && npx mocha 'out/test-unit/**/*.test.js' --ui tdd --timeout 20000",
     "test:integration": "vscode-test",
+    "test:multi-version": "vscode-test --config .vscode-test-multi.mjs",
+    "test:minimum-version": "vscode-test --config .vscode-test-multi.mjs --grep 'minimum version'",
+    "test:latest": "vscode-test --config .vscode-test-multi.mjs --grep 'latest stable'",
     "test:ci-fallback": "echo 'VS Code tests skipped due to environment limitations'",
     "knip": "knip",
     "package-check": "vsce package --allow-star-activation",
@@ -267,7 +270,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.19.9",
-    "@types/vscode": "^1.102.0",
+    "@types/vscode": "^1.99.3",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.22.0",
     "@vscode/test-cli": "^0.0.11",
