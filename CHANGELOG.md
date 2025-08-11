@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+- **SDK Version Checking**: Extension now verifies that the installed acme-portal-sdk version meets minimum requirements before allowing operations, ensuring compatibility and providing clear upgrade instructions when needed (#68)
+
 ### Changed
 - **VSCode Version Compatibility**: Updated minimum VSCode version requirement from 1.102.0 to 1.99.3 to support older but still supported VSCode versions (#66)
 
