@@ -223,12 +223,12 @@ export class PreConditionChecker {
             const extension = vscode.extensions.getExtension('blackwhitehere.acmeportal');
             if (extension) {
                 const packageJson = extension.packageJSON;
-                return packageJson.acmePortalConfig?.minSdkVersion || '0.1.0';
+                return packageJson.acmePortalConfig?.minSdkVersion || '0.0.12';
             }
-            return '0.1.0'; // Default fallback
+            return '0.0.12'; // Default fallback
         } catch (error) {
             console.warn('Failed to get minimum SDK version from package.json:', error);
-            return '0.1.0'; // Default fallback
+            return '0.0.12'; // Default fallback
         }
     }
 
