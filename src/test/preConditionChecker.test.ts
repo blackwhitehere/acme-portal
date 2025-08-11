@@ -178,6 +178,7 @@ suite('PreConditionChecker Test Suite', () => {
             workspace: { success: false, message: 'Test workspace error' },
             pythonInterpreter: { success: true, warning: 'Test warning' },
             acmePortalSdk: { success: false, message: 'Test SDK error' },
+            sdkVersion: { success: true },
             acmePortalSdkDirectory: { success: true },
             sdkModules: { success: true }
         };

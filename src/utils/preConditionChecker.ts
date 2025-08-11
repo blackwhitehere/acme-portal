@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 import { WorkspaceService } from './workspaceService';
 import { CommandExecutor } from './commandExecutor';
 import { PythonScriptExecutor } from './pythonScriptExecutor';
+import { parseSemanticVersion, isVersionCompatible } from './versionUtils';
 
 export interface PreConditionResult {
     success: boolean;
@@ -16,6 +18,7 @@ export interface PreConditionCheckResults {
     workspace: PreConditionResult;
     pythonInterpreter: PreConditionResult;
     acmePortalSdk: PreConditionResult;
+    sdkVersion: PreConditionResult;
     acmePortalSdkDirectory: PreConditionResult;
     sdkModules: PreConditionResult;
 }
@@ -44,6 +47,7 @@ export class PreConditionChecker {
             workspace: await this.checkWorkspaceOpen(),
             pythonInterpreter: await this.checkPythonInterpreter(),
             acmePortalSdk: { success: false },
+            sdkVersion: { success: false },
             acmePortalSdkDirectory: { success: false },
             sdkModules: { success: false }
         };
@@ -51,6 +55,12 @@ export class PreConditionChecker {
         // Only check remaining conditions if workspace and python are available
         if (results.workspace.success && results.pythonInterpreter.success) {
             results.acmePortalSdk = await this.checkAcmePortalSdkInstalled();
+            
+            // Only check version if SDK is installed
+            if (results.acmePortalSdk.success) {
+                results.sdkVersion = await this.checkSdkVersion();
+            }
+            
             results.acmePortalSdkDirectory = await this.checkAcmePortalSdkDirectory();
             
             // Only check modules if directory exists
@@ -63,6 +73,7 @@ export class PreConditionChecker {
         results.allPassed = results.workspace.success && 
                            results.pythonInterpreter.success &&
                            results.acmePortalSdk.success &&
+                           results.sdkVersion.success &&
                            results.acmePortalSdkDirectory.success &&
                            results.sdkModules.success;
 
@@ -167,6 +178,94 @@ export class PreConditionChecker {
                 success: false,
                 message: `Error checking acme-portal-sdk installation: ${error}`
             };
+        }
+    }
+
+    /**
+     * Check if the installed acme-portal-sdk version meets minimum requirements
+     */
+    private async checkSdkVersion(): Promise<PreConditionResult> {
+        try {
+            const minVersion = this.getMinimumSdkVersion();
+            const installedVersion = await this.getInstalledSdkVersion();
+            
+            if (!installedVersion) {
+                return {
+                    success: false,
+                    message: 'Unable to determine acme-portal-sdk version. Please ensure it is properly installed.'
+                };
+            }
+
+            if (!isVersionCompatible(installedVersion, minVersion)) {
+                return {
+                    success: false,
+                    message: `acme-portal-sdk version ${installedVersion} is not compatible with this extension. Minimum required version: ${minVersion}. Please upgrade: pip install --upgrade acme-portal-sdk`
+                };
+            }
+
+            return { 
+                success: true,
+                message: `acme-portal-sdk version ${installedVersion} is compatible.`
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: `Error checking acme-portal-sdk version: ${error}`
+            };
+        }
+    }
+
+    /**
+     * Get the minimum required SDK version from package.json configuration
+     */
+    private getMinimumSdkVersion(): string {
+        try {
+            const extension = vscode.extensions.getExtension('blackwhitehere.acmeportal');
+            if (extension) {
+                const packageJson = extension.packageJSON;
+                return packageJson.acmePortalConfig?.minSdkVersion || '0.1.0';
+            }
+            return '0.1.0'; // Default fallback
+        } catch (error) {
+            console.warn('Failed to get minimum SDK version from package.json:', error);
+            return '0.1.0'; // Default fallback
+        }
+    }
+
+    /**
+     * Get the installed SDK version using Python script
+     */
+    private async getInstalledSdkVersion(): Promise<string | null> {
+        try {
+            const scriptPath = await PythonScriptExecutor.getScriptPath('get_sdk_version.py');
+            if (!scriptPath) {
+                throw new Error('Could not locate the SDK version checker script.');
+            }
+
+            // Create a temporary file to store the output
+            const outputFile = path.join(os.tmpdir(), `acme_portal_version_${Date.now()}.json`);
+            
+            // Execute the script using PythonScriptExecutor
+            const pythonExecutor = new PythonScriptExecutor();
+            await pythonExecutor.executeScript(scriptPath, outputFile);
+            
+            // Read the result from the output file
+            if (await PythonScriptExecutor.fileExists(outputFile)) {
+                const jsonContent = await fs.promises.readFile(outputFile, 'utf8');
+                
+                // Clean up the temporary file
+                fs.promises.unlink(outputFile).catch(err => {
+                    console.warn(`Failed to delete temporary file ${outputFile}:`, err);
+                });
+                
+                const result = JSON.parse(jsonContent);
+                return result.success ? result.version : null;
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Error getting SDK version:', error);
+            return null;
         }
     }
 
@@ -303,6 +402,10 @@ export class PreConditionChecker {
 
         if (!results.acmePortalSdk.success && results.acmePortalSdk.message) {
             errors.push(results.acmePortalSdk.message);
+        }
+
+        if (!results.sdkVersion.success && results.sdkVersion.message) {
+            errors.push(results.sdkVersion.message);
         }
 
         if (!results.acmePortalSdkDirectory.success && results.acmePortalSdkDirectory.message) {
