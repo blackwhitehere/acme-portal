@@ -29,6 +29,14 @@ export class CommandManager {
         // Tree view commands
         this.disposables.push(
             vscode.commands.registerCommand(
+                'acmeportal.helloWorld',
+                this.treeViewCommands.helloWorld.bind(this.treeViewCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.itemClicked',
+                this.treeViewCommands.itemClicked.bind(this.treeViewCommands)
+            ),
+            vscode.commands.registerCommand(
                 'acmeportal.refreshTreeView',
                 this.treeViewCommands.refreshTreeView.bind(this.treeViewCommands)
             ),
