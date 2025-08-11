@@ -77,11 +77,11 @@ jobs:
     - name: Validate package integrity
       run: npm run package-check
 
-  # Integration tests that require VS Code installation - only run when explicitly requested
+  # Integration tests that require VS Code installation - run on every PR and push
   integration-tests:
     name: VS Code Integration Tests
-    # Only run integration tests when explicitly requested
-    if: ${{ inputs.run-integration-tests == true }}
+    # Run integration tests on every PR and push, plus when explicitly requested
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' || inputs.run-integration-tests == true }}
     strategy:
       matrix:
         # Simplified matrix per issue #40: default to Ubuntu + Node 20.x + stable VS Code
@@ -108,17 +108,55 @@ jobs:
     - name: Compile TypeScript
       run: npm run compile
       
+    - name: Cache VSCode downloads
+      uses: actions/cache@v4
+      with:
+        path: ~/.vscode-test
+        key: vscode-${{ matrix.vscode-version }}-${{ runner.os }}-${{ matrix.node-version }}
+        restore-keys: |
+          vscode-${{ matrix.vscode-version }}-${{ runner.os }}-
+          vscode-${{ matrix.vscode-version }}-
+          
+    - name: Setup custom retry for VSCode downloads
+      run: |
+        # Configure npm and node to use longer timeouts for downloads
+        npm config set timeout 300000
+        npm config set fetch-timeout 300000
+        npm config set fetch-retries 5
+      
     - name: Run VS Code integration tests (Linux)
       if: runner.os == 'Linux'
-      run: xvfb-run -a npm run test:integration
+      run: |
+        echo "🚀 Starting VSCode integration tests on Linux..."
+        echo "Environment: ${{ github.event_name }}"
+        echo "VSCode Version: ${{ matrix.vscode-version }}"
+        xvfb-run -a npm run test:integration
       env:
         VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
+      continue-on-error: false
       
     - name: Run VS Code integration tests (Windows/macOS)
-      if: runner.os != 'Linux'
-      run: npm run test:integration
+      if: runner.os != 'Linux'  
+      run: |
+        echo "🚀 Starting VSCode integration tests on ${{ runner.os }}..."
+        echo "Environment: ${{ github.event_name }}"
+        echo "VSCode Version: ${{ matrix.vscode-version }}"
+        npm run test:integration
       env:
         VSCODE_TEST_VERSION: ${{ matrix.vscode-version }}
+        # Set explicit retry and timeout options for better reliability
+        VSCODE_TEST_TIMEOUT: 60000
+      continue-on-error: false
+      
+    - name: Upload test results
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-failure-logs-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.vscode-version }}
+        path: |
+          .vscode-test/
+          npm-debug.log*
+          test-results.xml
 
   code-quality:
     name: Code Quality Checks
