@@ -225,26 +225,54 @@ We use semantic versioning (semver):
 - Increment MINOR for new features
 - Increment PATCH for bug fixes
 
-### Creating Releases
+### Automated Release Process
 
-Releases are automated through GitHub Actions:
+Releases are **fully automated** through GitHub Actions. No manual CHANGELOG.md editing required!
 
 1. **Update Version**
    ```bash
    npm version patch  # or minor/major
    ```
 
-2. **Create Tag**
+2. **Create and Push Tag**
    ```bash
    git push origin main
    git push origin --tags
    ```
 
-3. **Automated Process**
-   - CI runs tests across platforms
-   - Extension is packaged and validated
-   - GitHub release is created
-   - VS Code Marketplace publishing (when configured)
+3. **Automated Workflow**
+   The release workflow automatically:
+   - **Runs comprehensive tests** across multiple platforms and VS Code versions
+   - **Packages and validates** the extension
+   - **Extracts release notes** from the `[Unreleased]` section in CHANGELOG.md
+   - **Creates GitHub release** with extracted release notes
+   - **Publishes to VS Code Marketplace** (when `VSCE_PAT` secret is configured)
+   - **🆕 Updates CHANGELOG.md** by moving `[Unreleased]` content to new version section
+   - **🆕 Commits updated CHANGELOG.md** back to the main branch
+
+### New Developer Experience
+
+**Before** (manual process):
+```bash
+# Developers had to manually edit CHANGELOG.md
+# 1. Move [Unreleased] content to version section
+# 2. Clear [Unreleased] section
+# 3. Commit changes
+git add CHANGELOG.md
+git commit -m "Update CHANGELOG for 1.2.3"
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+**After** (automated process):
+```bash
+# Developers just create the tag - automation handles everything else
+git tag v1.2.3
+git push origin v1.2.3
+# ✅ GitHub Actions automatically updates CHANGELOG.md and commits it back
+```
+
+This eliminates manual steps and reduces the chance of release documentation errors.
 
 ## Getting Help
 

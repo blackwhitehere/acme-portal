@@ -41,88 +41,40 @@ Watch how to:
 
 ## Development
 
-For detailed development setup, contribution guidelines, and release notes process, see [CONTRIBUTING.md](CONTRIBUTING.md).
+For detailed development setup, contribution guidelines, and release process, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-### Dev setup
+### Quick Start for Developers
 
-* Go to `VSCode` `Run and Debug` tab and run `Run Extension` configuration.
-* Open [`acme-prefect`](https://github.com/blackwhitehere/acme-prefect) repository which you have pulled locally.
-* Create python virtual env according to instructions in the repo and set it using `Python: Select Interpreter`.
+1. **Setup**: Clone the repository and run `npm install`
+2. **Development**: Press F5 in VS Code to launch the Extension Development Host
+3. **Testing**: Open [acme-prefect](https://github.com/blackwhitehere/acme-prefect) repository in the extension host
+4. **Python Setup**: Create virtual environment and select Python interpreter
 
-### Building and Testing
-
-The project uses a comprehensive CI/CD pipeline with the following commands:
+### Essential Commands
 
 ```bash
-# Install dependencies
-npm install
-
-# Lint code
-npm run lint
-
-# Check for unused dependencies
-npm run knip
-
-# Compile TypeScript
-npm run compile
-
-# Run tests
-npm test
-
-# Package extension
-npm run package
-
-# Verify package integrity
-npm run package-check
+npm install     # Install dependencies
+npm run compile # Compile TypeScript
+npm run lint    # Check code quality
+npm test        # Run test suite
+npm run package # Build production package
 ```
 
-### CI/CD Pipeline
+### Automated Release Process
 
-The project includes comprehensive CI/CD automation:
+Releases are fully automated - just create and push a git tag:
 
-#### Continuous Integration (`.github/workflows/ci.yml`)
-- **Multi-platform testing**: Ubuntu, Windows, macOS
-- **Multiple Node.js versions**: 18.x, 20.x  
-- **Multiple VS Code versions**: stable, insiders
-- **Quality checks**: ESLint, knip, npm audit
-- **Automated packaging validation**
-
-#### Security Scanning
-- **CodeQL analysis** for security vulnerabilities
-- **Dependabot** for automatic dependency updates
-- **NPM audit** for known security issues
-
-#### Release Automation (`.github/workflows/release.yml`)
-- **Automated publishing** on git tags (`v*`)
-- **GitHub releases** with extension assets
-- **VS Code Marketplace publishing** (requires `VSCE_PAT` secret)
-- **Package verification** before publishing
-
-### Publishing
-
-To publish a new version:
-
-1. Update version in `package.json`
-2. Create a git tag: `git tag v1.0.0`
-3. Push tag: `git push origin v1.0.0`
-4. The release workflow will automatically:
-   - Run all tests and quality checks
-   - Package the extension
-   - Create a GitHub release
-   - Publish to VS Code Marketplace (if configured)
-
-Manual publishing:
 ```bash
-# Package extension
-npm run package
-
-# Publish to marketplace (requires authentication)
-npx vsce publish
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
-## Build and publish
-
-Follow [VS Code Extension Publishing Guide](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) for detailed publishing instructions.
+The release workflow automatically:
+- Runs comprehensive tests across platforms
+- Packages and validates the extension  
+- Creates GitHub release with automated changelog
+- Publishes to VS Code Marketplace (when configured)
+- **Updates CHANGELOG.md** by moving `[Unreleased]` content to version section
 
 ## Extension Settings
 
