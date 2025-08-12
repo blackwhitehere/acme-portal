@@ -46,10 +46,10 @@ function extractReleaseNotes(content, version = null) {
   if (version) {
     // Match specific version section
     const versionEscaped = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    sectionPattern = new RegExp(`## \\[${versionEscaped}\\][^\\n]*\\n([\\s\\S]*?)(?=## \\[|$)`, 'i');
+    sectionPattern = new RegExp(`## \\[${versionEscaped}\\][^\\n]*\\n([\\s\\S]*?)(?=\\n## (?!\\[${versionEscaped}\\])|$)`, 'i');
   } else {
     // Match unreleased section
-    sectionPattern = /## \[Unreleased\][^\n]*\n([\s\S]*?)(?=## \[|$)/i;
+    sectionPattern = /## \[Unreleased\][^\n]*\n([\s\S]*?)(?=\n## (?!\[Unreleased\])|$)/i;
   }
   
   const match = content.match(sectionPattern);

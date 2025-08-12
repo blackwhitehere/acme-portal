@@ -4,6 +4,7 @@
   "ignore": [
     "src/test/**/*.ts",
     "src/test-unit/**/*.ts",
+    "src/test-unit/**/*.js",
     ".vscode-test.mjs",
     ".vscode-test-unit.mjs",
     ".vscode-test-multi.mjs"
