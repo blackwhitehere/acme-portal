@@ -126,36 +126,39 @@ We follow [Semantic Versioning](https://semver.org/):
 - **Review Process**: Maintainers will verify release notes during code review
 
 ### Creating a Release
-1. **Prepare Release Notes**
+
+The release process is now **fully automated** - no manual CHANGELOG.md editing required!
+
+1. **Ensure Release Notes Are Ready**
    - Review all entries in the `[Unreleased]` section
    - Ensure all changes are properly categorized and described
    - Verify all PR numbers are correct and linked
 
-2. **Update Version**
+2. **Update Version and Create Release**
    ```bash
    # Update package.json version
    npm version patch|minor|major
-   ```
-
-3. **Move Release Notes**
-   - Create new version section in `CHANGELOG.md`
-   - Move all items from `[Unreleased]` to the new version section
-   - Add release date: `## [1.0.0] - 2024-01-15`
-   - Leave `[Unreleased]` section empty for future changes
-
-4. **Create and Push Tag**
-   ```bash
+   
+   # Create and push tag to trigger automated release
    git tag v1.0.0
    git push origin v1.0.0
    ```
 
-5. **Automated Release**
-   - GitHub Actions will automatically:
-     - Run all tests and quality checks
-     - Bundle the extension
-     - Extract release notes from `CHANGELOG.md`
-     - Create GitHub release with proper release notes
-     - Publish to VS Code Marketplace (if configured)
+3. **Automated Release Process**
+   The GitHub Actions workflow automatically:
+   - **Runs comprehensive tests** across all platforms and VS Code versions
+   - **Packages and validates** the extension
+   - **Extracts release notes** from the `[Unreleased]` section
+   - **Creates GitHub release** with extracted release notes  
+   - **Publishes to VS Code Marketplace** (when `VSCE_PAT` secret is configured)
+   - **🆕 Updates CHANGELOG.md** by moving `[Unreleased]` content to new version section
+   - **🆕 Commits and pushes** the updated CHANGELOG.md back to the repository
+
+4. **Post-Release**
+   - The `[Unreleased]` section will be automatically cleared
+   - A new version section will be created with the release content
+   - All changes are committed back to the main branch
+   - Future PRs can add new entries to the empty `[Unreleased]` section
 
 ## Code Style
 
