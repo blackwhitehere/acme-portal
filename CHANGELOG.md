@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Changed
+- **Release Process**: Automated CHANGELOG.md updates during release process to move [Unreleased] content to version sections (#73)
+
 ## 0.0.6
 
 ### Added
