@@ -5,10 +5,10 @@ import { DeploymentDetails } from '../actions/findDeployments';
  * Interface for search criteria
  */
 export interface SearchCriteria {
-    pattern: string;
-    caseSensitive?: boolean;
-    useRegex?: boolean;
-    searchFields?: string[]; // Specific fields to search in
+    field: string;
+    value: string;
+    isRegex?: boolean;
+    type?: 'flow' | 'deployment' | 'all';
 }
 
 /**
@@ -17,31 +17,39 @@ export interface SearchCriteria {
 export class SearchUtils {
     
     /**
-     * Search flows based on the given criteria
+     * Search flows based on multiple criteria
      * @param flows Array of flows to search
-     * @param criteria Search criteria
+     * @param criteriaList Array of search criteria
      * @returns Filtered array of flows
      */
-    public static searchFlows(flows: FlowDetails[], criteria: SearchCriteria): FlowDetails[] {
-        if (!criteria.pattern.trim()) {
+    public static searchFlows(flows: FlowDetails[], criteriaList: SearchCriteria[]): FlowDetails[] {
+        if (!criteriaList || criteriaList.length === 0) {
             return flows;
         }
 
-        return flows.filter(flow => this.matchesFlowCriteria(flow, criteria));
+        return flows.filter(flow => 
+            criteriaList.every(criteria => 
+                criteria.type === 'deployment' || this.matchesFlowCriteria(flow, criteria)
+            )
+        );
     }
 
     /**
-     * Search deployments based on the given criteria
+     * Search deployments based on multiple criteria
      * @param deployments Array of deployments to search
-     * @param criteria Search criteria
+     * @param criteriaList Array of search criteria
      * @returns Filtered array of deployments
      */
-    public static searchDeployments(deployments: DeploymentDetails[], criteria: SearchCriteria): DeploymentDetails[] {
-        if (!criteria.pattern.trim()) {
+    public static searchDeployments(deployments: DeploymentDetails[], criteriaList: SearchCriteria[]): DeploymentDetails[] {
+        if (!criteriaList || criteriaList.length === 0) {
             return deployments;
         }
 
-        return deployments.filter(deployment => this.matchesDeploymentCriteria(deployment, criteria));
+        return deployments.filter(deployment => 
+            criteriaList.every(criteria => 
+                criteria.type === 'flow' || this.matchesDeploymentCriteria(deployment, criteria)
+            )
+        );
     }
 
     /**
@@ -58,88 +66,88 @@ export class SearchUtils {
      * Check if a flow matches the search criteria
      */
     private static matchesFlowCriteria(flow: FlowDetails, criteria: SearchCriteria): boolean {
-        const pattern = criteria.caseSensitive ? criteria.pattern : criteria.pattern.toLowerCase();
-        
-        // If specific fields are specified, only search those
-        if (criteria.searchFields && criteria.searchFields.length > 0) {
-            return criteria.searchFields.some(field => {
-                const value = this.getFlowFieldValue(flow, field);
-                return value && this.matchesPattern(value, pattern, criteria.useRegex, criteria.caseSensitive);
-            });
+        if (!criteria.value.trim()) {
+            return true;
         }
 
-        // Search all relevant fields
-        const searchableFields = [
-            flow.name,
-            flow.original_name,
-            flow.description,
-            flow.obj_type,
-            flow.obj_name,
-            flow.obj_parent_type,
-            flow.obj_parent,
-            flow.module,
-            flow.source_path,
-            flow.source_relative,
-            flow.import_path,
-            ...(flow.grouping || []),
-            ...this.getChildAttributeValues(flow.child_attributes)
-        ];
+        // If field is 'all', search all fields
+        if (criteria.field === 'all') {
+            const searchableFields = [
+                flow.name,
+                flow.original_name,
+                flow.description,
+                flow.obj_type,
+                flow.obj_name,
+                flow.obj_parent_type,
+                flow.obj_parent,
+                flow.module,
+                flow.source_path,
+                flow.source_relative,
+                flow.import_path,
+                ...(flow.grouping || []),
+                ...this.getChildAttributeValues(flow.child_attributes)
+            ];
 
-        return searchableFields.some(field => 
-            field && this.matchesPattern(field, pattern, criteria.useRegex, criteria.caseSensitive)
-        );
+            return searchableFields.some(field => 
+                field && this.matchesPattern(field, criteria.value, criteria.isRegex)
+            );
+        }
+
+        // Search specific field
+        const value = this.getFlowFieldValue(flow, criteria.field);
+        return value ? this.matchesPattern(value, criteria.value, criteria.isRegex) : false;
     }
 
     /**
      * Check if a deployment matches the search criteria
      */
     private static matchesDeploymentCriteria(deployment: DeploymentDetails, criteria: SearchCriteria): boolean {
-        const pattern = criteria.caseSensitive ? criteria.pattern : criteria.pattern.toLowerCase();
-        
-        // If specific fields are specified, only search those
-        if (criteria.searchFields && criteria.searchFields.length > 0) {
-            return criteria.searchFields.some(field => {
-                const value = this.getDeploymentFieldValue(deployment, field);
-                return value && this.matchesPattern(value, pattern, criteria.useRegex, criteria.caseSensitive);
-            });
+        if (!criteria.value.trim()) {
+            return true;
         }
 
-        // Search all relevant fields
-        const searchableFields = [
-            deployment.name,
-            deployment.project_name,
-            deployment.branch,
-            deployment.flow_name,
-            deployment.env,
-            deployment.commit_hash,
-            deployment.package_version,
-            ...(deployment.tags || []),
-            deployment.url,
-            ...this.getChildAttributeValues(deployment.child_attributes)
-        ];
+        // If field is 'all', search all fields
+        if (criteria.field === 'all') {
+            const searchableFields = [
+                deployment.name,
+                deployment.project_name,
+                deployment.branch,
+                deployment.flow_name,
+                deployment.env,
+                deployment.commit_hash,
+                deployment.package_version,
+                ...(deployment.tags || []),
+                deployment.url,
+                ...this.getChildAttributeValues(deployment.child_attributes)
+            ];
 
-        return searchableFields.some(field => 
-            field && this.matchesPattern(field, pattern, criteria.useRegex, criteria.caseSensitive)
-        );
+            return searchableFields.some(field => 
+                field && this.matchesPattern(field, criteria.value, criteria.isRegex)
+            );
+        }
+
+        // Search specific field
+        const value = this.getDeploymentFieldValue(deployment, criteria.field);
+        return value ? this.matchesPattern(value, criteria.value, criteria.isRegex) : false;
     }
 
     /**
      * Check if a string matches the search pattern
      */
-    private static matchesPattern(value: string, pattern: string, useRegex: boolean = false, caseSensitive: boolean = false): boolean {
-        const searchValue = caseSensitive ? value : value.toLowerCase();
+    private static matchesPattern(value: string, pattern: string, useRegex: boolean = false): boolean {
+        const searchValue = value.toLowerCase();
+        const searchPattern = pattern.toLowerCase();
         
         if (useRegex) {
             try {
-                const flags = caseSensitive ? 'g' : 'gi';
-                const regex = new RegExp(pattern, flags);
-                return regex.test(searchValue);
+                const regex = new RegExp(pattern, 'i');
+                return regex.test(value);
             } catch (error) {
                 // If regex is invalid, fall back to simple contains search
-                return searchValue.includes(pattern);
+                return searchValue.includes(searchPattern);
             }
         } else {
-            return searchValue.includes(pattern);
+            return searchValue.includes(searchPattern);
         }
     }
 
@@ -205,7 +213,7 @@ export class SearchUtils {
      */
     public static parseSearchQuery(query: string): SearchCriteria[] {
         if (!query.trim()) {
-            return [{ pattern: query }];
+            return [];
         }
 
         // Check if query contains field-specific searches (colon-separated)
@@ -213,7 +221,11 @@ export class SearchUtils {
         
         if (!hasFieldSearch) {
             // Simple search - treat the entire query as one pattern
-            return [{ pattern: query }];
+            return [{
+                field: 'all',
+                value: query.trim(),
+                isRegex: false
+            }];
         }
 
         const criteria: SearchCriteria[] = [];
@@ -226,19 +238,26 @@ export class SearchUtils {
                     const value = valueParts.join(':');
                     if (field && value) {
                         criteria.push({
-                            pattern: value,
-                            searchFields: [field]
+                            field: field.trim(),
+                            value: value.trim(),
+                            isRegex: false
                         });
                     }
                 } else {
                     criteria.push({
-                        pattern: part
+                        field: 'all',
+                        value: part.trim(),
+                        isRegex: false
                     });
                 }
             }
         }
         
         // If no valid criteria found, treat the whole query as a single pattern
-        return criteria.length > 0 ? criteria : [{ pattern: query }];
+        return criteria.length > 0 ? criteria : [{
+            field: 'all',
+            value: query.trim(),
+            isRegex: false
+        }];
     }
 }

@@ -5,7 +5,6 @@ import { FlowCommands } from '../commands/FlowCommands';
 import { PromotionCommands } from '../commands/PromotionCommands';
 import { ComparisonCommands } from '../commands/ComparisonCommands';
 import { DeploymentCommands } from '../commands/DeploymentCommands';
-import { SearchCommands } from '../commands/SearchCommands';
 
 export class CommandManager {
     /**
@@ -19,8 +18,7 @@ export class CommandManager {
         private readonly flowCommands: FlowCommands,
         private readonly promotionCommands: PromotionCommands,
         private readonly comparisonCommands: ComparisonCommands,
-        private readonly deploymentCommands: DeploymentCommands,
-        private readonly searchCommands: SearchCommands
+        private readonly deploymentCommands: DeploymentCommands
     ) {}
 
     /**
@@ -97,22 +95,6 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.compareFlowVersions',
                 this.comparisonCommands.compareFlowVersions.bind(this.comparisonCommands)
-            )
-        );
-
-        // Search commands
-        this.disposables.push(
-            vscode.commands.registerCommand(
-                'acmeportal.searchFlows',
-                this.searchCommands.searchFlows.bind(this.searchCommands)
-            ),
-            vscode.commands.registerCommand(
-                'acmeportal.clearSearch',
-                this.searchCommands.clearSearch.bind(this.searchCommands)
-            ),
-            vscode.commands.registerCommand(
-                'acmeportal.showSearchHelp',
-                this.searchCommands.showSearchHelp.bind(this.searchCommands)
             )
         );
 

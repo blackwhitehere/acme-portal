@@ -389,17 +389,9 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
 
         this.searchCriteria = criteria;
         
-        // Filter flows based on criteria
-        this.filteredFlows = [...this.flows];
-        for (const criterion of criteria) {
-            this.filteredFlows = SearchUtils.searchFlows(this.filteredFlows, criterion);
-        }
-
-        // Filter deployments based on criteria and flow names
-        this.filteredDeployments = [...this.deployments];
-        for (const criterion of criteria) {
-            this.filteredDeployments = SearchUtils.searchDeployments(this.filteredDeployments, criterion);
-        }
+        // Filter flows and deployments using the new multiple criteria approach
+        this.filteredFlows = SearchUtils.searchFlows(this.flows, criteria);
+        this.filteredDeployments = SearchUtils.searchDeployments(this.deployments, criteria);
 
         // Additionally filter deployments to only include those belonging to filtered flows
         const filteredFlowNames = this.filteredFlows.map(f => f.name);

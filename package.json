@@ -85,21 +85,6 @@
         "command": "acmeportal.openExternalUrl",
         "title": "Open URL",
         "icon": "$(link)"
-      },
-      {
-        "command": "acmeportal.searchFlows",
-        "title": "Search Flows & Deployments",
-        "icon": "$(search)"
-      },
-      {
-        "command": "acmeportal.clearSearch",
-        "title": "Clear Search",
-        "icon": "$(clear-all)"
-      },
-      {
-        "command": "acmeportal.showSearchHelp",
-        "title": "Search Help",
-        "icon": "$(question)"
       }
     ],
 
@@ -114,6 +99,12 @@
     },
     "views": {
       "acme-portal-container": [
+        {
+          "id": "acmePortalSearchView",
+          "name": "Search",
+          "when": "acmePortalEnabled",
+          "type": "webview"
+        },
         {
           "id": "acmePortalView",
           "name": "ACME Resources",
@@ -130,16 +121,6 @@
         },
         {
           "command": "acmeportal.refreshFlows",
-          "when": "view == acmePortalView",
-          "group": "navigation"
-        },
-        {
-          "command": "acmeportal.searchFlows",
-          "when": "view == acmePortalView",
-          "group": "navigation"
-        },
-        {
-          "command": "acmeportal.clearSearch",
           "when": "view == acmePortalView",
           "group": "navigation"
         }
@@ -209,18 +190,6 @@
         {
           "command": "acmeportal.compareFlowVersions",
           "title": "ACME: Compare Flow Versions"
-        },
-        {
-          "command": "acmeportal.searchFlows",
-          "title": "ACME: Search Flows & Deployments"
-        },
-        {
-          "command": "acmeportal.clearSearch",
-          "title": "ACME: Clear Search"
-        },
-        {
-          "command": "acmeportal.showSearchHelp",
-          "title": "ACME: Search Help"
         }
       ]
     },

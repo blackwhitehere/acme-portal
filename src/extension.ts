@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { FlowTreeDataProvider } from './treeView/treeDataProvider';
+import { SearchViewProvider } from './treeView/searchViewProvider';
 import { CommandExecutor } from './utils/commandExecutor';
 import { WorkspaceService } from './utils/workspaceService';
 import { GitService } from './utils/gitService';
@@ -12,7 +13,6 @@ import { FlowCommands } from './commands/FlowCommands';
 import { PromotionCommands } from './commands/PromotionCommands';
 import { ComparisonCommands } from './commands/ComparisonCommands';
 import { DeploymentCommands } from './commands/DeploymentCommands';
-import { SearchCommands } from './commands/SearchCommands';
 
 export function activate(context: vscode.ExtensionContext) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -34,6 +34,10 @@ export function activate(context: vscode.ExtensionContext) {
         showCollapseAll: true
     });
 
+    // Initialize search view provider
+    const searchViewProvider = new SearchViewProvider(context.extensionUri, acmeTreeDataProvider);
+    vscode.window.registerWebviewViewProvider(SearchViewProvider.viewType, searchViewProvider);
+
     // Initialize command handlers
     const treeViewCommands = new TreeViewCommands(acmeTreeDataProvider);
     const settingsCommands = new SettingsCommands();
@@ -41,7 +45,6 @@ export function activate(context: vscode.ExtensionContext) {
     const promotionCommands = new PromotionCommands(gitService);
     const comparisonCommands = new ComparisonCommands(gitService, workspaceService, acmeTreeDataProvider);
     const deploymentCommands = new DeploymentCommands(gitService);
-    const searchCommands = new SearchCommands(acmeTreeDataProvider);
 
     // Initialize command manager and register all commands
     const commandManager = new CommandManager(
@@ -50,15 +53,17 @@ export function activate(context: vscode.ExtensionContext) {
         flowCommands,
         promotionCommands,
         comparisonCommands,
-        deploymentCommands,
-        searchCommands
+        deploymentCommands
     );
 
     // Register all commands and add them to context subscriptions
     context.subscriptions.push(...commandManager.registerCommands());
 
-    // Add the tree view to subscriptions
+    // Add the tree view and search view to subscriptions
     context.subscriptions.push(treeView);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(SearchViewProvider.viewType, searchViewProvider)
+    );
 
 
 }
