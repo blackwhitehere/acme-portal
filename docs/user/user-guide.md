@@ -45,8 +45,45 @@ The extension automatically discovers flows using the acme-portal-sdk FlowFinder
 ### Tree Navigation
 
 - **Refresh**: Click the refresh button (🔄) or use Command Palette → "ACME: Refresh Flows"
+- **Search**: Click the search button (🔍) or use Command Palette → "ACME: Search Flows & Deployments"
+- **Clear Search**: Click the clear button (🆑) to reset search and show all items
 - **Expand/Collapse**: Click arrows or double-click items
 - **Hover Information**: Tooltips show additional details
+
+### Search Functionality
+
+The extension provides powerful search capabilities to filter flows and deployments:
+
+**Basic Search:**
+- Enter any text to search across all flow and deployment properties
+- Search is case-insensitive by default
+- Example: `data processing` finds flows with "data" or "processing" in any field
+
+**Field-Specific Search:**
+Use `field:value` format to search specific properties:
+
+**Flow Fields:**
+- `name:my-flow` - Search flow names
+- `description:process` - Search flow descriptions
+- `module:analytics` - Search Python module names
+- `grouping:etl` - Search grouping paths
+
+**Deployment Fields:**
+- `env:prod` - Search by environment (dev, staging, prod)
+- `branch:main` - Search by git branch
+- `project_name:analytics` - Search by project name
+- `tags:version` - Search deployment tags
+
+**Advanced Search:**
+- Combine multiple criteria: `env:prod branch:main`
+- Mix general and field-specific: `name:process env:staging data`
+- Case-sensitive search available in advanced mode
+
+**Search Results:**
+- Shows filtered flows and their associated deployments
+- Maintains hierarchical tree structure
+- Displays match count in status messages
+- Stack searches: filter flows first, then deployments
 
 ### Deployment Operations
 

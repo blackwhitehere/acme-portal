@@ -12,6 +12,7 @@ import { FlowCommands } from './commands/FlowCommands';
 import { PromotionCommands } from './commands/PromotionCommands';
 import { ComparisonCommands } from './commands/ComparisonCommands';
 import { DeploymentCommands } from './commands/DeploymentCommands';
+import { SearchCommands } from './commands/SearchCommands';
 
 export function activate(context: vscode.ExtensionContext) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -40,6 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
     const promotionCommands = new PromotionCommands(gitService);
     const comparisonCommands = new ComparisonCommands(gitService, workspaceService, acmeTreeDataProvider);
     const deploymentCommands = new DeploymentCommands(gitService);
+    const searchCommands = new SearchCommands(acmeTreeDataProvider);
 
     // Initialize command manager and register all commands
     const commandManager = new CommandManager(
@@ -49,6 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
         promotionCommands,
         comparisonCommands,
         deploymentCommands,
+        searchCommands
     );
 
     // Register all commands and add them to context subscriptions
