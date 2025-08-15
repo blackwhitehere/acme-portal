@@ -15,6 +15,7 @@ export interface FlowDetails {
     source_relative: string;  // Relative path to the source file from some known root
     import_path: string;  // Python import path to the source file
     grouping: string[];  // Desired grouping of the flow in the context of the project (for navigation)
+    line_number?: number;  // Optional line number where the flow is defined in the source file
     child_attributes?: Record<string, any>;  // Additional attributes from subclassed SDK FlowDetails
 }
 
