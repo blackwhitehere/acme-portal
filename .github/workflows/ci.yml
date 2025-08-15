@@ -32,7 +32,7 @@ on:
         default: true
         type: boolean
       full-test:
-        description: 'Run tests on all platforms (Linux, Windows, macOS) - applies to integration tests only'
+        description: 'Run tests on all platforms (Linux, macOS) - applies to integration tests only'
         required: false
         default: false
         type: boolean
@@ -86,7 +86,7 @@ jobs:
       matrix:
         # Simplified matrix per issue #40: default to Ubuntu + Node 20.x + stable VS Code
         # Full test only when explicitly requested via workflow_dispatch
-        os: ${{ inputs.full-test && fromJSON('["ubuntu-latest", "windows-latest", "macos-latest"]') || fromJSON('["ubuntu-latest"]') }}
+        os: ${{ inputs.full-test && fromJSON('["ubuntu-latest", "macos-latest"]') || fromJSON('["ubuntu-latest"]') }}
         node-version: ['20.x']  # Simplified to Node 20.x only per issue #40
         vscode-version: ['stable']  # Simplified to stable only per issue #40
     

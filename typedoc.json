@@ -1,0 +1,19 @@
+{
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "docs/developer/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  "exclude": [
+    "src/test-unit/**/*",
+    "src/**/*.test.ts",
+    "**/*.test.ts"
+  ],
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "hideGenerator": true,
+  "readme": "none",
+  "sort": ["source-order"],
+  "gitRevision": "main",
+  "theme": "markdown"
+}

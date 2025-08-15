@@ -76,14 +76,14 @@ export class SearchUtils {
                 flow.name,
                 flow.original_name,
                 flow.description,
-                flow.obj_type,
-                flow.obj_name,
-                flow.obj_parent_type,
-                flow.obj_parent,
-                flow.module,
+                flow.child_attributes?.['obj_type'],
+                flow.child_attributes?.['obj_name'],
+                flow.child_attributes?.['obj_parent_type'],
+                flow.child_attributes?.['obj_parent'],
+                flow.child_attributes?.['module'],
                 flow.source_path,
                 flow.source_relative,
-                flow.import_path,
+                flow.child_attributes?.['import_path'],
                 ...(flow.grouping || []),
                 ...this.getChildAttributeValues(flow.child_attributes)
             ];
@@ -159,15 +159,9 @@ export class SearchUtils {
             case 'name': return flow.name;
             case 'original_name': return flow.original_name;
             case 'description': return flow.description;
-            case 'obj_type': return flow.obj_type;
-            case 'obj_name': return flow.obj_name;
-            case 'obj_parent_type': return flow.obj_parent_type;
-            case 'obj_parent': return flow.obj_parent;
-            case 'module': return flow.module;
             case 'source': return [flow.source_path, flow.source_relative].filter(Boolean).join(' ');
             case 'source_path': return flow.source_path;
             case 'source_relative': return flow.source_relative;
-            case 'import_path': return flow.import_path;
             case 'grouping': return flow.grouping?.join('/');
             default: 
                 // Check child attributes

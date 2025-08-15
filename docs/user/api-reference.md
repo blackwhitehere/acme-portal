@@ -34,17 +34,44 @@ interface FlowDetails {
     name: string;                    // Display name for the flow
     original_name: string;           // Original name as defined in code
     description: string;             // Flow description/documentation
-    obj_type: string;                // Type of object ('function', 'method', etc.)
-    obj_name: string;                // Name of the object defining the flow
-    obj_parent_type: string;         // Type of parent container ('class', 'module')
-    obj_parent: string;              // Name of parent container
     id: string;                      // Unique identifier for the flow
-    module: string;                  // Python module name
     source_path: string;             // Absolute path to source file
     source_relative: string;         // Relative path from project root
-    import_path: string;             // Python import path
     grouping: string[];              // Hierarchical grouping for display
-    child_attributes?: Record<string, any>; // Extended attributes from subclasses
+    child_attributes?: Record<string, any>; // Extended attributes including obj_type, obj_name, module, etc.
+}
+```
+
+#### DeploymentFinder
+
+**Module**: `deployment_finder`
+**Class**: `DeploymentFinder`
+**Purpose**: Discovers existing deployments across environments
+
+**Interface**:
+```python
+class DeploymentFinder:
+    def __call__(self) -> Dict[str, DeploymentDetails]:
+        """
+        Scan for existing deployments across all environments.
+        
+        Returns:
+            Dictionary mapping deployment IDs to DeploymentDetails
+        """
+```
+
+**Return Data Structure**:
+```typescript
+interface DeploymentDetails {
+    flow_name: string;               // Name of the deployed flow
+    environment: string;             // Target environment
+    branch: string;                  // Git branch
+    commit_sha: string;              // Git commit SHA
+    deployment_id: string;           // Unique deployment identifier
+    status: string;                  // Deployment status
+    url?: string;                    // External deployment URL
+    timestamp: string;               // Deployment timestamp (ISO format)
+    metadata?: Record<string, any>;  // Additional deployment metadata
 }
 ```
 
@@ -114,38 +141,6 @@ interface PromotionParameters {
 }
 ```
 
-#### DeploymentFinder
-
-**Module**: `deployment_finder`
-**Class**: `DeploymentFinder`
-**Purpose**: Discovers existing deployments across environments
-
-**Interface**:
-```python
-class DeploymentFinder:
-    def __call__(self) -> Dict[str, DeploymentDetails]:
-        """
-        Scan for existing deployments across all environments.
-        
-        Returns:
-            Dictionary mapping deployment IDs to DeploymentDetails
-        """
-```
-
-**Return Data Structure**:
-```typescript
-interface DeploymentDetails {
-    flow_name: string;               // Name of the deployed flow
-    environment: string;             // Target environment
-    branch: string;                  // Git branch
-    commit_sha: string;              // Git commit SHA
-    deployment_id: string;           // Unique deployment identifier
-    status: string;                  // Deployment status
-    url?: string;                    // External deployment URL
-    timestamp: string;               // Deployment timestamp (ISO format)
-    metadata?: Record<string, any>;  // Additional deployment metadata
-}
-```
 
 ### SDK Object Runner
 
