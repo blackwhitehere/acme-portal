@@ -50,6 +50,7 @@ nav:
   - Developer:
     - Contributing: developer/contributing.md
     - CI Strategy: developer/ci-strategy.md
+    - API Documentation: developer/api/README.md
 
 markdown_extensions:
   - admonition

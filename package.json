@@ -92,7 +92,6 @@
         "icon": "$(clear-all)"
       }
     ],
-
     "viewsContainers": {
       "activitybar": [
         {
@@ -275,6 +274,7 @@
     "docs:build": "mkdocs build",
     "docs:serve": "mkdocs serve",
     "docs:deploy": "mkdocs gh-deploy --force",
+    "docs:api": "typedoc",
     "check-release-notes": "node scripts/check-release-notes.js",
     "extract-release-notes": "node scripts/extract-release-notes.js",
     "update-changelog": "node scripts/update-changelog.js",
@@ -292,6 +292,8 @@
     "eslint": "^9.33.0",
     "knip": "^5.62.0",
     "mocha": "^11.7.1",
+    "typedoc": "^0.28.10",
+    "typedoc-plugin-markdown": "^4.8.1",
     "typescript": "^5.9.2"
   }
 }

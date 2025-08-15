@@ -17,7 +17,7 @@ export class FlowTreeItem extends BaseTreeItem {
         this.id = flowData.id || flowData.name;
         this.contextValue = 'flow deployable'; // Added 'deployable' context to support deploy action
         this.tooltip = flowData.description || `Flow: ${this.label}`;
-        this.description = flowData.child_attributes?.['module'] || '';
+        this.description = flowData.source_relative;
         this.iconPath = new vscode.ThemeIcon('symbol-event');
         
         // Add a command to open the flow when clicked

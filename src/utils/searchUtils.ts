@@ -159,15 +159,9 @@ export class SearchUtils {
             case 'name': return flow.name;
             case 'original_name': return flow.original_name;
             case 'description': return flow.description;
-            case 'obj_type': return flow.child_attributes?.['obj_type'];
-            case 'obj_name': return flow.child_attributes?.['obj_name'];
-            case 'obj_parent_type': return flow.child_attributes?.['obj_parent_type'];
-            case 'obj_parent': return flow.child_attributes?.['obj_parent'];
-            case 'module': return flow.child_attributes?.['module'];
             case 'source': return [flow.source_path, flow.source_relative].filter(Boolean).join(' ');
             case 'source_path': return flow.source_path;
             case 'source_relative': return flow.source_relative;
-            case 'import_path': return flow.child_attributes?.['import_path'];
             case 'grouping': return flow.grouping?.join('/');
             default: 
                 // Check child attributes
