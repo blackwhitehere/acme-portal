@@ -34,18 +34,24 @@ interface FlowDetails {
     name: string;                    // Display name for the flow
     original_name: string;           // Original name as defined in code
     description: string;             // Flow description/documentation
-    obj_type: string;                // Type of object ('function', 'method', etc.)
-    obj_name: string;                // Name of the object defining the flow
-    obj_parent_type: string;         // Type of parent container ('class', 'module')
-    obj_parent: string;              // Name of parent container
     id: string;                      // Unique identifier for the flow
-    module: string;                  // Python module name
     source_path: string;             // Absolute path to source file
     source_relative: string;         // Relative path from project root
-    import_path: string;             // Python import path
     grouping: string[];              // Hierarchical grouping for display
     child_attributes?: Record<string, any>; // Extended attributes from subclasses
+    
+    // Legacy fields (optional, may be in child_attributes)
+    obj_type?: string;               // Type of object ('function', 'method', etc.)
+    obj_name?: string;               // Name of the object defining the flow
+    obj_parent_type?: string;        // Type of parent container ('class', 'module')
+    obj_parent?: string;             // Name of parent container
+    module?: string;                 // Python module name
+    import_path?: string;            // Python import path
 }
+}
+```
+
+**API Changes Note**: As of acme-portal-sdk v1.0.0, implementation-specific fields (`obj_type`, `obj_name`, `obj_parent_type`, `obj_parent`, `module`, `import_path`) are optional in the base interface and may be found in the `child_attributes` dictionary for better flexibility across different workflow implementations.
 ```
 
 #### DeployWorkflow

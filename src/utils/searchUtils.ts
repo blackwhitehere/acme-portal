@@ -1,5 +1,6 @@
 import { FlowDetails } from '../actions/findFlows';
 import { DeploymentDetails } from '../actions/findDeployments';
+import { FlowUtils } from './flowUtils';
 
 /**
  * Interface for search criteria
@@ -76,14 +77,14 @@ export class SearchUtils {
                 flow.name,
                 flow.original_name,
                 flow.description,
-                flow.obj_type,
-                flow.obj_name,
-                flow.obj_parent_type,
-                flow.obj_parent,
-                flow.module,
+                FlowUtils.getObjType(flow),
+                FlowUtils.getObjName(flow),
+                FlowUtils.getObjParentType(flow),
+                FlowUtils.getObjParent(flow),
+                FlowUtils.getModule(flow),
                 flow.source_path,
                 flow.source_relative,
-                flow.import_path,
+                FlowUtils.getImportPath(flow),
                 ...(flow.grouping || []),
                 ...this.getChildAttributeValues(flow.child_attributes)
             ];
@@ -159,15 +160,15 @@ export class SearchUtils {
             case 'name': return flow.name;
             case 'original_name': return flow.original_name;
             case 'description': return flow.description;
-            case 'obj_type': return flow.obj_type;
-            case 'obj_name': return flow.obj_name;
-            case 'obj_parent_type': return flow.obj_parent_type;
-            case 'obj_parent': return flow.obj_parent;
-            case 'module': return flow.module;
+            case 'obj_type': return FlowUtils.getObjType(flow);
+            case 'obj_name': return FlowUtils.getObjName(flow);
+            case 'obj_parent_type': return FlowUtils.getObjParentType(flow);
+            case 'obj_parent': return FlowUtils.getObjParent(flow);
+            case 'module': return FlowUtils.getModule(flow);
             case 'source': return [flow.source_path, flow.source_relative].filter(Boolean).join(' ');
             case 'source_path': return flow.source_path;
             case 'source_relative': return flow.source_relative;
-            case 'import_path': return flow.import_path;
+            case 'import_path': return FlowUtils.getImportPath(flow);
             case 'grouping': return flow.grouping?.join('/');
             default: 
                 // Check child attributes

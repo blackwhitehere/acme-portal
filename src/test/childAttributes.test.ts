@@ -8,17 +8,17 @@ suite('Child Attributes Test Suite', () => {
             name: 'test_flow',
             original_name: 'test_flow',
             description: 'Test flow description',
-            obj_type: 'function',
-            obj_name: 'test_flow',
-            obj_parent_type: 'module',
-            obj_parent: 'test_module',
             id: 'test_id',
-            module: 'test_module',
             source_path: '/path/to/test.py',
             source_relative: 'test.py',
-            import_path: 'test_module.test',
             grouping: ['group1'],
             child_attributes: {
+                obj_type: 'function',
+                obj_name: 'test_flow',
+                obj_parent_type: 'module',
+                obj_parent: 'test_module',
+                module: 'test_module',
+                import_path: 'test_module.test',
                 custom_field: 'custom_value',
                 custom_number: 123,
                 custom_boolean: true
@@ -28,6 +28,8 @@ suite('Child Attributes Test Suite', () => {
         assert.strictEqual(flowDetails.child_attributes?.custom_field, 'custom_value');
         assert.strictEqual(flowDetails.child_attributes?.custom_number, 123);
         assert.strictEqual(flowDetails.child_attributes?.custom_boolean, true);
+        assert.strictEqual(flowDetails.child_attributes?.obj_type, 'function');
+        assert.strictEqual(flowDetails.child_attributes?.module, 'test_module');
     });
 
     test('DeploymentDetails should support child_attributes', () => {
@@ -64,20 +66,37 @@ suite('Child Attributes Test Suite', () => {
             name: 'test_flow',
             original_name: 'test_flow',
             description: 'Test flow description',
-            obj_type: 'function',
-            obj_name: 'test_flow',
-            obj_parent_type: 'module',
-            obj_parent: 'test_module',
             id: 'test_id',
-            module: 'test_module',
             source_path: '/path/to/test.py',
             source_relative: 'test.py',
-            import_path: 'test_module.test',
             grouping: ['group1']
             // No child_attributes property
         };
 
         assert.strictEqual(flowDetails.child_attributes, undefined);
+    });
+
+    test('FlowDetails should support legacy direct properties for backward compatibility', () => {
+        const flowDetails: FlowDetails = {
+            name: 'test_flow',
+            original_name: 'test_flow',
+            description: 'Test flow description',
+            id: 'test_id',
+            source_path: '/path/to/test.py',
+            source_relative: 'test.py',
+            grouping: ['group1'],
+            // Legacy fields as direct properties
+            obj_type: 'function',
+            obj_name: 'test_flow',
+            obj_parent_type: 'module',
+            obj_parent: 'test_module',
+            module: 'test_module',
+            import_path: 'test_module.test'
+        };
+
+        assert.strictEqual(flowDetails.obj_type, 'function');
+        assert.strictEqual(flowDetails.module, 'test_module');
+        assert.strictEqual(flowDetails.import_path, 'test_module.test');
     });
 
     test('DeploymentDetails should work without child_attributes', () => {
