@@ -1,0 +1,198 @@
+/**
+ * LEGACY FILE - NOT CURRENTLY IN USE
+ * 
+ * This CSS file was originally intended for styling the webview-based search interface
+ * in the ACME Portal VSCode extension. However, the current implementation uses inline
+ * styles within src/treeView/searchViewProvider.ts instead.
+ * 
+ * Current search implementation location: src/treeView/searchViewProvider.ts
+ * This file contains the _getHtmlForWebview() method with embedded CSS styles.
+ * 
+ * This file remains as a reference for potential future refactoring to external stylesheets.
+ */
+
+/* Search view styles with VSCode native look */
+.search-container {
+    padding: 4px;
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+}
+
+.search-section-collapsible {
+    margin: 0;
+    padding: 0;
+}
+
+.search-section-header {
+    padding: 6px 8px;
+    margin: 0;
+    background-color: var(--vscode-sideBarSectionHeader-background);
+    color: var(--vscode-sideBarSectionHeader-foreground);
+    border: 1px solid var(--vscode-sideBarSectionHeader-border);
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+}
+
+.search-section-header::-webkit-details-marker {
+    display: none;
+}
+
+.search-section-header::before {
+    content: '▶';
+    margin-right: 6px;
+    transition: transform 0.2s;
+    font-size: 9px;
+}
+
+.search-section-collapsible[open] .search-section-header::before {
+    transform: rotate(90deg);
+}
+
+.search-content {
+    padding: 8px;
+    background-color: var(--vscode-sideBar-background);
+    border: 1px solid var(--vscode-sideBarSectionHeader-border);
+    border-top: none;
+}
+
+.search-input-section {
+    margin-bottom: 8px;
+}
+
+.search-input-wrapper {
+    margin-bottom: 6px;
+    position: relative;
+}
+
+.search-input-container {
+    display: flex;
+    align-items: center;
+    background-color: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.search-input {
+    flex: 1;
+    padding: 4px 6px;
+    border: none;
+    background: transparent;
+    color: var(--vscode-input-foreground);
+    font-family: var(--vscode-font-family);
+    font-size: 12px;
+    outline: none;
+}
+
+.search-input:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+}
+
+.search-input::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+}
+
+.search-label {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    color: var(--vscode-descriptionForeground);
+    background-color: var(--vscode-input-background);
+    padding: 0 2px;
+    pointer-events: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.regex-toggle {
+    padding: 2px 6px;
+    border: none;
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 10px;
+    min-width: 24px;
+    height: 100%;
+    transition: background-color 0.2s;
+}
+
+.regex-toggle:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.regex-toggle.active {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+
+.search-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 4px 0;
+}
+
+.clear-button {
+    padding: 3px 8px;
+    border: 1px solid var(--vscode-button-border);
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--vscode-font-family);
+    font-size: 11px;
+}
+
+.clear-button:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.search-results {
+    font-size: 10px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.search-help {
+    font-size: 10px;
+}
+
+.search-help summary {
+    color: var(--vscode-descriptionForeground);
+    cursor: pointer;
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.help-content {
+    color: var(--vscode-descriptionForeground);
+    margin-top: 4px;
+    font-size: 10px;
+}
+
+.help-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+}
+
+.help-title {
+    font-weight: bold;
+    color: var(--vscode-foreground);
+    margin-bottom: 1px;
+}
+
+.help-text {
+    font-family: var(--vscode-editor-font-family);
+    font-size: 9px;
+    opacity: 0.8;
+}

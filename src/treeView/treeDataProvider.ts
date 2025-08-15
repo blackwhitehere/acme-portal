@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { FindFlows, FlowDetails } from '../actions/findFlows';
 import { FindDeployments, DeploymentDetails } from '../actions/findDeployments';
 import { PreConditionChecker } from '../utils/preConditionChecker';
+import { SearchUtils, SearchCriteria } from '../utils/searchUtils';
 import { 
     BaseTreeItem,
     FlowTreeItem,
@@ -22,12 +23,20 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
     private deployments: DeploymentDetails[] = [];
     // Store tree data
     private data: { [key: string]: BaseTreeItem[] } = {};
+    // Store filtered data when search is active
+    private filteredFlows: FlowDetails[] = [];
+    private filteredDeployments: DeploymentDetails[] = [];
+    private searchCriteria: SearchCriteria[] = [];
     // Loading state
     private isLoading: boolean = false;
 
     constructor() {
         // Initial load
         this.loadFlows();
+        // Initialize filtered data
+        this.filteredFlows = [];
+        this.filteredDeployments = [];
+        this.searchCriteria = [];
     }
 
     /**
@@ -99,14 +108,18 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
     private buildTreeData(): void {
         this.data = {}; // Reset the data
 
-        console.log(`Building tree data from ${this.flows.length} flows and ${this.deployments.length} deployments`);
+        // Use filtered data if search is active, otherwise use all data
+        const flowsToUse = this.isSearchActive() ? this.filteredFlows : this.flows;
+        const deploymentsToUse = this.isSearchActive() ? this.filteredDeployments : this.deployments;
+
+        console.log(`Building tree data from ${flowsToUse.length} flows and ${deploymentsToUse.length} deployments`);
         
         // Create root items array and a map to track group nodes
         const rootItems: BaseTreeItem[] = [];
         const groupMap = new Map<string, GroupTreeItem>();
         
         // Organize flows into their groupings
-        for (const flow of this.flows) {
+        for (const flow of flowsToUse) {
             const flowItem = new FlowTreeItem(flow);
             const grouping = flow.grouping || [];
             
@@ -160,8 +173,8 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
             
             // Setup flow details in the tree
             const flowId = flow.id || flow.name;
-            // Find all deployments for this flow
-            const flowDeployments = this.deployments.filter(
+            // Find all deployments for this flow from the filtered deployments
+            const flowDeployments = deploymentsToUse.filter(
                 d => d.flow_name === flow.name
             );
             
@@ -362,5 +375,71 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
             }
         }
         return null;
+    }
+
+    /**
+     * Apply search criteria to filter flows and deployments
+     * @param criteria Array of search criteria
+     */
+    public applySearch(criteria: SearchCriteria[]): void {
+        if (criteria.length === 0) {
+            this.clearSearch();
+            return;
+        }
+
+        this.searchCriteria = criteria;
+        
+        // Filter flows and deployments using the new multiple criteria approach
+        this.filteredFlows = SearchUtils.searchFlows(this.flows, criteria);
+        this.filteredDeployments = SearchUtils.searchDeployments(this.deployments, criteria);
+
+        // Additionally filter deployments to only include those belonging to filtered flows
+        const filteredFlowNames = this.filteredFlows.map(f => f.name);
+        this.filteredDeployments = SearchUtils.filterDeploymentsByFlows(this.filteredDeployments, filteredFlowNames);
+
+        // Rebuild tree with filtered data
+        this.buildTreeData();
+        this.refresh();
+    }
+
+    /**
+     * Clear search and show all items
+     */
+    public clearSearch(): void {
+        this.searchCriteria = [];
+        this.filteredFlows = [];
+        this.filteredDeployments = [];
+        this.buildTreeData();
+        this.refresh();
+    }
+
+    /**
+     * Check if search is currently active
+     */
+    public isSearchActive(): boolean {
+        return this.searchCriteria.length > 0;
+    }
+
+    /**
+     * Get count of filtered items
+     */
+    public getFilteredItemsCount(): { flows: number; deployments: number } {
+        if (this.isSearchActive()) {
+            return {
+                flows: this.filteredFlows.length,
+                deployments: this.filteredDeployments.length
+            };
+        }
+        return {
+            flows: this.flows.length,
+            deployments: this.deployments.length
+        };
+    }
+
+    /**
+     * Get current search criteria
+     */
+    public getSearchCriteria(): SearchCriteria[] {
+        return [...this.searchCriteria];
     }
 }

@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+- **Search Functionality**: Comprehensive search for flows and deployments with field-specific filtering, pattern matching, and stackable criteria (#76)
+
 ### Changed
 - **Release Process**: Automated CHANGELOG.md updates during release process to move [Unreleased] content to version sections (#73)
 

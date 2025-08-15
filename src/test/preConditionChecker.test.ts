@@ -73,7 +73,14 @@ suite('PreConditionChecker Test Suite', () => {
             getWorkspaceRoot: () => tempDir
         };
         
-        const checker = new PreConditionChecker(mockWorkspaceService as WorkspaceService);
+        // Mock command executor to avoid real Python calls that might hang
+        const mockCommandExecutor = {
+            execute: async () => {
+                throw new Error('acme-portal-sdk not found');
+            }
+        };
+        
+        const checker = new PreConditionChecker(mockWorkspaceService as WorkspaceService, mockCommandExecutor as CommandExecutor);
         const results = await checker.checkAllPreconditions();
         
         // Should detect missing directory
@@ -96,7 +103,14 @@ suite('PreConditionChecker Test Suite', () => {
             getWorkspaceRoot: () => tempDir
         };
         
-        const checker = new PreConditionChecker(mockWorkspaceService as WorkspaceService);
+        // Mock command executor to avoid real Python calls
+        const mockCommandExecutor = {
+            execute: async () => {
+                throw new Error('acme-portal-sdk not found');
+            }
+        };
+        
+        const checker = new PreConditionChecker(mockWorkspaceService as WorkspaceService, mockCommandExecutor as CommandExecutor);
         const results = await checker.checkAllPreconditions();
         
         // Should find the directory
@@ -122,7 +136,14 @@ suite('PreConditionChecker Test Suite', () => {
             getWorkspaceRoot: () => tempDir
         };
         
-        const checker = new PreConditionChecker(mockWorkspaceService as WorkspaceService);
+        // Mock command executor to avoid real Python calls
+        const mockCommandExecutor = {
+            execute: async () => {
+                throw new Error('acme-portal-sdk not found');
+            }
+        };
+        
+        const checker = new PreConditionChecker(mockWorkspaceService as WorkspaceService, mockCommandExecutor as CommandExecutor);
         const results = await checker.checkAllPreconditions();
         
         // Should detect missing modules

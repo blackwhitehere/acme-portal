@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { FlowTreeDataProvider } from './treeView/treeDataProvider';
+import { SearchViewProvider } from './treeView/searchViewProvider';
 import { CommandExecutor } from './utils/commandExecutor';
 import { WorkspaceService } from './utils/workspaceService';
 import { GitService } from './utils/gitService';
@@ -33,6 +34,12 @@ export function activate(context: vscode.ExtensionContext) {
         showCollapseAll: true
     });
 
+    // Initialize search view provider
+    const searchViewProvider = new SearchViewProvider(context.extensionUri, acmeTreeDataProvider);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(SearchViewProvider.viewType, searchViewProvider)
+    );
+
     // Initialize command handlers
     const treeViewCommands = new TreeViewCommands(acmeTreeDataProvider);
     const settingsCommands = new SettingsCommands();
@@ -48,7 +55,12 @@ export function activate(context: vscode.ExtensionContext) {
         flowCommands,
         promotionCommands,
         comparisonCommands,
-        deploymentCommands,
+        deploymentCommands
+    );
+
+    // Register search commands (simplified for webview)
+    context.subscriptions.push(
+        vscode.commands.registerCommand('acmeportal.searchClear', () => searchViewProvider.clearAllSearch())
     );
 
     // Register all commands and add them to context subscriptions

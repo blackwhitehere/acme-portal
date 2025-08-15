@@ -225,6 +225,30 @@ implementation: SettingsCommands.openSettings()
 ```
 Opens VS Code settings filtered to ACME Portal extension.
 
+**acmeportal.searchFlows**
+```typescript
+command: 'acmeportal.searchFlows'
+title: 'ACME: Search Flows & Deployments'
+implementation: SearchCommands.searchFlows()
+```
+Opens search input dialog for filtering flows and deployments by various criteria.
+
+**acmeportal.clearSearch**
+```typescript
+command: 'acmeportal.clearSearch'
+title: 'ACME: Clear Search'
+implementation: SearchCommands.clearSearch()
+```
+Clears current search filter and shows all flows and deployments.
+
+**acmeportal.showSearchHelp**
+```typescript
+command: 'acmeportal.showSearchHelp'
+title: 'ACME: Search Help'
+implementation: SearchCommands.showSearchHelp()
+```
+Displays help information about search syntax and available fields.
+
 #### Utility Commands
 
 **acmeportal.openExternalUrl**

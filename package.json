@@ -85,6 +85,11 @@
         "command": "acmeportal.openExternalUrl",
         "title": "Open URL",
         "icon": "$(link)"
+      },
+      {
+        "command": "acmeportal.searchClear",
+        "title": "Clear Search",
+        "icon": "$(clear-all)"
       }
     ],
 
@@ -99,6 +104,13 @@
     },
     "views": {
       "acme-portal-container": [
+        {
+          "id": "acmePortalSearchView",
+          "name": "Search",
+          "type": "webview",
+          "when": "acmePortalEnabled",
+          "visibility": "collapsed"
+        },
         {
           "id": "acmePortalView",
           "name": "ACME Resources",
@@ -116,6 +128,11 @@
         {
           "command": "acmeportal.refreshFlows",
           "when": "view == acmePortalView",
+          "group": "navigation"
+        },
+        {
+          "command": "acmeportal.searchClear",
+          "when": "view == acmePortalSearchView",
           "group": "navigation"
         }
       ],
