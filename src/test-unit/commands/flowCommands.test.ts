@@ -10,15 +10,9 @@ suite('FlowCommands Interface Tests', () => {
             name: 'test-flow',
             original_name: 'test_flow',
             description: 'Test flow',
-            obj_type: 'function',
-            obj_name: 'test_flow',
-            obj_parent_type: 'module',
-            obj_parent: 'test_module',
             id: 'test-id',
-            module: 'test_module',
             source_path: '/test/path.py',
             source_relative: 'test_path.py',
-            import_path: 'test_module',
             grouping: ['test'],
             line_number: 42  // This should be accepted as optional
         };
@@ -34,15 +28,9 @@ suite('FlowCommands Interface Tests', () => {
             name: 'test-flow',
             original_name: 'test_flow',
             description: 'Test flow',
-            obj_type: 'function',
-            obj_name: 'test_flow',
-            obj_parent_type: 'module',
-            obj_parent: 'test_module',
             id: 'test-id',
-            module: 'test_module',
             source_path: '/test/path.py',
             source_relative: 'test_path.py',
-            import_path: 'test_module',
             grouping: ['test']
             // No line_number property - should still be valid
         };
