@@ -42,8 +42,6 @@ interface FlowDetails {
     grouping: string[];              // Hierarchical grouping for display
     child_attributes?: Record<string, any>; // Extended attributes including obj_type, obj_name, module, etc.
 }
-}
-}
 ```
 
 **API Changes Note**: As of acme-portal-sdk v1.0.0, implementation-specific fields (`obj_type`, `obj_name`, `obj_parent_type`, `obj_parent`, `module`, `import_path`) are optional in the base interface and may be found in the `child_attributes` dictionary for better flexibility across different workflow implementations.
