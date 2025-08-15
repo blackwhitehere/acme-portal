@@ -36,7 +36,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Initialize search view provider
     const searchViewProvider = new SearchViewProvider(context.extensionUri, acmeTreeDataProvider);
-    vscode.window.registerWebviewViewProvider(SearchViewProvider.viewType, searchViewProvider);
 
     // Initialize command handlers
     const treeViewCommands = new TreeViewCommands(acmeTreeDataProvider);
