@@ -285,4 +285,20 @@ suite('SearchUtils Test Suite', () => {
         assert.strictEqual(results.length, 1);
         assert.strictEqual(results[0].name, 'data-processing-flow');
     });
+
+    test('should search deployments by env field specifically', () => {
+        const criteria: SearchCriteria[] = [{ field: 'env', value: 'dev', isRegex: false, type: 'deployment' }];
+        const results = SearchUtils.searchDeployments(sampleDeployments, criteria);
+        
+        assert.strictEqual(results.length, 1);
+        assert.strictEqual(results[0].name, 'data-processing-dev');
+    });
+
+    test('should search deployments by env field with prod value', () => {
+        const criteria: SearchCriteria[] = [{ field: 'env', value: 'prod', isRegex: false, type: 'deployment' }];
+        const results = SearchUtils.searchDeployments(sampleDeployments, criteria);
+        
+        assert.strictEqual(results.length, 1);
+        assert.strictEqual(results[0].name, 'email-notification-prod');
+    });
 });
