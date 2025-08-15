@@ -1,3 +1,16 @@
+/**
+ * LEGACY FILE - NOT CURRENTLY IN USE
+ * 
+ * This JavaScript file was originally intended for handling webview interactions
+ * in the ACME Portal VSCode extension search interface. However, the current 
+ * implementation uses inline JavaScript within src/treeView/searchViewProvider.ts instead.
+ * 
+ * Current search implementation location: src/treeView/searchViewProvider.ts
+ * This file contains the _getHtmlForWebview() method with embedded JavaScript in a <script> tag.
+ * 
+ * This file remains as a reference for potential future refactoring to external scripts.
+ */
+
 // @ts-check
 (function() {
     // @ts-ignore

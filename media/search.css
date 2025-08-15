@@ -1,3 +1,16 @@
+/**
+ * LEGACY FILE - NOT CURRENTLY IN USE
+ * 
+ * This CSS file was originally intended for styling the webview-based search interface
+ * in the ACME Portal VSCode extension. However, the current implementation uses inline
+ * styles within src/treeView/searchViewProvider.ts instead.
+ * 
+ * Current search implementation location: src/treeView/searchViewProvider.ts
+ * This file contains the _getHtmlForWebview() method with embedded CSS styles.
+ * 
+ * This file remains as a reference for potential future refactoring to external stylesheets.
+ */
+
 /* Search view styles with VSCode native look */
 .search-container {
     padding: 4px;
