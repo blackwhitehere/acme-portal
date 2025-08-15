@@ -10,14 +10,6 @@ export interface FlowDetails {
     source_relative: string;  // Relative path to the source file from some known root
     grouping: string[];  // Desired grouping of the flow in the context of the project (for navigation)
     child_attributes?: Record<string, any>;  // Additional attributes from subclassed SDK FlowDetails
-    
-    // Legacy fields - now optional and may be found in child_attributes
-    obj_type?: string;  // Type of object defining the flow (e.g., function, method)
-    obj_name?: string;  // Name of the object defining the flow (e.g., function name, method name)
-    obj_parent_type?: string;  // Type of container for object defining the flow (e.g. class, module)
-    obj_parent?: string;  // Name of container for flow object (e.g., class name if method, module name if function)
-    module?: string;  // Module name where the flow is defined
-    import_path?: string;  // Python import path to the source file
 }
 
 export class FindFlows {

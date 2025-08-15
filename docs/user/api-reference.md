@@ -4,6 +4,8 @@
 
 This document provides technical details about the ACME Portal extension's integration with the acme-portal-sdk, including data structures, SDK object interfaces, and extension APIs.
 
+**Minimum SDK Version**: This extension requires acme-portal-sdk v1.0.0 or higher for compatibility with the simplified FlowDetails API structure.
+
 ## SDK Integration
 
 ### Core SDK Objects
@@ -38,15 +40,8 @@ interface FlowDetails {
     source_path: string;             // Absolute path to source file
     source_relative: string;         // Relative path from project root
     grouping: string[];              // Hierarchical grouping for display
-    child_attributes?: Record<string, any>; // Extended attributes from subclasses
-    
-    // Legacy fields (optional, may be in child_attributes)
-    obj_type?: string;               // Type of object ('function', 'method', etc.)
-    obj_name?: string;               // Name of the object defining the flow
-    obj_parent_type?: string;        // Type of parent container ('class', 'module')
-    obj_parent?: string;             // Name of parent container
-    module?: string;                 // Python module name
-    import_path?: string;            // Python import path
+    child_attributes?: Record<string, any>; // Extended attributes including obj_type, obj_name, module, etc.
+}
 }
 }
 ```

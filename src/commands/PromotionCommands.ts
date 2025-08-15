@@ -84,7 +84,7 @@ export class PromotionCommands {
             
             const flowItems = flows.map(flow => ({ 
                 label: flow.name,
-                detail: flow.module || flow.source_path,
+                detail: flow.child_attributes?.['module'] || flow.source_path,
                 description: flow.description,
                 flow
             }));
