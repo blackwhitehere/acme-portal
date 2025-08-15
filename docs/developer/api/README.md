@@ -1,8 +1,24 @@
-**acmeportal**
+# TypeScript API Documentation
 
-***
+**Auto-generated API documentation for the ACME Portal VS Code Extension**
 
-# acmeportal
+This documentation is automatically generated from the TypeScript source code using [TypeDoc](https://typedoc.org/). It provides comprehensive reference information for all classes, interfaces, functions, and modules in the extension.
+
+## 🔄 Regenerating Documentation
+
+To regenerate this API documentation after making changes to the TypeScript source code:
+
+```bash
+# Regenerate API docs only
+npm run docs:api
+
+# Regenerate and build complete documentation site  
+npm run docs:build
+```
+
+## 📋 Overview
+
+The ACME Portal extension is organized into the following modules:
 
 ## Modules
 
