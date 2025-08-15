@@ -7,7 +7,8 @@
     "src/test-unit/**/*.js",
     ".vscode-test.mjs",
     ".vscode-test-unit.mjs",
-    ".vscode-test-multi.mjs"
+    ".vscode-test-multi.mjs",
+    "typedoc.json"
   ],
   "ignoreExportsUsedInFile": true
 }
