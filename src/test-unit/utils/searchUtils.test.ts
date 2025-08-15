@@ -261,4 +261,28 @@ suite('SearchUtils Test Suite', () => {
         
         assert.strictEqual(criteria.length, 0);
     });
+
+    test('should parse field-specific search without space after colon', () => {
+        const criteria = SearchUtils.parseSearchQuery('source:example');
+        
+        assert.strictEqual(criteria.length, 1);
+        assert.strictEqual(criteria[0].field, 'source');
+        assert.strictEqual(criteria[0].value, 'example');
+    });
+
+    test('should parse field-specific search with space after colon', () => {
+        const criteria = SearchUtils.parseSearchQuery('source: example');
+        
+        assert.strictEqual(criteria.length, 1);
+        assert.strictEqual(criteria[0].field, 'source');
+        assert.strictEqual(criteria[0].value, 'example');
+    });
+
+    test('should search flows by source field', () => {
+        const criteria: SearchCriteria[] = [{ field: 'source', value: 'analytics', isRegex: false }];
+        const results = SearchUtils.searchFlows(sampleFlows, criteria);
+        
+        assert.strictEqual(results.length, 1);
+        assert.strictEqual(results[0].name, 'data-processing-flow');
+    });
 });

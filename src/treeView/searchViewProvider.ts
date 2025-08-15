@@ -163,47 +163,49 @@ export class SearchViewProvider implements vscode.WebviewViewProvider {
             </head>
             <body>
                 <div class="search-container">
-                    <div class="search-section">
-                        <label for="flowSearch">Flow Search:</label>
-                        <div class="search-input-group">
-                            <input type="text" id="flowSearch" placeholder="Search flows (name:value or general text)..." />
-                            <button id="flowRegexToggle" class="regex-toggle" title="Toggle regex mode">.*</button>
-                        </div>
-                    </div>
-                    
-                    <div class="search-section">
-                        <label for="deploymentSearch">Deployment Search:</label>
-                        <div class="search-input-group">
-                            <input type="text" id="deploymentSearch" placeholder="Search deployments (env:prod or general text)..." />
-                            <button id="deploymentRegexToggle" class="regex-toggle" title="Toggle regex mode">.*</button>
-                        </div>
-                    </div>
-                    
-                    <div class="search-actions">
-                        <button id="clearSearch" class="clear-button">Clear All</button>
-                        <div class="search-results">
-                            <span id="flowCount">0</span> flows, <span id="deploymentCount">0</span> deployments
-                        </div>
-                    </div>
-                    
-                    <div class="search-help">
-                        <details>
-                            <summary>Search Help</summary>
-                            <div class="help-content">
-                                <h4>Field-specific search:</h4>
-                                <ul>
-                                    <li><strong>Flows:</strong> name:value, description:value, module:value</li>
-                                    <li><strong>Deployments:</strong> env:value, branch:value, project_name:value</li>
-                                </ul>
-                                <h4>Examples:</h4>
-                                <ul>
-                                    <li><code>name:my-flow</code> - Find flows with "my-flow" in name</li>
-                                    <li><code>env:prod</code> - Find production deployments</li>
-                                    <li><code>analytics</code> - General search across all fields</li>
-                                </ul>
+                    <details class="search-section-collapsible">
+                        <summary class="search-section-header">Search</summary>
+                        <div class="search-content">
+                            <div class="search-input-section">
+                                <div class="search-input-wrapper">
+                                    <div class="search-input-container">
+                                        <input type="text" id="flowSearch" placeholder="Search flows..." class="search-input" />
+                                        <button id="flowRegexToggle" class="regex-toggle" title="Toggle regex mode">.*</button>
+                                    </div>
+                                    <label class="search-label">Flows</label>
+                                </div>
+                                
+                                <div class="search-input-wrapper">
+                                    <div class="search-input-container">
+                                        <input type="text" id="deploymentSearch" placeholder="Search deployments..." class="search-input" />
+                                        <button id="deploymentRegexToggle" class="regex-toggle" title="Toggle regex mode">.*</button>
+                                    </div>
+                                    <label class="search-label">Deployments</label>
+                                </div>
                             </div>
-                        </details>
-                    </div>
+                            
+                            <div class="search-actions">
+                                <button id="clearSearch" class="clear-button">Clear</button>
+                                <div class="search-results">
+                                    <span id="flowCount">0</span> flows, <span id="deploymentCount">0</span> deployments
+                                </div>
+                            </div>
+                            
+                            <details class="search-help">
+                                <summary>Help</summary>
+                                <div class="help-content">
+                                    <div class="help-section">
+                                        <span class="help-title">Field search:</span>
+                                        <span class="help-text">name:value, env:prod, source:file</span>
+                                    </div>
+                                    <div class="help-section">
+                                        <span class="help-title">Examples:</span>
+                                        <span class="help-text">name:analytics, env:prod, general search</span>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </details>
                 </div>
                 <script nonce="${nonce}" src="${scriptUri}"></script>
             </body>

@@ -164,6 +164,7 @@ export class SearchUtils {
             case 'obj_parent_type': return flow.obj_parent_type;
             case 'obj_parent': return flow.obj_parent;
             case 'module': return flow.module;
+            case 'source': return [flow.source_path, flow.source_relative].filter(Boolean).join(' ');
             case 'source_path': return flow.source_path;
             case 'source_relative': return flow.source_relative;
             case 'import_path': return flow.import_path;
@@ -229,28 +230,41 @@ export class SearchUtils {
         }
 
         const criteria: SearchCriteria[] = [];
-        const parts = query.split(/\s+/);
         
-        for (const part of parts) {
-            if (part.trim()) {
-                if (part.includes(':')) {
-                    const [field, ...valueParts] = part.split(':');
-                    const value = valueParts.join(':');
-                    if (field && value) {
-                        criteria.push({
-                            field: field.trim(),
-                            value: value.trim(),
-                            isRegex: false
-                        });
-                    }
-                } else {
+        // Split by spaces but handle field:value patterns specially
+        const tokens = query.trim().split(/\s+/);
+        let i = 0;
+        
+        while (i < tokens.length) {
+            const token = tokens[i];
+            
+            if (token.includes(':')) {
+                const colonIndex = token.indexOf(':');
+                const field = token.substring(0, colonIndex);
+                let value = token.substring(colonIndex + 1);
+                
+                // If value is empty, it might be separated by space (e.g. "field: value")
+                if (!value && i + 1 < tokens.length) {
+                    value = tokens[i + 1];
+                    i++; // Skip the next token since we used it as the value
+                }
+                
+                if (field && value) {
                     criteria.push({
-                        field: 'all',
-                        value: part.trim(),
+                        field: field.trim(),
+                        value: value.trim(),
                         isRegex: false
                     });
                 }
+            } else {
+                // Regular search term
+                criteria.push({
+                    field: 'all',
+                    value: token.trim(),
+                    isRegex: false
+                });
             }
+            i++;
         }
         
         // If no valid criteria found, treat the whole query as a single pattern

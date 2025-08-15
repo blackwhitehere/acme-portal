@@ -11,6 +11,7 @@
     const clearButton = document.getElementById('clearSearch');
     const flowCountSpan = document.getElementById('flowCount');
     const deploymentCountSpan = document.getElementById('deploymentCount');
+    const searchDetails = document.querySelector('.search-section-collapsible');
 
     let flowRegexMode = false;
     let deploymentRegexMode = false;
@@ -47,7 +48,14 @@
     }, 300);
 
     // Flow search input event listeners
-    flowSearchInput.addEventListener('input', debouncedFlowSearch);
+    flowSearchInput.addEventListener('input', () => {
+        // Auto-open search section if user starts typing
+        if (flowSearchInput.value && !searchDetails.open) {
+            searchDetails.open = true;
+        }
+        debouncedFlowSearch();
+    });
+    
     flowSearchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             debouncedFlowSearch.cancel();
@@ -60,7 +68,14 @@
     });
 
     // Deployment search input event listeners
-    deploymentSearchInput.addEventListener('input', debouncedDeploymentSearch);
+    deploymentSearchInput.addEventListener('input', () => {
+        // Auto-open search section if user starts typing
+        if (deploymentSearchInput.value && !searchDetails.open) {
+            searchDetails.open = true;
+        }
+        debouncedDeploymentSearch();
+    });
+    
     deploymentSearchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             debouncedDeploymentSearch.cancel();
