@@ -4,8 +4,6 @@
 
 This document provides technical details about the ACME Portal extension's integration with the acme-portal-sdk, including data structures, SDK object interfaces, and extension APIs.
 
-**Minimum SDK Version**: This extension requires acme-portal-sdk v1.0.0 or higher for compatibility with the simplified FlowDetails API structure.
-
 ## SDK Integration
 
 ### Core SDK Objects
@@ -44,7 +42,37 @@ interface FlowDetails {
 }
 ```
 
-**API Changes Note**: As of acme-portal-sdk v1.0.0, implementation-specific fields (`obj_type`, `obj_name`, `obj_parent_type`, `obj_parent`, `module`, `import_path`) are optional in the base interface and may be found in the `child_attributes` dictionary for better flexibility across different workflow implementations.
+#### DeploymentFinder
+
+**Module**: `deployment_finder`
+**Class**: `DeploymentFinder`
+**Purpose**: Discovers existing deployments across environments
+
+**Interface**:
+```python
+class DeploymentFinder:
+    def __call__(self) -> Dict[str, DeploymentDetails]:
+        """
+        Scan for existing deployments across all environments.
+        
+        Returns:
+            Dictionary mapping deployment IDs to DeploymentDetails
+        """
+```
+
+**Return Data Structure**:
+```typescript
+interface DeploymentDetails {
+    flow_name: string;               // Name of the deployed flow
+    environment: string;             // Target environment
+    branch: string;                  // Git branch
+    commit_sha: string;              // Git commit SHA
+    deployment_id: string;           // Unique deployment identifier
+    status: string;                  // Deployment status
+    url?: string;                    // External deployment URL
+    timestamp: string;               // Deployment timestamp (ISO format)
+    metadata?: Record<string, any>;  // Additional deployment metadata
+}
 ```
 
 #### DeployWorkflow
@@ -113,38 +141,6 @@ interface PromotionParameters {
 }
 ```
 
-#### DeploymentFinder
-
-**Module**: `deployment_finder`
-**Class**: `DeploymentFinder`
-**Purpose**: Discovers existing deployments across environments
-
-**Interface**:
-```python
-class DeploymentFinder:
-    def __call__(self) -> Dict[str, DeploymentDetails]:
-        """
-        Scan for existing deployments across all environments.
-        
-        Returns:
-            Dictionary mapping deployment IDs to DeploymentDetails
-        """
-```
-
-**Return Data Structure**:
-```typescript
-interface DeploymentDetails {
-    flow_name: string;               // Name of the deployed flow
-    environment: string;             // Target environment
-    branch: string;                  // Git branch
-    commit_sha: string;              // Git commit SHA
-    deployment_id: string;           // Unique deployment identifier
-    status: string;                  // Deployment status
-    url?: string;                    // External deployment URL
-    timestamp: string;               // Deployment timestamp (ISO format)
-    metadata?: Record<string, any>;  // Additional deployment metadata
-}
-```
 
 ### SDK Object Runner
 
