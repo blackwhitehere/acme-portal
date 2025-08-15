@@ -87,24 +87,9 @@
         "icon": "$(link)"
       },
       {
-        "command": "acmeportal.openSearchInput",
-        "title": "Edit Search",
-        "icon": "$(edit)"
-      },
-      {
         "command": "acmeportal.searchClear",
         "title": "Clear Search",
         "icon": "$(clear-all)"
-      },
-      {
-        "command": "acmeportal.toggleFlowRegex",
-        "title": "Toggle Flow Regex Mode",
-        "icon": "$(regex)"
-      },
-      {
-        "command": "acmeportal.toggleDeploymentRegex",
-        "title": "Toggle Deployment Regex Mode", 
-        "icon": "$(regex)"
       }
     ],
 
@@ -122,6 +107,7 @@
         {
           "id": "acmePortalSearchView",
           "name": "Search",
+          "type": "webview",
           "when": "acmePortalEnabled",
           "visibility": "collapsed"
         },
@@ -184,16 +170,6 @@
         {
           "command": "acmeportal.openExternalUrl",
           "when": "view == acmePortalView && viewItem == environment",
-          "group": "inline"
-        },
-        {
-          "command": "acmeportal.toggleFlowRegex",
-          "when": "view == acmePortalSearchView && viewItem == searchInput_flow",
-          "group": "inline"
-        },
-        {
-          "command": "acmeportal.toggleDeploymentRegex",
-          "when": "view == acmePortalSearchView && viewItem == searchInput_deployment",
           "group": "inline"
         }
       ],

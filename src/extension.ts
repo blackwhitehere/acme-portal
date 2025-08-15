@@ -36,10 +36,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Initialize search view provider
     const searchViewProvider = new SearchViewProvider(context.extensionUri, acmeTreeDataProvider);
-    const searchTreeView = vscode.window.createTreeView('acmePortalSearchView', {
-        treeDataProvider: searchViewProvider,
-        showCollapseAll: false
-    });
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(SearchViewProvider.viewType, searchViewProvider)
+    );
 
     // Initialize command handlers
     const treeViewCommands = new TreeViewCommands(acmeTreeDataProvider);
@@ -59,22 +58,16 @@ export function activate(context: vscode.ExtensionContext) {
         deploymentCommands
     );
 
-    // Register search commands
+    // Register search commands (simplified for webview)
     context.subscriptions.push(
-        vscode.commands.registerCommand('acmeportal.openSearchInput', 
-            (inputType: 'flow' | 'deployment', currentValue: string) => 
-                searchViewProvider.openSearchInput(inputType, currentValue)
-        ),
-        vscode.commands.registerCommand('acmeportal.searchClear', () => searchViewProvider.clearAllSearch()),
-        vscode.commands.registerCommand('acmeportal.toggleFlowRegex', () => searchViewProvider.toggleRegexMode('flow')),
-        vscode.commands.registerCommand('acmeportal.toggleDeploymentRegex', () => searchViewProvider.toggleRegexMode('deployment'))
+        vscode.commands.registerCommand('acmeportal.searchClear', () => searchViewProvider.clearAllSearch())
     );
 
     // Register all commands and add them to context subscriptions
     context.subscriptions.push(...commandManager.registerCommands());
 
-    // Add the tree views to subscriptions
-    context.subscriptions.push(treeView, searchTreeView);
+    // Add the tree view to subscriptions
+    context.subscriptions.push(treeView);
 
 
 }
