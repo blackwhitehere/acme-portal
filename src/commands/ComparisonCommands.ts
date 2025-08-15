@@ -111,7 +111,7 @@ export class ComparisonCommands {
 
                 if (!sourceCommitHash) {
                     vscode.window.showInformationMessage(
-                        'No commit hash found for this deployment. Please ensure the deployment has a COMMIT_HASH tag.',
+                        'No commit hash found for this deployment. Please ensure the deployment has commit hash information.',
                         'OK'
                     );
                     return;
