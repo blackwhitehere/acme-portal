@@ -8,6 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 - **Search Functionality**: Comprehensive search for flows and deployments with field-specific filtering, pattern matching, and stackable criteria (#76)
+- **Flow File Opening**: Enhanced flow file opening with error handling for missing files and support for opening at specific line numbers when line_number property is available (#75)
 
 ### Changed
 - **Tag Display**: Updated deployment details display to use direct commit_hash and package_version properties instead of parsing from tags. All deployment tags are now shown in a collapsible "Tags" directory under each environment for better organization (#79)
