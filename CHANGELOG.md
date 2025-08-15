@@ -10,6 +10,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Search Functionality**: Comprehensive search for flows and deployments with field-specific filtering, pattern matching, and stackable criteria (#76)
 
 ### Changed
+- **Tag Display**: Updated deployment details display to use direct commit_hash and package_version properties instead of parsing from tags. All deployment tags are now shown in a collapsible "Tags" directory under each environment for better organization (#79)
 - **Release Process**: Automated CHANGELOG.md updates during release process to move [Unreleased] content to version sections (#73)
 
 ## 0.0.6

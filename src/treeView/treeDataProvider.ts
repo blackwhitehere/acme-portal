@@ -9,7 +9,9 @@ import {
     BranchTreeItem,
     EnvironmentTreeItem,
     DetailTreeItem,
-    GroupTreeItem
+    GroupTreeItem,
+    TagsDirectoryTreeItem,
+    TagTreeItem
 } from './items';
 
 // Tree data provider implementation
@@ -270,25 +272,24 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                     let detailIndex = 0;
                     
                     for (const deployment of envDeployments) {
-                        // Add tag information
-                        for (const tag of deployment.tags) {
-                            if (tag.includes('COMMIT_HASH')) {
-                                const hash = tag.split('=')[1];
-                                envDetailItems.push(new DetailTreeItem(
-                                    `Commit: ${hash}`,
-                                    flow,
-                                    deployment,
-                                    `${envId}-detail-${detailIndex++}`
-                                ));
-                            } else if (tag.includes('PACKAGE_VERSION')) {
-                                const version = tag.split('=')[1];
-                                envDetailItems.push(new DetailTreeItem(
-                                    `Package Version: ${version}`,
-                                    flow,
-                                    deployment,
-                                    `${envId}-detail-${detailIndex++}`
-                                ));
-                            }
+                        // Add commit hash from direct property (not from tags)
+                        if (deployment.commit_hash) {
+                            envDetailItems.push(new DetailTreeItem(
+                                `Commit: ${deployment.commit_hash}`,
+                                flow,
+                                deployment,
+                                `${envId}-detail-${detailIndex++}`
+                            ));
+                        }
+                        
+                        // Add package version from direct property (not from tags)
+                        if (deployment.package_version) {
+                            envDetailItems.push(new DetailTreeItem(
+                                `Package Version: ${deployment.package_version}`,
+                                flow,
+                                deployment,
+                                `${envId}-detail-${detailIndex++}`
+                            ));
                         }
                         
                         // Add creation date
@@ -312,6 +313,30 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                                     `${envId}-detail-${detailIndex++}`
                                 ));
                             }
+                        }
+                        
+                        // Add tags directory if deployment has tags
+                        if (deployment.tags && deployment.tags.length > 0) {
+                            const tagsDirectoryItem = new TagsDirectoryTreeItem(
+                                flow,
+                                deployment,
+                                `${envId}-detail-${detailIndex++}`
+                            );
+                            envDetailItems.push(tagsDirectoryItem);
+                            
+                            // Create tag items for this tags directory
+                            const tagItems: BaseTreeItem[] = [];
+                            deployment.tags.forEach((tag, tagIndex) => {
+                                tagItems.push(new TagTreeItem(
+                                    tag,
+                                    flow,
+                                    deployment,
+                                    `${tagsDirectoryItem.id}-tag-${tagIndex}`
+                                ));
+                            });
+                            
+                            // Store tag items under the tags directory
+                            this.data[tagsDirectoryItem.id!] = tagItems;
                         }
                     }
                     
