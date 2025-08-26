@@ -122,8 +122,8 @@ suite('Progress Notifications Test Suite', () => {
         const progressPromise = vscode.window.withProgress({
             location: vscode.ProgressLocation.Notification,
             title: 'Loading ACME Portal data',
-            cancellable: false
-        }, async (progress) => {
+            cancellable: true
+        }, async (progress, token) => {
             progress.report({ increment: 10, message: 'Scanning for flows...' });
             progress.report({ increment: 50, message: 'Found 5 flows, scanning deployments...' });
             progress.report({ increment: 80, message: 'Found 3 deployments, building tree...' });
@@ -136,9 +136,69 @@ suite('Progress Notifications Test Suite', () => {
         assert.strictEqual(progressCalls.length >= 1, true, 'Progress should be initiated');
         assert.strictEqual(progressCalls[0].options.location, vscode.ProgressLocation.Notification);
         assert.strictEqual(progressCalls[0].options.title, 'Loading ACME Portal data');
+        assert.strictEqual(progressCalls[0].options.cancellable, true);
         
         // Verify that progress reports were made for each stage
         const reportCalls = progressCalls.filter(call => call.type === 'report');
         assert.strictEqual(reportCalls.length >= 4, true, 'Should have progress reports for each loading stage');
+    });
+
+    test('Data loading supports cancellation', async () => {
+        // Create a mock cancellation token that reports as cancelled
+        const mockCancellationToken = {
+            isCancellationRequested: true,
+            onCancellationRequested: () => ({ dispose: () => {} })
+        };
+
+        // Mock withProgress to use our cancelled token
+        (vscode.window as any).withProgress = (options: any, task: any) => {
+            progressCalls.push({ options, task });
+            
+            // Create a mock progress object
+            const mockProgress = {
+                report: (value: any) => {
+                    progressCalls.push({ type: 'report', value });
+                }
+            };
+            
+            // Execute the task with the mock progress and cancelled token
+            return task(mockProgress, mockCancellationToken);
+        };
+
+        // Simulate the data loading with cancellation
+        const progressPromise = vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: 'Loading ACME Portal data',
+            cancellable: true
+        }, async (progress, token) => {
+            progress.report({ increment: 5, message: 'Checking preconditions...' });
+            
+            // Simulate passing preconditions
+            progress.report({ increment: 15, message: 'Scanning for flows...' });
+            
+            // Check for cancellation (this should trigger)
+            if (token.isCancellationRequested) {
+                progress.report({ increment: 100, message: 'Loading cancelled' });
+                return;
+            }
+            
+            // This shouldn't be reached due to cancellation
+            progress.report({ increment: 100, message: '✅ Loaded flows and deployments' });
+        });
+
+        await progressPromise;
+        
+        // Verify that withProgress was called with correct options
+        assert.strictEqual(progressCalls.length >= 1, true, 'Progress should be initiated');
+        assert.strictEqual(progressCalls[0].options.location, vscode.ProgressLocation.Notification);
+        assert.strictEqual(progressCalls[0].options.title, 'Loading ACME Portal data');
+        assert.strictEqual(progressCalls[0].options.cancellable, true);
+        
+        // Verify that cancellation was handled
+        const reportCalls = progressCalls.filter(call => call.type === 'report');
+        const cancelledReports = reportCalls.filter(call => 
+            call.value && call.value.message === 'Loading cancelled'
+        );
+        assert.strictEqual(cancelledReports.length >= 1, true, 'Should report cancellation');
     });
 });

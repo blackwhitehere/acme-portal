@@ -52,8 +52,8 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Notification,
             title: 'Loading ACME Portal data',
-            cancellable: false
-        }, async (progress) => {
+            cancellable: true
+        }, async (progress, token) => {
             try {
                 progress.report({ increment: 5, message: 'Checking preconditions...' });
                 
@@ -73,17 +73,35 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                     return;
                 }
                 
+                // Check for cancellation after precondition check
+                if (token.isCancellationRequested) {
+                    progress.report({ increment: 100, message: 'Loading cancelled' });
+                    return;
+                }
+                
                 progress.report({ increment: 15, message: 'Scanning for flows...' });
                 
                 // Load flows first
                 this.flows = await FindFlows.scanForFlows();
                 console.log(`Loaded ${this.flows.length} flows`);
                 
+                // Check for cancellation after loading flows
+                if (token.isCancellationRequested) {
+                    progress.report({ increment: 100, message: 'Loading cancelled' });
+                    return;
+                }
+                
                 progress.report({ increment: 50, message: `Found ${this.flows.length} flows, scanning deployments...` });
                 
                 // Then load deployments
                 this.deployments = await FindDeployments.scanForDeployments();
                 console.log(`Loaded ${this.deployments.length} deployments`);
+                
+                // Check for cancellation after loading deployments
+                if (token.isCancellationRequested) {
+                    progress.report({ increment: 100, message: 'Loading cancelled' });
+                    return;
+                }
                 
                 progress.report({ increment: 80, message: `Found ${this.deployments.length} deployments, building tree...` });
                 
