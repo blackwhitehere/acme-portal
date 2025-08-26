@@ -27,6 +27,14 @@ suite('Update Changelog Script Tests', () => {
       assert.strictEqual(validateVersion('1.0.0-beta.2'), true);
     });
 
+    test('should accept alpha/beta versions without hyphen', () => {
+      assert.strictEqual(validateVersion('0.0.7alpha1'), true);
+      assert.strictEqual(validateVersion('1.0.0alpha'), true);
+      assert.strictEqual(validateVersion('2.1.3beta1'), true);
+      assert.strictEqual(validateVersion('1.0.0alpha.1'), true);
+      assert.strictEqual(validateVersion('2.3.4rc1'), true);
+    });
+
     test('should reject invalid version formats', () => {
       assert.strictEqual(validateVersion('1.0'), false);
       assert.strictEqual(validateVersion('1'), false);
