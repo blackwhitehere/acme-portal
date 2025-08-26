@@ -50,7 +50,7 @@ The extension needs access to your Python environment:
 ### Verify Setup
 
 1. Open ACME Portal sidebar (click ACME icon in Activity Bar)
-2. You should see "ACME Resources" view with your flows in a tree structure
+2. You should see "Flows & Deployments" view with your flows in a tree structure
 3. If properly configured, flows will be listed; if not, you'll see a welcome message
 
 ## Troubleshooting Setup
@@ -83,7 +83,7 @@ The extension needs access to your Python environment:
 Once set up:
 
 ### Immediate Actions
-1. **Browse Flows**: Explore tree structure in ACME Resources
+1. **Browse Flows**: Explore tree structure in Flows & Deployments
 2. **Open Flow File**: Click file icon next to any flow
 3. **Test Refresh**: Use refresh button to reload flow data
 

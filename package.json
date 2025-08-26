@@ -112,7 +112,7 @@
         },
         {
           "id": "acmePortalView",
-          "name": "ACME Resources",
+          "name": "Flows & Deployments",
           "when": "acmePortalEnabled"
         }
       ]

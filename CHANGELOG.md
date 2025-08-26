@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Flow File Opening**: Enhanced flow file opening with error handling for missing files and support for opening at specific line numbers when line_number property is available (#75)
 
 ### Changed
+- **Panel Rename**: Renamed "Acme Resources" panel to "Flows & Deployments" for better clarity and user understanding (#97)
 - **Tag Display**: Updated deployment details display to use direct commit_hash and package_version properties instead of parsing from tags. All deployment tags are now shown in a collapsible "Tags" directory under each environment for better organization (#79)
 - **Release Process**: Automated CHANGELOG.md updates during release process to move [Unreleased] content to version sections (#73)
 

@@ -10,7 +10,7 @@ The ACME Portal VS Code extension provides a comprehensive interface for managin
 
 Access the main interface through the ACME Portal icon in the VS Code Activity Bar:
 
-- **ACME Resources View**: Tree structure showing all flows and their deployments
+- **Flows & Deployments View**: Tree structure showing all flows and their deployments
 - **Toolbar Actions**: Refresh and settings buttons
 - **Context Menus**: Right-click actions for specific items
 
@@ -136,7 +136,7 @@ Access deployment dashboards and monitoring tools by clicking link icons (🔗) 
 All flow discovery and configuration is handled automatically by the acme-portal-sdk. No manual configuration is needed.
 
 **Access Extension Settings**:
-- Click gear icon (⚙️) in ACME Resources toolbar
+- Click gear icon (⚙️) in Flows & Deployments toolbar
 - VS Code Settings (`Ctrl+,`) → Search "acme portal"
 - Command Palette → "ACME: Open Settings"
 
