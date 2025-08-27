@@ -483,4 +483,116 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
     public getSearchCriteria(): SearchCriteria[] {
         return [...this.searchCriteria];
     }
+
+    /**
+     * Get all flows currently loaded
+     */
+    public getAllFlows(): FlowDetails[] {
+        return [...this.flows];
+    }
+
+    /**
+     * Refresh a subset of flows and their associated deployments
+     * @param flowsToRefresh Array of flow details to refresh
+     */
+    public async refreshFlowsSubset(flowsToRefresh: FlowDetails[]): Promise<void> {
+        if (flowsToRefresh.length === 0) {
+            return;
+        }
+
+        // Show progress notification during data loading
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Refreshing ${flowsToRefresh.length} flow(s)`,
+            cancellable: false
+        }, async (progress) => {
+            try {
+                progress.report({ increment: 10, message: 'Refreshing flow data...' });
+                
+                // Refresh flows using the new scanSpecificFlows method
+                const refreshedFlows = await FindFlows.scanSpecificFlows(flowsToRefresh);
+                console.log(`Refreshed ${refreshedFlows.length} flows`);
+                
+                progress.report({ increment: 50, message: 'Refreshing deployment data...' });
+                
+                // Refresh deployments for these flows
+                const refreshedDeployments = await FindDeployments.scanDeploymentsForFlows(flowsToRefresh);
+                console.log(`Refreshed ${refreshedDeployments.length} deployments`);
+                
+                progress.report({ increment: 80, message: 'Updating tree data...' });
+                
+                // Update the main data arrays with refreshed data
+                this.updateFlowsData(refreshedFlows);
+                this.updateDeploymentsData(refreshedDeployments, flowsToRefresh);
+                
+                // Rebuild the tree with updated data
+                this.buildTreeData();
+                
+                progress.report({ increment: 100, message: '✅ Refresh complete' });
+                
+            } catch (error) {
+                progress.report({ increment: 100, message: 'Refresh failed' });
+                vscode.window.showErrorMessage(`❌ Error refreshing flows: ${error}`);
+            } finally {
+                this.refresh();
+            }
+        });
+    }
+
+    /**
+     * Update flows data by replacing existing flows with refreshed versions
+     * @param refreshedFlows Array of refreshed flow details
+     */
+    private updateFlowsData(refreshedFlows: FlowDetails[]): void {
+        // Create a map of refreshed flows by ID for efficient lookup
+        const refreshedFlowMap = new Map<string, FlowDetails>();
+        refreshedFlows.forEach(flow => {
+            const flowId = flow.id || flow.name;
+            refreshedFlowMap.set(flowId, flow);
+        });
+        
+        // Update existing flows with refreshed data
+        for (let i = 0; i < this.flows.length; i++) {
+            const existingFlow = this.flows[i];
+            const flowId = existingFlow.id || existingFlow.name;
+            
+            if (refreshedFlowMap.has(flowId)) {
+                this.flows[i] = refreshedFlowMap.get(flowId)!;
+                refreshedFlowMap.delete(flowId); // Mark as processed
+            }
+        }
+        
+        // Add any new flows that weren't in the existing set
+        refreshedFlowMap.forEach(flow => {
+            this.flows.push(flow);
+        });
+        
+        // Update filtered flows if search is active
+        if (this.isSearchActive()) {
+            this.applySearch(this.searchCriteria);
+        }
+    }
+
+    /**
+     * Update deployments data by replacing deployments for the specified flows
+     * @param refreshedDeployments Array of refreshed deployment details
+     * @param refreshedFlows Array of flows that were refreshed
+     */
+    private updateDeploymentsData(refreshedDeployments: DeploymentDetails[], refreshedFlows: FlowDetails[]): void {
+        // Get flow names for the refreshed flows
+        const refreshedFlowNames = new Set(refreshedFlows.map(flow => flow.name));
+        
+        // Remove existing deployments for these flows
+        this.deployments = this.deployments.filter(deployment => 
+            !refreshedFlowNames.has(deployment.flow_name)
+        );
+        
+        // Add the refreshed deployments
+        this.deployments.push(...refreshedDeployments);
+        
+        // Update filtered deployments if search is active
+        if (this.isSearchActive()) {
+            this.applySearch(this.searchCriteria);
+        }
+    }
 }

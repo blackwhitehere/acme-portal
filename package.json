@@ -95,6 +95,16 @@
         "command": "acmeportal.copyAttributeValue",
         "title": "Copy Value",
         "icon": "$(copy)"
+      },
+      {
+        "command": "acmeportal.refreshGroup",
+        "title": "Refresh Group",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "acmeportal.refreshFlow",
+        "title": "Refresh Flow",
+        "icon": "$(refresh)"
       }
     ],
     "viewsContainers": {
@@ -179,6 +189,16 @@
         {
           "command": "acmeportal.copyAttributeValue",
           "when": "view == acmePortalView && viewItem == flowDetail",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.refreshGroup",
+          "when": "view == acmePortalView && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.refreshFlow",
+          "when": "view == acmePortalView && viewItem == flow",
           "group": "inline"
         }
       ],
