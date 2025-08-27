@@ -272,6 +272,22 @@ export class FlowTreeDataProvider implements vscode.TreeDataProvider<BaseTreeIte
                     let detailIndex = 0;
                     
                     for (const deployment of envDeployments) {
+                        // Add name attribute from deployment
+                        envDetailItems.push(new DetailTreeItem(
+                            `Name: ${deployment.name}`,
+                            flow,
+                            deployment,
+                            `${envId}-detail-${detailIndex++}`
+                        ));
+                        
+                        // Add project name attribute from deployment
+                        envDetailItems.push(new DetailTreeItem(
+                            `Project: ${deployment.project_name}`,
+                            flow,
+                            deployment,
+                            `${envId}-detail-${detailIndex++}`
+                        ));
+                        
                         // Add commit hash from direct property (not from tags)
                         if (deployment.commit_hash) {
                             envDetailItems.push(new DetailTreeItem(
