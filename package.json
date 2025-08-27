@@ -90,6 +90,11 @@
         "command": "acmeportal.searchClear",
         "title": "Clear Search",
         "icon": "$(clear-all)"
+      },
+      {
+        "command": "acmeportal.copyAttributeValue",
+        "title": "Copy Value",
+        "icon": "$(copy)"
       }
     ],
     "viewsContainers": {
@@ -169,6 +174,11 @@
         {
           "command": "acmeportal.openExternalUrl",
           "when": "view == acmePortalView && viewItem == environment",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.copyAttributeValue",
+          "when": "view == acmePortalView && viewItem == flowDetail",
           "group": "inline"
         }
       ],

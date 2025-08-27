@@ -35,6 +35,10 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.openExternalUrl',
                 this.treeViewCommands.openExternalUrl.bind(this.treeViewCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.copyAttributeValue',
+                this.treeViewCommands.copyAttributeValue.bind(this.treeViewCommands)
             )
         );
 
