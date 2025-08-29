@@ -20,7 +20,7 @@
     "url": "https://github.com/blackwhitehere/acme-portal"
   },
   "acmePortalConfig": {
-    "minSdkVersion": "1.1.2"
+    "minSdkVersion": "1.1.3"
   },
   "contributes": {
     "viewsWelcome": [
