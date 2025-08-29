@@ -133,7 +133,8 @@ function updateChangelog(version) {
  */
 function validateVersion(version) {
   // Basic semantic version validation (major.minor.patch with optional pre-release)
-  const semverPattern = /^\d+\.\d+\.\d+(?:-[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)?$/;
+  // Allows both standard semver (1.0.0-alpha1) and non-hyphen format (1.0.0alpha1)
+  const semverPattern = /^\d+\.\d+\.\d+(?:-?[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)?$/;
   return semverPattern.test(version);
 }
 

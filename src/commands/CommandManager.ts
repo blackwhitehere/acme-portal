@@ -35,6 +35,10 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.openExternalUrl',
                 this.treeViewCommands.openExternalUrl.bind(this.treeViewCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.copyAttributeValue',
+                this.treeViewCommands.copyAttributeValue.bind(this.treeViewCommands)
             )
         );
 
@@ -55,6 +59,14 @@ export class CommandManager {
             vscode.commands.registerCommand(
                 'acmeportal.openFlowFile',
                 this.flowCommands.openFlowFile.bind(this.flowCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.refreshGroup',
+                this.flowCommands.refreshGroup.bind(this.flowCommands)
+            ),
+            vscode.commands.registerCommand(
+                'acmeportal.refreshFlow',
+                this.flowCommands.refreshFlow.bind(this.flowCommands)
             )
         );
 

@@ -20,7 +20,7 @@
     "url": "https://github.com/blackwhitehere/acme-portal"
   },
   "acmePortalConfig": {
-    "minSdkVersion": "1.0.0"
+    "minSdkVersion": "1.1.3"
   },
   "contributes": {
     "viewsWelcome": [
@@ -90,6 +90,21 @@
         "command": "acmeportal.searchClear",
         "title": "Clear Search",
         "icon": "$(clear-all)"
+      },
+      {
+        "command": "acmeportal.copyAttributeValue",
+        "title": "Copy Value",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "acmeportal.refreshGroup",
+        "title": "Refresh Group",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "acmeportal.refreshFlow",
+        "title": "Refresh Flow",
+        "icon": "$(refresh)"
       }
     ],
     "viewsContainers": {
@@ -112,7 +127,7 @@
         },
         {
           "id": "acmePortalView",
-          "name": "ACME Resources",
+          "name": "Flows & Deployments",
           "when": "acmePortalEnabled"
         }
       ]
@@ -143,7 +158,7 @@
         },
         {
           "command": "acmeportal.deployFlow",
-          "when": "view == acmePortalView && viewItem =~ /.*deployable.*/",
+          "when": "view == acmePortalView && viewItem == flow",
           "group": "inline"
         },
         {
@@ -169,6 +184,21 @@
         {
           "command": "acmeportal.openExternalUrl",
           "when": "view == acmePortalView && viewItem == environment",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.copyAttributeValue",
+          "when": "view == acmePortalView && viewItem == flowDetail",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.refreshGroup",
+          "when": "view == acmePortalView && viewItem == group",
+          "group": "inline"
+        },
+        {
+          "command": "acmeportal.refreshFlow",
+          "when": "view == acmePortalView && viewItem == flow",
           "group": "inline"
         }
       ],
@@ -282,17 +312,17 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.19.10",
+    "@types/node": "^20.19.11",
     "@types/vscode": "^1.99.3",
-    "@typescript-eslint/eslint-plugin": "^8.39.0",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.22.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.2.1",
-    "eslint": "^9.33.0",
-    "knip": "^5.62.0",
+    "eslint": "^9.34.0",
+    "knip": "^5.63.0",
     "mocha": "^11.7.1",
-    "typedoc": "^0.28.10",
+    "typedoc": "^0.28.11",
     "typedoc-plugin-markdown": "^4.8.1",
     "typescript": "^5.9.2"
   }

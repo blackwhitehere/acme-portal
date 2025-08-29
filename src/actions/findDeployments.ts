@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { SdkObjectRunner } from '../sdk/sdkObjectRunner';
+import { FlowDetails } from './findFlows';
 
 export interface DeploymentDetails {
     name: string;  // Original name of the deployment config in the deployment system
@@ -56,6 +57,51 @@ export class FindDeployments {
         } catch (error) {
             console.error('Deployment scanning error:', error);
             vscode.window.showErrorMessage(`Error scanning for deployments: ${error}`);
+            return [];
+        }
+    }
+
+    /**
+     * Scan for deployments for specific flows
+     * @param flowDetails Array of flow details to get deployments for
+     */
+    public static async scanDeploymentsForFlows(flowDetails: FlowDetails[]): Promise<DeploymentDetails[]> {
+        try {
+            console.log(`Scanning deployments for ${flowDetails.length} specific flows...`);
+            
+            try {
+                // Use SdkObjectRunner to invoke the DeploymentFinder object from the SDK
+                // Pass flow details as kwargs
+                console.log(`Running DeploymentFinder from SDK module: ${this.DEPLOYMENT_FINDER_MODULE} with flow details`);
+                
+                // Convert flow details to the format expected by the SDK
+                const deploymentsKwargs = {
+                    flows_to_fetch: flowDetails,
+                    deployments_to_fetch: null
+                };
+                
+                const result = await SdkObjectRunner.runSdkObject<DeploymentDetails[]>(
+                    this.DEPLOYMENT_FINDER_MODULE,
+                    this.DEPLOYMENT_FINDER_CLASS,
+                    deploymentsKwargs
+                );
+                
+                console.log(`Found ${result.length} deployments for specific flows via SDK`);
+                
+                // Log the deployment names to help debug
+                result.forEach(deployment => {
+                    console.log(`Deployment for specific flows: ${deployment.project_name}/${deployment.flow_name} (${deployment.branch}/${deployment.env})`);
+                });
+                
+                return result;
+            } catch (sdkError) {
+                console.error('Error using SDK DeploymentFinder for specific flows:', sdkError);
+                // Error notification is now handled by SdkObjectRunner
+                return [];
+            }
+        } catch (error) {
+            console.error('Deployment scanning error for specific flows:', error);
+            vscode.window.showErrorMessage(`Error scanning deployments for specific flows: ${error}`);
             return [];
         }
     }
