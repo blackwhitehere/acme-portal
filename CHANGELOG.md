@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 - **Search Functionality**: Comprehensive search for flows and deployments with field-specific filtering, pattern matching, and stackable criteria (#76)
 - **Flow File Opening**: Enhanced flow file opening with error handling for missing files and support for opening at specific line numbers when line_number property is available (#75)
+- **Flow Refresh Cancellation**: Added cancel button to flow refresh progress notifications allowing users to terminate the loading process (#98)
 - **Detail Attribute Icons**: Intelligent icon selection for flow and deployment detail attributes based on content type, improving visual navigation in tree view (#94)
 - **Add refresh buttons for flow groups and individual flows**  Granular refresh functionality allowing users to refresh flow and deployment data for specific groups or individual flows instead of refreshing everything. (#106)
 
