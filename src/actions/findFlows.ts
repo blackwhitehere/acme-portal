@@ -73,7 +73,8 @@ export class FindFlows {
                 
                 // Convert flows to the format expected by the SDK
                 const flowsKwargs = {
-                    existing_flows: existingFlows
+                    flows_to_fetch: existingFlows,
+                    flow_groups: null
                 };
                 
                 const result = await SdkObjectRunner.runSdkObject<Record<string, FlowDetails>>(
