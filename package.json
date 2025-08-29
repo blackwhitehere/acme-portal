@@ -158,7 +158,7 @@
         },
         {
           "command": "acmeportal.deployFlow",
-          "when": "view == acmePortalView && viewItem =~ /.*deployable.*/",
+          "when": "view == acmePortalView && viewItem == flow",
           "group": "inline"
         },
         {
