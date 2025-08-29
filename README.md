@@ -43,48 +43,6 @@ Watch how to:
 
 For detailed development setup, contribution guidelines, and release process, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-### Quick Start for Developers
-
-1. **Setup**: Clone the repository and run `npm install`
-2. **Development**: Press F5 in VS Code to launch the Extension Development Host
-3. **Testing**: Open [acme-prefect](https://github.com/blackwhitehere/acme-prefect) repository in the extension host
-4. **Python Setup**: Create virtual environment and select Python interpreter
-
-### Essential Commands
-
-```bash
-npm install     # Install dependencies
-npm run compile # Compile TypeScript
-npm run lint    # Check code quality
-npm test        # Run test suite
-npm run package # Build production package
-```
-
-### Automated Release Process
-
-Releases are fully automated - just create and push a git tag:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-The release workflow automatically:
-- Runs comprehensive tests across platforms
-- Packages and validates the extension  
-- Creates GitHub release with automated changelog
-- Publishes to VS Code Marketplace (when configured)
-- **Updates CHANGELOG.md** by moving `[Unreleased]` content to version section
-
-## Extension Settings
-
-## Release Notes
-
-### 0.0.1
-
-Initial release of `acme-portal`
-
----
 
 ## Following extension guidelines
 
