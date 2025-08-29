@@ -76,7 +76,8 @@ export class FindDeployments {
                 
                 // Convert flow details to the format expected by the SDK
                 const deploymentsKwargs = {
-                    flow_details: flowDetails
+                    flows_to_fetch: flowDetails,
+                    deployments_to_fetch: null
                 };
                 
                 const result = await SdkObjectRunner.runSdkObject<DeploymentDetails[]>(
