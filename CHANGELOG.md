@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## 0.0.8alpha1
+
 ### Added
 - **Search Functionality**: Comprehensive search for flows and deployments with field-specific filtering, pattern matching, and stackable criteria (#76)
 - **Flow File Opening**: Enhanced flow file opening with error handling for missing files and support for opening at specific line numbers when line_number property is available (#75)
@@ -17,6 +19,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Panel Rename**: Renamed "Acme Resources" panel to "Flows & Deployments" for better clarity and user understanding (#97)
 - **Tag Display**: Updated deployment details display to use direct commit_hash and package_version properties instead of parsing from tags. All deployment tags are now shown in a collapsible "Tags" directory under each environment for better organization (#79)
 - **Release Process**: Automated CHANGELOG.md updates during release process to move [Unreleased] content to version sections (#73)
+
 
 ## 0.0.6
 
