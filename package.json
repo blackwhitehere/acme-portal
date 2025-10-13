@@ -312,18 +312,18 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.19.11",
-    "@types/vscode": "^1.99.3",
-    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@types/node": "^20.19.21",
+    "@types/vscode": "^1.105.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
     "@typescript-eslint/parser": "^8.22.0",
-    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
-    "@vscode/vsce": "^3.2.1",
-    "eslint": "^9.34.0",
-    "knip": "^5.63.0",
+    "@vscode/vsce": "^3.6.2",
+    "eslint": "^9.37.0",
+    "knip": "^5.64.3",
     "mocha": "^11.7.1",
-    "typedoc": "^0.28.11",
-    "typedoc-plugin-markdown": "^4.8.1",
-    "typescript": "^5.9.2"
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "typescript": "^5.9.3"
   }
 }
